@@ -14,6 +14,9 @@
   --linea: #E4E1DA; --linea-2: #F0EEE8; --seleccion: #E6E3DB;
   --ok: #15803D; --ok-fondo: #E8F5EC; --err: #B91C1C; --err-fondo: #FBECEC;
   --sit: #1D4ED8; --coh: #B45309; --org: #6D28D9; --cor: #BE185D;
+  /* Un color por criterio para sus marcas en el texto */
+  --k1: #2563EB; --k2: #059669; --k3: #7C3AED; --k4: #DB2777; --k5: #64748B; --k6: #CA8A04; --k7: #EA580C;
+  --k8: #65A30D; --k9: #0891B2; --k10: #92400E; --k11: #DC2626; --k12: #9F1239; --k13: #4338CA;
   --radio: 6px; --cab: 56px; --panel: 420px;
   --ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --serif: 'Source Serif 4', 'Source Serif Pro', Georgia, 'Times New Roman', serif;
@@ -26,6 +29,8 @@
     --linea: #34343B; --linea-2: #28282E; --seleccion: #3A3A42;
     --ok: #4ADE80; --ok-fondo: #16301F; --err: #F87171; --err-fondo: #3A1C1C;
     --sit: #7FA2F7; --coh: #E59A55; --org: #B69CFB; --cor: #F07AB6;
+    --k1: #7FA2F7; --k2: #34D399; --k3: #B69CFB; --k4: #F472B6; --k5: #94A3B8; --k6: #FACC15; --k7: #FB923C;
+    --k8: #A3E635; --k9: #22D3EE; --k10: #D6A26C; --k11: #F87171; --k12: #FDA4AF; --k13: #A5B4FC;
     --sombra: 0 8px 28px rgba(0, 0, 0, .5), 0 1px 3px rgba(0, 0, 0, .4);
     color-scheme: dark;
   }
@@ -104,39 +109,90 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
 .vacio { color: var(--tinta-3); font-size: 13px; padding: 16px 0; }
 
 /* Marcado */
-.marcado { display: grid; grid-template-columns: minmax(0, 1fr) var(--panel); }
-.marcado.panel-colapsado { grid-template-columns: minmax(0, 1fr) 64px; }
+.marcado { display: grid; } /* las columnas las fija el código (aplicarRejilla) */
 .col-texto { overflow: auto; position: relative; }
-.herramientas { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; padding: 10px 24px; border-bottom: 1px solid var(--linea-2); font-size: 12px; color: var(--tinta-2); }
+.barra-texto { position: sticky; top: 0; z-index: 20; background: var(--papel); border-bottom: 1px solid var(--linea); }
+.herramientas { padding: 8px 20px; font-size: 12px; color: var(--tinta-2); }
+.barra-fila { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .herramientas label { display: flex; gap: 5px; align-items: center; }
 .herramientas .sep { flex: 1; }
-.hoja { max-width: calc(72ch + 64px); margin: 0 auto; padding: 28px 24px 120px 12px; }
+.contadores { display: flex; gap: 10px; font-variant-numeric: tabular-nums; font-size: 12.5px; }
+.contadores .mas { color: var(--ok); } .contadores .menos { color: var(--err); }
+.btn.activo { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.hoja { max-width: calc(72ch + 64px); margin: 0 auto; padding: 24px 20px 120px 8px; }
 
-/* Paleta */
-.paleta { position: sticky; top: 0; z-index: 20; background: var(--hoja); border-bottom: 1px solid var(--linea); }
-.paleta-vacia { padding: 10px 24px; font-size: 13px; color: var(--tinta-3); }
-.paleta-abierta { padding: 10px 24px 12px; max-height: 46vh; overflow: auto; }
-.pal-cab { display: flex; gap: 10px; align-items: baseline; margin-bottom: 8px; }
-.pal-tipo { font-size: 12px; font-weight: 600; color: var(--tinta-2); }
+/* Paleta: columna fija a la izquierda */
+.paleta { border-right: 1px solid var(--linea); background: var(--hoja); overflow: hidden; display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.pal-cab { display: flex; align-items: center; gap: 2px; padding: 8px 4px 8px 6px; border-bottom: 1px solid var(--linea); flex: none; }
+.pestanas-pal { display: flex; gap: 2px; flex: 1; min-width: 0; white-space: nowrap; }
+.pestanas-pal button { border: 0; background: none; padding: 4px 6px; font-size: 12px; border-radius: 4px; color: var(--tinta-2); white-space: nowrap; }
+.pestanas-pal button:hover { background: var(--linea-2); }
+.pestanas-pal button.activa { background: var(--tinta); color: var(--papel); }
+.pestanas-pal.compacta button { padding: 4px 4px; font-size: 11px; }
+.pestanas-pal.compacta { gap: 0; }
+.pal-plegar { flex: none; width: 26px; padding: 0; justify-content: center; }
+.pal-cuerpo { overflow: auto; flex: 1; min-height: 0; padding: 12px 12px 48px; }
+.pal-sel { border-left: 3px solid var(--tinta-3); padding: 2px 0 2px 10px; margin-bottom: 16px; }
+.pal-sel .cita { display: block; font-size: 15px; line-height: 1.45; max-height: 7.4em; overflow: auto; overflow-wrap: break-word; }
+.pal-sel small { display: block; margin-top: 4px; color: var(--tinta-3); font-size: 11.5px; }
+.pal-instr { font-size: 12.5px; color: var(--tinta-2); margin: 0 0 16px; line-height: 1.5; }
+.pal-grupo { margin-bottom: 16px; }
+.pal-grupo h4 { font-size: 11.5px; font-weight: 600; color: var(--tinta-2); margin: 0 0 6px; }
+.pal-vacio { font-size: 12px; color: var(--tinta-3); margin: 0; line-height: 1.45; }
+.pildoras { display: flex; flex-wrap: wrap; gap: 4px; }
+.pildora { display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 2px 8px; border: 1px solid var(--linea); border-radius: 13px; background: var(--hoja); font-size: 12px; text-align: left; line-height: 1.25; }
+.pildora:hover { border-color: var(--f); background: color-mix(in srgb, var(--f) 8%, var(--hoja)); }
+.pildora.doc { border-style: dashed; }
+.punto-f { width: 8px; height: 8px; border-radius: 50%; background: var(--f); flex: none; }
+.pol { font-weight: 600; }
+.pol.mas { color: var(--ok); } .pol.menos { color: var(--err); }
+kbd, .kbd { font: 500 10.5px var(--ui); color: var(--tinta-3); border: 1px solid var(--linea); border-radius: 3px; padding: 0 4px; line-height: 16px; background: var(--hoja); }
+.pal-crit { border-left: 3px solid var(--f); padding-left: 8px; margin: 0 0 14px; }
+.pal-crit-nom { color: var(--f); font-weight: 600; font-size: 12px; margin: 0 0 3px 6px; }
+.ev-btn { display: flex; width: 100%; align-items: center; gap: 6px; padding: 5px 6px; border: 0; border-radius: 4px; background: none; font-size: 12.5px; text-align: left; line-height: 1.3; }
+.ev-btn:hover { background: color-mix(in srgb, var(--f) 10%, var(--hoja)); }
+.ev-btn .nom { flex: 1; min-width: 0; }
+.ev-btn.doc .nom { color: var(--tinta-2); }
+.pal-catalogo.sin-sel .ev-btn { color: var(--tinta-2); }
+.pal-plegada { width: 100%; height: 100%; border: 0; background: var(--hoja); display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 14px; color: var(--tinta-2); }
+.pal-plegada:hover { background: var(--linea-2); color: var(--tinta); }
+.pal-plegada .vertical { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12.5px; font-weight: 500; }
+
+/* Consulta de materiales, sobre el texto */
+.consulta { border-top: 1px solid var(--linea); background: var(--hoja); padding: 8px 20px 10px; }
+.sub-barra { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.sub-barra .sep { flex: 1; }
+.pildora-et { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border: 1px solid var(--linea); border-radius: 13px; background: var(--hoja); font-size: 12px; white-space: nowrap; }
+.pildora-et:hover { border-color: var(--c); }
+.pildora-et.activa { border-color: var(--c); background: color-mix(in srgb, var(--c) 16%, var(--hoja)); font-weight: 500; }
+.punto-c { width: 9px; height: 9px; border-radius: 50%; background: var(--c); flex: none; display: inline-block; }
+.punto-c.grande { width: 12px; height: 12px; }
+.sub-ayuda { font-size: 11.5px; color: var(--tinta-3); margin: 5px 0 4px; }
+.doc-pestanas { display: flex; gap: 2px; border-bottom: 1px solid var(--linea); overflow-x: auto; }
+.doc-pestanas button { border: 0; background: none; padding: 6px 10px; font-size: 12.5px; border-bottom: 2px solid transparent; white-space: nowrap; color: var(--tinta-2); }
+.doc-pestanas button:hover { color: var(--tinta); }
+.doc-pestanas button.activa { border-bottom-color: var(--tinta); color: var(--tinta); font-weight: 500; }
+.doc-pestanas button.vacia { color: var(--tinta-3); font-style: italic; }
+.doc-pestanas .n { font-size: 10.5px; background: var(--linea-2); border-radius: 8px; padding: 0 5px; font-style: normal; }
+.doc-vista { max-height: 33vh; overflow: auto; padding: 10px 2px 4px; }
+.doc-cuerpo { font: 15px/1.7 var(--serif); white-space: pre-wrap; overflow-wrap: break-word; max-width: 80ch; }
+.doc-vista.mono .doc-cuerpo { font: 13px/1.6 ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; white-space: pre; overflow-wrap: normal; tab-size: 8; max-width: none; }
+.doc-cuerpo .tab { display: inline-block; overflow: hidden; vertical-align: bottom; }
 .cita { font-family: var(--serif); font-style: italic; }
-.pal-frag { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; }
-.pal-fila { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
-.pal-rot { font-size: 11px; color: var(--tinta-3); width: 72px; flex: none; }
-.chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 9px; border: 1px solid var(--linea); border-radius: 14px; background: var(--hoja); font-size: 12.5px; }
-.chip:hover { border-color: var(--f, var(--tinta-3)); background: color-mix(in srgb, var(--f, var(--tinta-3)) 8%, var(--hoja)); }
-.chip .punto-f { width: 8px; height: 8px; border-radius: 50%; background: var(--f); flex: none; }
-.chip .pol { font-weight: 600; }
-.chip .pol.mas { color: var(--ok); } .chip .pol.menos { color: var(--err); }
-.chip kbd, .kbd { font: 500 10.5px var(--ui); color: var(--tinta-3); border: 1px solid var(--linea); border-radius: 3px; padding: 0 4px; line-height: 16px; }
-.chip.doc { border-style: dashed; }
-.pal-filtro { width: 220px; height: 28px; font-size: 12.5px; }
-.pal-secciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; margin-top: 4px; }
-.pal-sec h4 { margin: 0 0 6px; font-size: 11.5px; font-weight: 600; color: var(--tinta-2); }
-.pal-crit { margin-bottom: 8px; }
-.pal-crit > div:first-child { font-size: 11px; color: var(--tinta-3); margin-bottom: 3px; }
-.pal-crit .chips { display: flex; flex-wrap: wrap; gap: 4px; }
-.pal-crit .chip { height: 24px; font-size: 12px; padding: 0 7px; }
-.pal-ayuda { font-size: 11.5px; color: var(--tinta-3); margin-top: 6px; }
+.ds.sub { background: color-mix(in srgb, var(--c) 22%, transparent); box-shadow: inset 0 -2px 0 var(--c); cursor: pointer; }
+.ds.sub.elegido { outline: 2px solid var(--c); outline-offset: 1px; border-radius: 2px; }
+.ds.sel-doc { background: var(--seleccion); outline: 1px solid var(--tinta-3); }
+
+/* Ventana de etiquetas y editor de pruebas */
+.et-fila { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--linea-2); flex-wrap: wrap; }
+.et-fila .entrada { flex: 1; min-width: 160px; }
+.colores { display: flex; gap: 4px; }
+.color { width: 18px; height: 18px; border-radius: 50%; border: 0; background: var(--c); padding: 0; }
+.color.elegido { box-shadow: 0 0 0 2px var(--hoja), 0 0 0 4px var(--c); }
+.et-n { font-size: 11.5px; color: var(--tinta-3); min-width: 52px; text-align: right; }
+.et-aviso { flex: 1; font-size: 12.5px; color: var(--err); }
+.pr-mono { font-size: 12px; display: flex; gap: 4px; align-items: center; white-space: nowrap; color: var(--tinta-2); }
+.doc-ed textarea.mono { font: 13px/1.5 ui-monospace, Menlo, Consolas, monospace; white-space: pre; overflow-x: auto; tab-size: 8; }
 
 /* Texto del estudiante */
 .parr { display: grid; grid-template-columns: 52px minmax(0, 1fr); margin-bottom: 1.1em; }
@@ -149,7 +205,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
 .barra-m .num { position: absolute; top: -2px; right: 7px; }
 .ptexto { margin: 0; font: 17px/1.8 var(--serif); max-width: 72ch; white-space: pre-wrap; overflow-wrap: break-word; }
 .ptexto .s { border-radius: 2px; }
-.s.acierto { background: color-mix(in srgb, var(--fa) 17%, transparent); }
+.s.acierto { background: color-mix(in srgb, var(--fa) 20%, transparent); }
 .s.error { text-decoration: underline wavy var(--f); text-decoration-thickness: 1.4px; text-underline-offset: 4px; text-decoration-skip-ink: none; }
 .s.error.grave { text-decoration-thickness: 2.4px; }
 .s.error2 { box-shadow: inset 0 -2px 0 var(--f2); }
@@ -165,9 +221,13 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
 .sin-marcas .s.acierto { background: none; }
 .sin-marcas .s.error, .sin-marcas .s.error2 { text-decoration: none; box-shadow: none; }
 .sin-marcas .punto, .sin-marcas .barra-m, .sin-marcas .num { visibility: hidden; }
-.leyenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--tinta-3); padding: 0 0 18px 52px; }
-.leyenda span { display: inline-flex; align-items: center; gap: 5px; }
-.leyenda i { width: 10px; height: 10px; border-radius: 50%; background: var(--f); display: inline-block; }
+.leyenda { display: flex; gap: 6px 16px; flex-wrap: wrap; font-size: 11.5px; color: var(--tinta-2); padding: 0 0 4px 52px; }
+.ley-grupo { display: inline-flex; gap: 4px 10px; flex-wrap: wrap; }
+.ley-grupo span { display: inline-flex; align-items: center; gap: 4px; }
+.leyenda i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.leyenda-nota { font-size: 11.5px; color: var(--tinta-3); padding: 0 0 18px 52px; }
+.muestra { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: var(--k); margin-right: 6px; vertical-align: -1px; flex: none; }
+.t-cab .muestra { margin-top: 4px; }
 
 /* Panel de rúbrica */
 .panel { border-left: 1px solid var(--linea); background: var(--hoja); overflow: auto; }
@@ -273,23 +333,25 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   .inicio { padding: 20px 14px 80px; }
   .inicio-rejilla { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .area-texto { min-height: 300px; padding: 14px; font-size: 16px; }
-  .marcado, .marcado.panel-colapsado { grid-template-columns: minmax(0, 1fr); }
+  .marcado { grid-template-columns: minmax(0, 1fr) !important; }
   .herramientas { padding: 8px 12px; }
   .hoja { padding: 16px 12px 140px 0; }
   .parr { grid-template-columns: 30px minmax(0, 1fr); }
   .margen { padding-right: 6px; }
-  .leyenda { padding-left: 30px; }
+  .leyenda, .leyenda-nota { padding-left: 30px; }
   .ptexto { font-size: 16.5px; }
   .panel { position: fixed; inset: var(--cab) 0 0 0; z-index: 40; border-left: 0; display: none; }
   .panel.abierto-movil { display: block; }
-  .paleta.con-seleccion { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 45; border-top: 1px solid var(--linea); border-bottom: 0; box-shadow: var(--sombra); border-radius: 12px 12px 0 0; }
-  .paleta-abierta { max-height: 55vh; padding: 12px 14px 20px; }
-  .pal-secciones { grid-template-columns: minmax(0, 1fr); }
-  .pal-filtro { width: 100%; }
-  .pal-rot { width: 100%; }
-  .chip { height: 34px; font-size: 13.5px; }
-  .pal-crit .chip { height: 32px; font-size: 13px; }
-  .chip kbd, .pal-cab .kbd, .pal-ayuda, .editor-marca .kbd { display: none; }
+  .paleta { position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 45; max-height: 62vh; border: 1px solid var(--linea); border-bottom: 0; border-radius: 12px 12px 0 0; box-shadow: var(--sombra); display: none; }
+  .paleta.abierta-movil { display: flex; }
+  .pal-cuerpo { padding: 12px 14px 24px; }
+  .ev-btn { padding: 9px 6px; font-size: 14px; }
+  .pildora { min-height: 32px; font-size: 13.5px; }
+  .pildora kbd, .ev-btn kbd, .pal-ayuda, .editor-marca .kbd { display: none; }
+  .fab-paleta { right: auto !important; left: 14px; font-size: 14px; font-weight: 500; align-items: center; justify-content: center; }
+  .herramientas { padding: 8px 12px; }
+  .consulta { padding: 8px 12px; }
+  .doc-vista { max-height: 30vh; }
   .nv { padding: 8px 2px; font-size: 12px; }
   .fab { display: flex; position: fixed; right: 14px; bottom: 16px; z-index: 35; align-items: baseline; gap: 4px; height: 48px; padding: 0 16px; border-radius: 24px; border: 0; background: var(--tinta); color: var(--papel); box-shadow: var(--sombra); }
   .fab .cifra { font-size: 20px; }
@@ -307,7 +369,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   html, body { height: auto; overflow: visible; background: #fff; color: #111; }
   body > *:not(#impresion) { display: none !important; }
   #impresion { display: block; font: 10.5pt/1.5 var(--ui); color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  :root { --sit: #1D4ED8; --coh: #B45309; --org: #6D28D9; --cor: #BE185D; --ok: #15803D; --err: #B91C1C; --linea: #ddd; --linea-2: #eee; --tinta-2: #444; --tinta-3: #777; }
+  :root { --k1: #2563EB; --k2: #059669; --k3: #7C3AED; --k4: #DB2777; --k6: #CA8A04; --k7: #EA580C; --k8: #65A30D; --k9: #0891B2; --k10: #92400E; --k11: #DC2626; --k12: #9F1239; --k13: #4338CA; --sit: #1D4ED8; --coh: #B45309; --org: #6D28D9; --cor: #BE185D; --ok: #15803D; --err: #B91C1C; --linea: #ddd; --linea-2: #eee; --tinta-2: #444; --tinta-3: #777; }
 }
 .imp h1 { font: 500 20pt/1.2 var(--serif); margin: 0 0 2pt; }
 .imp .meta { color: #555; margin-bottom: 12pt; }
@@ -335,6 +397,40 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
 .imp .rec-imp li { margin-bottom: 5pt; }
 .imp .nota-imp { font-size: 9pt; color: #666; }
 
+/* Imágenes de los documentos */
+.doc-imagenes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+.doc-imagenes figure { margin: 0; max-width: 100%; }
+.img-btn { display: block; padding: 0; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--hoja); cursor: zoom-in; max-width: 100%; }
+.img-btn img { display: block; max-width: 100%; max-height: 28vh; border-radius: var(--radio); }
+.doc-imagenes figcaption { font-size: 11.5px; color: var(--tinta-3); margin-top: 4px; }
+.doc-vista.lectura { max-height: 55vh; border: 1px solid var(--linea); border-top: 0; padding: 12px 14px; border-radius: 0 0 var(--radio) var(--radio); }
+.doc-vista.lectura .img-btn img { max-height: 40vh; }
+.visor { position: fixed; inset: 0; z-index: 90; background: rgba(12, 12, 12, .86); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; cursor: zoom-out; }
+.visor img { max-width: 100%; max-height: calc(100% - 56px); object-fit: contain; background: #fff; border-radius: 4px; }
+.mini-lista { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.mini { margin: 0; display: flex; flex-direction: column; gap: 4px; width: 150px; }
+.mini img { width: 150px; height: 96px; object-fit: cover; border: 1px solid var(--linea); border-radius: 4px; background: #fff; }
+.mini .entrada { height: 28px; font-size: 12px; }
+.subir-img { cursor: pointer; }
+.pildora-et.quieta { cursor: default; }
+.leyenda-et { margin-bottom: 8px; }
+
+/* Ponderación */
+.pond-prop { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0; font-size: 12.5px; color: var(--tinta-2); }
+.pond-prop label { display: flex; gap: 8px; align-items: center; }
+.pond-prop .entrada, .tabla.pond .entrada { width: 72px; height: 30px; text-align: right; font-variant-numeric: tabular-nums; }
+.tabla.pond td.v { font-family: var(--serif); font-variant-numeric: tabular-nums; color: var(--tinta-2); }
+.tabla.pond tr.pond-desc td { font-weight: 600; font-size: 12px; border-left: 3px solid var(--f); background: var(--linea-2); }
+.tabla.pond .st { float: right; font-family: var(--serif); font-weight: 400; }
+.tabla.pond tr.invalido .entrada { border-color: var(--err); background: var(--err-fondo); }
+.pond-total { font-size: 13px; margin: 12px 0 0; }
+.aviso-pond { color: var(--err); margin-left: 8px; }
+@media (max-width: 860px) {
+  .mini { width: 120px; } .mini img { width: 120px; height: 80px; }
+  .doc-ed > .fila .pr-nombre { flex: 1 1 100% !important; }
+  .img-btn img { max-height: 24vh; }
+}
+
 </style>
 </head>
 <body>
@@ -342,13 +438,14 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
 <div id="avisoSup"></div>
 <main class="vista inicio" id="vistaInicio"></main>
 <main class="vista marcado" id="vistaMarcado" hidden>
+  <aside class="paleta" id="paleta" aria-label="Paleta de marcas"></aside>
   <section class="col-texto" id="colTexto">
-    <div class="paleta" id="paleta"></div>
-    <div class="herramientas" id="herramientas"></div>
+    <div class="barra-texto" id="barraTexto"><div class="herramientas" id="herramientas"></div><div class="consulta" id="consulta" hidden></div></div>
     <div class="hoja"><div id="leyenda"></div><article id="texto" aria-label="Texto del estudiante"></article></div>
   </section>
   <aside class="panel" id="panel" aria-label="Rúbrica"></aside>
 </main>
+<button class="fab fab-paleta" id="fabPaleta" hidden aria-label="Abrir la paleta de marcas">Marcas</button>
 <button class="fab" id="fab" hidden></button>
 <div id="emergentes"></div>
 <div id="impresion"></div>
@@ -497,6 +594,42 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
 
   var CRIT = {};
   RUBRICA.forEach(function (c) { CRIT[c.id] = c; });
+
+  // ───────────────────────── Ponderación editable ─────────────────────────
+  // Por defecto: los pesos del CSV y la proporción 1 / 0,66 / 0,33 / 0. Los valores por nivel se derivan,
+  // redondeados a dos decimales (mitad hacia arriba), y reproducen exactamente el CSV.
+  var PESOS_DEF = {};
+  RUBRICA.forEach(function (c) { PESOS_DEF[c.id] = c.peso; });
+  var PROPORCIONES_DEF = { avanzado: 0.66, intermedio: 0.33 };
+  function ponderacionPorDefecto() { return { pesos: JSON.parse(JSON.stringify(PESOS_DEF)), proporciones: { avanzado: PROPORCIONES_DEF.avanzado, intermedio: PROPORCIONES_DEF.intermedio } }; }
+  function r2(x) { return Math.round(x * 100 + 1e-9) / 100; }
+  function valoresDe(peso, prop) {
+    return { experto: r2(peso), avanzado: r2(peso * prop.avanzado), intermedio: r2(peso * prop.intermedio), inicial: 0 };
+  }
+  function normalizarPonderacion(p) {
+    var d = ponderacionPorDefecto();
+    p = p || {};
+    RUBRICA.forEach(function (c) {
+      var v = p.pesos && Number(p.pesos[c.id]);
+      if (isFinite(v) && v >= 0) d.pesos[c.id] = r2(v);
+    });
+    ['avanzado', 'intermedio'].forEach(function (n) {
+      var v = p.proporciones && Number(p.proporciones[n]);
+      if (isFinite(v) && v >= 0 && v <= 1) d.proporciones[n] = v;
+    });
+    return d;
+  }
+  // Aplica una ponderación a la rúbrica en uso. Sin argumento, vuelve a la de por defecto.
+  function aplicarPonderacion(p) {
+    var n = normalizarPonderacion(p);
+    RUBRICA.forEach(function (c) { c.peso = n.pesos[c.id]; c.valores = valoresDe(c.peso, n.proporciones); });
+    return n;
+  }
+  function puntajeMaximo() { return r2(RUBRICA.reduce(function (a, c) { return a + c.valores.experto; }, 0)); }
+  function esPonderacionPorDefecto(p) { return JSON.stringify(normalizarPonderacion(p)) === JSON.stringify(ponderacionPorDefecto()); }
+
+  // Color propio de cada criterio para pintar sus marcas (variables --k1…--k13 en la hoja de estilos).
+  function colorCriterio(cid) { return 'var(--k' + cid.slice(1) + ')'; }
   var DESC = {};
   DESCRIPTORES.forEach(function (d) { DESC[d.id] = d; });
   function familiaDe(cid) { return DESC[CRIT[cid].d].familia; }
@@ -514,10 +647,139 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   var INSUMOS_DEF = ['Actor 1', 'Actor 2', 'Actor 3', 'Información complementaria'];
 
   var SECCIONES = [
-    { id: 'correccion', nombre: 'Corrección', criterios: ['c11', 'c12', 'c13'] },
-    { id: 'cohesion', nombre: 'Cohesión y organización', criterios: ['c6', 'c7', 'c8', 'c9', 'c10'] },
-    { id: 'contenido', nombre: 'Contenido', criterios: ['c1', 'c2', 'c3', 'c4'] }
+    { id: 'correccion', nombre: 'Corrección', corto: 'Corrección', criterios: ['c11', 'c12', 'c13'] },
+    { id: 'cohesion', nombre: 'Cohesión y organización', corto: 'Cohesión', criterios: ['c6', 'c7', 'c8', 'c9', 'c10'] },
+    { id: 'contenido', nombre: 'Contenido', corto: 'Contenido', criterios: ['c1', 'c2', 'c3', 'c4'] }
   ];
+
+  // Sugeridas por tipo de selección, escritas a mano y ordenadas por frecuencia esperada de uso.
+  // Criterio: en textos de este nivel las marcas más numerosas son de corrección (tildes, ortografía,
+  // puntuación), luego cohesión, y las de contenido se hacen pocas veces por texto. Ajustar con datos reales.
+  var SUGERIDAS = {
+    hueco: ['c6.falta', 'c7.sintransicion'],
+    signo: ['c6.sobrante', 'c6.equivocado', 'c6.sujetoverbo'],
+    palabra: ['c11.aguda', 'c11.diacritica', 'c11.hiato', 'c12.malescrita', 'c12.mayuscula', 'c8.repeticion', 'c7.pertinente', 'c13.concordancia'],
+    frase: ['c7.pertinente', 'c13.concordancia', 'c6.fusionadas', 'c8.repeticion', 'c8.ambiguo', 'c2.razonInsumo', 'c4.postura', 'c1.explicita'],
+    parrafo: ['c10.cumple', 'c10.nocumple', 'c9.salto', 'c9.repite', 'c2.razonInsumo', 'c4.refuta', 'c7.sintransicion']
+  };
+
+  // ───────────────────────── Pruebas: documentos, etiquetas y subrayados ─────────────────────────
+  var DOCS_DEF = [
+    { nom: 'Situación controversial' }, { nom: 'Tabla de datos', mono: true },
+    { nom: 'Actor 1' }, { nom: 'Actor 2' }, { nom: 'Actor 3' }
+  ];
+  var COLORES = [
+    { id: 'amarillo', nombre: 'Amarillo', hex: '#CA8A04' }, { id: 'verde', nombre: 'Verde', hex: '#16A34A' },
+    { id: 'azul', nombre: 'Azul', hex: '#2563EB' }, { id: 'violeta', nombre: 'Violeta', hex: '#9333EA' },
+    { id: 'rosa', nombre: 'Rosa', hex: '#DB2777' }, { id: 'naranja', nombre: 'Naranja', hex: '#EA580C' },
+    { id: 'turquesa', nombre: 'Turquesa', hex: '#0D9488' }, { id: 'gris', nombre: 'Gris', hex: '#64748B' }
+  ];
+  var ETIQUETAS_DEF = [
+    { nom: 'Postura del actor 1', color: 'azul' }, { nom: 'Postura del actor 2', color: 'verde' },
+    { nom: 'Postura del actor 3', color: 'violeta' }, { nom: 'Dato de la tabla', color: 'amarillo' },
+    { nom: 'Posición contraria', color: 'rosa' }
+  ];
+  function colorHex(id) { var c = COLORES.find(function (x) { return x.id === id; }); return c ? c.hex : COLORES[0].hex; }
+
+  // Etiquetas: globales, guardadas en el navegador y en la capa cifrada; nunca en la pública.
+  function etiquetasPorDefecto() {
+    var ahora = new Date().toISOString();
+    return ETIQUETAS_DEF.map(function (e) { return { id: nuevoId('et'), nom: e.nom, color: e.color, modificada: ahora }; });
+  }
+
+  function nuevaPrueba(titulo) {
+    var ahora = new Date().toISOString();
+    return {
+      id: nuevoId('mat'), titulo: titulo || '', creada: ahora, modificada: ahora,
+      documentos: DOCS_DEF.map(function (d) { var o = { id: nuevoId('doc'), nom: d.nom, texto: '' }; if (d.mono) o.mono = true; return o; }),
+      subrayados: []
+    };
+  }
+
+  // Lleva cualquier forma anterior de prueba al modelo actual:
+  // { id, titulo, documentos: [ { id, nom, texto, mono?, imagenes? } ], subrayados: [ { id, documento, inicio, fin, etiqueta } ] }
+  function migrarPrueba(m) {
+    if (!m) return m;
+    if (!m.documentos) {
+      m.documentos = (m.docs || []).map(function (d) {
+        var o = { id: nuevoId('doc'), nom: d.nombre || d.nom || 'Documento', texto: d.texto || '' };
+        if (/tabla|cifras|datos/i.test(o.nom)) o.mono = true;
+        return o;
+      });
+      delete m.docs;
+    }
+    if (!m.subrayados) m.subrayados = [];
+    m.subrayados.forEach(function (s) { if (s.documento == null && s.doc != null) { s.documento = s.doc; delete s.doc; } });
+    return m;
+  }
+  // Etiquetas que alguna versión intermedia guardó dentro de las pruebas pasan a la lista global.
+  function migrarEtiquetas(datos) {
+    if (!datos.etiquetas) datos.etiquetas = [];
+    (datos.materiales || []).forEach(function (m) {
+      (m.etiquetas || []).forEach(function (e) { if (!datos.etiquetas.some(function (x) { return x.id === e.id; })) datos.etiquetas.push(e); });
+      delete m.etiquetas;
+    });
+    if (!datos.etiquetas.length && !(datos.borradas || []).some(function (id) { return /^et/.test(id); })) datos.etiquetas = etiquetasPorDefecto();
+    return datos;
+  }
+
+  // Añade un subrayado. Absorbe (elimina) los del mismo documento que queden completamente dentro.
+  // Devuelve { subrayado, absorbidos }, o null si la selección está vacía.
+  function agregarSubrayado(prueba, documento, inicio, fin, etiqueta) {
+    if (fin < inicio) { var x = inicio; inicio = fin; fin = x; }
+    if (fin === inicio) return null;
+    var absorbidos = prueba.subrayados.filter(function (s) { return s.documento === documento && s.inicio >= inicio && s.fin <= fin; });
+    prueba.subrayados = prueba.subrayados.filter(function (s) { return absorbidos.indexOf(s) === -1; });
+    var nuevo = { id: nuevoId('sb'), documento: documento, inicio: inicio, fin: fin, etiqueta: etiqueta };
+    prueba.subrayados.push(nuevo);
+    return { subrayado: nuevo, absorbidos: absorbidos.length };
+  }
+
+  // Cuántos subrayados, en todas las pruebas, llevan una etiqueta.
+  function usosEtiqueta(datos, etId) {
+    var n = 0;
+    (datos.materiales || []).forEach(function (m) { n += m.subrayados.filter(function (s) { return s.etiqueta === etId; }).length; });
+    return n;
+  }
+  // Eliminar una etiqueta borra sus subrayados en todas las pruebas. Devuelve cuántos se perdieron.
+  function eliminarEtiqueta(datos, etId) {
+    var n = usosEtiqueta(datos, etId);
+    datos.etiquetas = datos.etiquetas.filter(function (e) { return e.id !== etId; });
+    (datos.materiales || []).forEach(function (m) { m.subrayados = m.subrayados.filter(function (s) { return s.etiqueta !== etId; }); });
+    if (datos.borradas && datos.borradas.indexOf(etId) === -1) datos.borradas.push(etId);
+    return n;
+  }
+
+  // Al editar documentos: conserva los subrayados solo donde el texto del documento no cambió.
+  function subrayadosVigentes(prueba, documentosNuevos) {
+    var viejo = {};
+    prueba.documentos.forEach(function (d) { viejo[d.id] = d.texto; });
+    var nuevo = {};
+    documentosNuevos.forEach(function (d) { nuevo[d.id] = d.texto; });
+    return prueba.subrayados.filter(function (s) { return nuevo[s.documento] != null && nuevo[s.documento] === viejo[s.documento]; });
+  }
+
+  // Para mostrar una tabla pegada con tabulaciones: ancho (en caracteres) que debe ocupar cada tabulación
+  // para que las columnas queden alineadas. Devuelve { posición: ancho }. El texto no se modifica.
+  function anchosTabulacion(texto) {
+    var lineas = String(texto || '').split('\n');
+    var anchos = [];
+    lineas.forEach(function (l) {
+      var celdas = l.split('\t');
+      celdas.slice(0, -1).forEach(function (c, k) { anchos[k] = Math.max(anchos[k] || 0, c.length); });
+    });
+    var mapa = {}, pos = 0;
+    lineas.forEach(function (l) {
+      var celdas = l.split('\t');
+      celdas.forEach(function (c, k) {
+        pos += c.length;
+        if (k < celdas.length - 1) { mapa[pos] = anchos[k] - c.length + 3; pos += 1; }
+      });
+      pos += 1;
+    });
+    return mapa;
+  }
+
 
   var CATALOGO = [
     // Postura
@@ -1226,8 +1488,10 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     return {
       evaluaciones: porId(a.evaluaciones, b.evaluaciones),
       materiales: porId(a.materiales, b.materiales),
+      etiquetas: porId(a.etiquetas, b.etiquetas),
       borradas: Object.keys(borradas),
-      umbrales: a.umbrales || b.umbrales || null
+      umbrales: a.umbrales || b.umbrales || null,
+      ponderacion: a.ponderacion || b.ponderacion || null
     };
   }
 
@@ -1285,6 +1549,11 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     marcasDe: marcasDe, generalesDe: generalesDe, fragmento: fragmento, sugerir: sugerir, puntaje: puntaje, calcularTotal: calcularTotal,
     fmt2: fmt2, redondear2: redondear2, rellenar: rellenar, recomendaciones: recomendaciones, datosRecomendacion: datosRecomendacion,
     detectarMarcadores: detectarMarcadores, contieneNombre: contieneNombre, capaPublica: capaPublica, fusionar: fusionar,
+    ponderacionPorDefecto: ponderacionPorDefecto, normalizarPonderacion: normalizarPonderacion, aplicarPonderacion: aplicarPonderacion,
+    puntajeMaximo: puntajeMaximo, esPonderacionPorDefecto: esPonderacionPorDefecto, valoresDe: valoresDe, colorCriterio: colorCriterio,
+    SUGERIDAS: SUGERIDAS, DOCS_DEF: DOCS_DEF, COLORES: COLORES, ETIQUETAS_DEF: ETIQUETAS_DEF, colorHex: colorHex, nuevaPrueba: nuevaPrueba,
+    etiquetasPorDefecto: etiquetasPorDefecto, migrarEtiquetas: migrarEtiquetas, usosEtiqueta: usosEtiqueta,
+    migrarPrueba: migrarPrueba, anchosTabulacion: anchosTabulacion, agregarSubrayado: agregarSubrayado, eliminarEtiqueta: eliminarEtiqueta, subrayadosVigentes: subrayadosVigentes,
     cifrar: cifrar, descifrar: descifrar, jsonIncrustable: jsonIncrustable, nuevoId: nuevoId, insumosUsados: insumosUsados, ITERACIONES: ITERACIONES
   };
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -1299,17 +1568,21 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   // Copia intacta de la página, tomada antes de tocar el DOM: base de "Guardar historial".
   var PLANTILLA = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
 
-  var CLAVE_LOCAL = 'calificacion-escritura-n2-manual-v1';
+  var CLAVE_LOCAL = 'calificacion-escritura-n2-manual-v2';
+  var CLAVE_V1 = 'calificacion-escritura-n2-manual-v1';
+  var CLAVE_PREF = 'calificacion-escritura-n2-manual-preferencias';
   var FAMILIA_VAR = { sit: 'var(--sit)', coh: 'var(--coh)', org: 'var(--org)', cor: 'var(--cor)' };
   var ABREV = { c1: 'Post', c2: 'Just', c3: 'Rol', c4: 'Ref', c5: 'Ext', c6: 'Punt', c7: 'Marc', c8: 'Léx', c9: 'Prog', c10: 'Párr', c11: 'Tild', c12: 'Orto', c13: 'Gram' };
   var NV_CORTO = { experto: 'Exp', avanzado: 'Ava', intermedio: 'Int', inicial: 'Ini' };
   var TIPO_NOMBRE = { hueco: 'Hueco', signo: 'Signo', palabra: 'Palabra', frase: 'Frase', parrafo: 'Párrafo' };
 
   var S = {
-    datos: { evaluaciones: [], materiales: [], borradas: [], umbrales: null },
+    datos: { evaluaciones: [], materiales: [], etiquetas: [], borradas: [], umbrales: null, ponderacion: null },
     ev: null, sel: null, recientes: [], deshacer: [], abierta: null, detector: false, descartadas: {},
     ocultarNumeros: false, ocultarMarcas: false, solo: null, filtro: '', expandidos: {}, colapsado: false,
     menu: false, cifradoEmbebido: null, desbloqueado: false, clave: null, sinAlmacen: false, ptr: null,
+    pestana: 'todo', paletaPlegada: false, paletaMovil: false,
+    consulta: { abierta: false, doc: null, sel: null, sub: null },
     borrador: { texto: '', estudiante: '', etiqueta: '', materialId: '', visibilidad: 'privada', unidas: 0, guiones: 0 }
   };
   window.__N2UI = S; // acceso para pruebas
@@ -1329,16 +1602,19 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   // ───────── Persistencia ─────────
   function cargar() {
     try {
-      var t = localStorage.getItem(CLAVE_LOCAL);
+      var t = localStorage.getItem(CLAVE_LOCAL) || localStorage.getItem(CLAVE_V1);
       localStorage.setItem(CLAVE_LOCAL + '-prueba', '1');
       localStorage.removeItem(CLAVE_LOCAL + '-prueba');
       if (t) {
         var d = JSON.parse(t);
-        S.datos = { evaluaciones: d.evaluaciones || [], materiales: d.materiales || [], borradas: d.borradas || [], umbrales: d.umbrales || null };
+        S.datos = { evaluaciones: d.evaluaciones || [], materiales: d.materiales || [], etiquetas: d.etiquetas || [], borradas: d.borradas || [], umbrales: d.umbrales || null, ponderacion: d.ponderacion || null };
       }
+      var pr = JSON.parse(localStorage.getItem(CLAVE_PREF) || '{}');
+      S.paletaPlegada = !!pr.paletaPlegada; S.colapsado = !!pr.rubricaPlegada;
     } catch (e) { S.sinAlmacen = true; }
     try {
       var pub = JSON.parse($('n2-publico').textContent || 'null');
+      if (pub && pub.ponderacion) S.ponderacionPublica = pub.ponderacion;
       if (pub && pub.evaluaciones && pub.evaluaciones.length) {
         pub.evaluaciones.forEach(function (e) { e.publicada = true; });
         S.datos = N.fusionar(S.datos, { evaluaciones: pub.evaluaciones });
@@ -1349,10 +1625,25 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       if (cif && cif.datos) S.cifradoEmbebido = cif;
     } catch (e) { /* sin capa cifrada */ }
   }
+  function migrar() {
+    S.datos.materiales.forEach(N.migrarPrueba);
+    N.migrarEtiquetas(S.datos);
+    // La ponderación propia manda; si no hay, la que trae la página publicada; si no, la de la rúbrica.
+    N.aplicarPonderacion(S.datos.ponderacion || S.ponderacionPublica || null);
+  }
+  function guardarPref() {
+    try { localStorage.setItem(CLAVE_PREF, JSON.stringify({ paletaPlegada: S.paletaPlegada, rubricaPlegada: S.colapsado })); } catch (e) { /* sin almacenamiento */ }
+  }
+  // Una evaluación de ejemplo publicada, vista sin desbloquear el historial, no se edita.
+  function soloLectura(ev) { ev = ev || S.ev; return !!(ev && ev.publicada && !S.desbloqueado); }
+  // Devuelve false si no se pudo guardar. "No cabe" (por imágenes grandes) no es lo mismo que "no hay almacenamiento".
   function guardar() {
-    if (S.sinAlmacen) return;
-    try { localStorage.setItem(CLAVE_LOCAL, JSON.stringify(S.datos)); }
-    catch (e) { S.sinAlmacen = true; renderAvisoSup(); }
+    if (S.sinAlmacen) return false;
+    try { localStorage.setItem(CLAVE_LOCAL, JSON.stringify(S.datos)); return true; }
+    catch (e) {
+      if (e && (e.name === 'QuotaExceededError' || e.code === 22 || /quota/i.test(e.message || ''))) { S.sinEspacio = true; return false; }
+      S.sinAlmacen = true; renderAvisoSup(); return false;
+    }
   }
   function tocarEv() {
     if (!S.ev) return;
@@ -1362,6 +1653,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     guardar();
   }
   function material(id) { return S.datos.materiales.find(function (m) { return m.id === id; }) || null; }
+  function etiqueta(id) { return S.datos.etiquetas.find(function (e) { return e.id === id; }) || null; }
 
   // ───────── Avisos ─────────
   var tAviso;
@@ -1388,13 +1680,14 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     if (ev) {
       var mat = material(ev.materialId);
       h += '<b>' + esc(ev.etiquetaPublica || ev.estudiante || 'Sin nombre') + '</b>';
+      if (soloLectura(ev)) h += '&emsp;<span class="etiqueta">Ejemplo publicado, solo lectura</span>';
       if (mat) h += '&emsp;' + esc(mat.titulo);
       h += '&emsp;' + ev.palabras + ' palabras';
     }
     h += '</div>';
     if (ev) {
       var t = N.calcularTotal(ev);
-      h += '<div class="cab-total" title="Solo suman los criterios decididos"><span class="cifra" id="cifraTotal">' + N.fmt2(t.total) + '</span><span class="cifra-de">/ 5,00</span><span class="decididos">' + t.decididos + ' de ' + t.criterios + ' criterios decididos</span></div>';
+      h += '<div class="cab-total" title="Solo suman los criterios decididos"><span class="cifra" id="cifraTotal">' + N.fmt2(t.total) + '</span><span class="cifra-de">/ ' + N.fmt2(N.puntajeMaximo()) + '</span><span class="decididos">' + t.decididos + ' de ' + t.criterios + ' criterios decididos</span></div>';
     }
     h += '<div class="cab-acciones">';
     if (ev) {
@@ -1408,9 +1701,10 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       if (ev) {
         h += '<button data-a="inicio" role="menuitem">Evaluaciones guardadas</button>';
         h += '<button data-a="imprimir" role="menuitem">Imprimir PDF</button>';
-        if (ev.materialId) h += '<button data-a="verMateriales" role="menuitem">Materiales de la prueba</button>';
+        if (ev.materialId) h += '<button data-a="consulta" role="menuitem">Materiales de la prueba</button>';
       }
       h += '<hr><button data-a="pruebas" role="menuitem">Pruebas</button>';
+      h += '<button data-a="ponderacion" role="menuitem">Ponderación</button>';
       h += '<button data-a="umbrales" role="menuitem">Umbrales de sugerencia</button>';
       h += '<hr><button data-a="guardarHistorial" role="menuitem">Guardar historial</button>';
       if (S.cifradoEmbebido && !S.desbloqueado) h += '<button data-a="desbloquear" role="menuitem">Desbloquear historial</button>';
@@ -1433,6 +1727,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     cerrarEditor();
     $('vistaMarcado').hidden = true;
     $('vistaInicio').hidden = false;
+    $('fabPaleta').hidden = true;
     renderInicio();
     renderCabecera();
   }
@@ -1459,7 +1754,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     h += '<label class="campo"><span>Etiqueta pública</span><input class="entrada" id="entEtiqueta" value="' + esc(b.etiqueta) + '" autocomplete="off" placeholder="Ejemplo: texto 3, simulacro de marzo"><small>Lo único que se ve si publicas esta evaluación.</small></label>';
     h += '<div class="campo"><span>Prueba</span><div class="fila"><select class="entrada" id="entMaterial" style="flex:1;min-width:0"><option value="">Sin materiales</option>';
     mats.forEach(function (m) { h += '<option value="' + m.id + '"' + (b.materialId === m.id ? ' selected' : '') + '>' + esc(m.titulo) + '</option>'; });
-    h += '</select><button class="btn" data-a="nuevaPrueba">Nueva prueba</button></div><small>Situación, actores e información complementaria, para consultarlos mientras marcas.</small></div>';
+    h += '</select><button class="btn" data-a="nuevaPrueba">Nueva prueba</button></div><small>Situación controversial, tabla de datos y posturas de los tres actores, para consultarlas y subrayarlas mientras marcas.</small></div>';
     h += '<div class="campo"><span>Visibilidad</span><div class="opciones"><label><input type="radio" name="vis" value="privada"' + (b.visibilidad !== 'publica' ? ' checked' : '') + '> Privada</label><label><input type="radio" name="vis" value="publica"' + (b.visibilidad === 'publica' ? ' checked' : '') + '> Pública, como ejemplo</label></div></div>';
     h += '<button class="btn primario" id="btnEmpezar" data-a="empezar" style="width:100%;justify-content:center;height:40px">Empezar a marcar</button>';
     h += '</div></div>';
@@ -1501,7 +1796,8 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     var ev = S.datos.evaluaciones.find(function (e) { return e.id === id; });
     if (!ev) return;
     ev.marcas = ev.marcas || []; ev.generales = ev.generales || []; ev.decisiones = ev.decisiones || {}; ev.recExcluidas = ev.recExcluidas || [];
-    S.ev = ev; S.sel = null; S.abierta = null; S.deshacer = []; S.solo = null; S.menu = false;
+    S.ev = ev; S.sel = null; S.abierta = null; S.deshacer = []; S.solo = null; S.menu = false; S.paletaMovil = false;
+    S.consulta = { abierta: false, doc: null, sel: null, sub: null };
     $('vistaInicio').hidden = true;
     $('vistaMarcado').hidden = false;
     $('colTexto').scrollTop = 0;
@@ -1511,7 +1807,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   window.__N2 = { S: S, esc: esc, $: $, umbrales: umbrales, fam: fam, famVar: famVar, fecha: fecha, esMovil: esMovil, copia: copia,
     guardar: guardar, tocarEv: tocarEv, material: material, aviso: aviso, renderAvisoSup: renderAvisoSup, renderCabecera: renderCabecera,
     irInicio: irInicio, renderInicio: renderInicio, renderContador: renderContador, empezar: empezar, abrirEval: abrirEval,
-    cargar: cargar, PLANTILLA: PLANTILLA, ABREV: ABREV, NV_CORTO: NV_CORTO, TIPO_NOMBRE: TIPO_NOMBRE, FAMILIA_VAR: FAMILIA_VAR, ahora: ahora };
+    cargar: cargar, migrar: migrar, etiqueta: etiqueta, guardarPref: guardarPref, soloLectura: soloLectura, PLANTILLA: PLANTILLA, ABREV: ABREV, NV_CORTO: NV_CORTO, TIPO_NOMBRE: TIPO_NOMBRE, FAMILIA_VAR: FAMILIA_VAR, ahora: ahora };
   function renderMarcado() { window.__N2.renderMarcado(); }
   function cerrarEditor() { if (window.__N2.cerrarEditor) window.__N2.cerrarEditor(); }
 })();
@@ -1568,7 +1864,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       function puntosEn(x) {
         var h = '';
         puntos.filter(function (m) { return cl(m.punto) === x; }).sort(function (p, q) { return nums[p.id] - nums[q.id]; }).forEach(function (m) {
-          var fv = U.famVar(EV[m.evidencia].c);
+          var fv = N.colorCriterio(EV[m.evidencia].c);
           h += '<span class="punto" data-m="' + m.id + '" data-c="‸" style="--f:' + fv + '" title="' + esc(EV[m.evidencia].nombre) + '"></span>';
           h += '<span class="num" data-m="' + m.id + '" data-n="' + nums[m.id] + '" style="--f:' + fv + '"></span>';
         });
@@ -1577,7 +1873,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       function numsFin(y) {
         var h = '';
         rangos.filter(function (m) { return cl(m.fin) === y; }).sort(function (p, q) { return nums[p.id] - nums[q.id]; }).forEach(function (m) {
-          h += '<span class="num" data-m="' + m.id + '" data-n="' + nums[m.id] + '" style="--f:' + U.famVar(EV[m.evidencia].c) + '"></span>';
+          h += '<span class="num" data-m="' + m.id + '" data-n="' + nums[m.id] + '" style="--f:' + N.colorCriterio(EV[m.evidencia].c) + '"></span>';
         });
         return h;
       }
@@ -1589,12 +1885,12 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
         var aciertos = cubren.filter(function (m) { return EV[m.evidencia].pol === '+'; });
         var errores = cubren.filter(function (m) { return EV[m.evidencia].pol === '-'; });
         var cls = ['s'], st = [];
-        if (aciertos.length) { cls.push('acierto'); st.push('--fa:' + U.famVar(EV[aciertos[0].evidencia].c)); }
+        if (aciertos.length) { cls.push('acierto'); st.push('--fa:' + N.colorCriterio(EV[aciertos[0].evidencia].c)); }
         if (errores.length) {
-          cls.push('error'); st.push('--f:' + U.famVar(EV[errores[0].evidencia].c));
+          cls.push('error'); st.push('--f:' + N.colorCriterio(EV[errores[0].evidencia].c));
           if (errores.some(function (m) { return (m.gravedad || 0) >= 1; })) cls.push('grave');
-          if (errores.length > 1) { cls.push('error2'); st.push('--f2:' + U.famVar(EV[errores[1].evidencia].c)); }
-        } else if (aciertos.length) st.push('--f:' + U.famVar(EV[aciertos[0].evidencia].c));
+          if (errores.length > 1) { cls.push('error2'); st.push('--f2:' + N.colorCriterio(EV[errores[1].evidencia].c)); }
+        } else if (aciertos.length) st.push('--f:' + N.colorCriterio(EV[aciertos[0].evidencia].c));
         if (sel && x >= sel.inicio && y <= sel.fin) cls.push('seleccion');
         var pr = misProps.find(function (p) { return x >= p.inicio && y <= p.fin; });
         var attrs = '';
@@ -1607,7 +1903,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       var margen = '';
       barras.sort(function (p, q) { return nums[p.id] - nums[q.id]; }).forEach(function (m) {
         var e = EV[m.evidencia];
-        margen += '<button class="barra-m ' + (e.pol === '+' ? 'acierto' : 'error') + '" data-m="' + m.id + '" style="--f:' + U.famVar(e.c) + '" title="' + esc(e.nombre) + '" aria-label="Marca ' + nums[m.id] + ': ' + esc(e.nombre) + '"><span class="num" data-n="' + nums[m.id] + '" style="--f:' + U.famVar(e.c) + '"></span></button>';
+        margen += '<button class="barra-m ' + (e.pol === '+' ? 'acierto' : 'error') + '" data-m="' + m.id + '" style="--f:' + N.colorCriterio(e.c) + '" title="' + esc(e.nombre) + '" aria-label="Marca ' + nums[m.id] + ': ' + esc(e.nombre) + '"><span class="num" data-m="' + m.id + '" data-n="' + nums[m.id] + '" style="--f:' + N.colorCriterio(e.c) + '"></span></button>';
       });
       if (!o.imprimir) margen += '<button class="asa" data-a="parrafo" data-p="' + i + '" title="Tomar el párrafo ' + (i + 1) + ' entero" aria-label="Seleccionar el párrafo ' + (i + 1) + '">¶</button>';
       out += '<div class="parr" data-p="' + i + '"><div class="margen">' + margen + '</div><p class="ptexto" data-p="' + i + '">' + cuerpo + '</p></div>';
@@ -1632,75 +1928,105 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   }
 
   function renderHerramientas() {
-    var h = '<label title="Propone los marcadores discursivos del texto. Solo cuentan los que confirmes."><input type="checkbox" data-campo="detector"' + (S.detector ? ' checked' : '') + '> Sugerir marcadores</label>';
-    h += '<label><input type="checkbox" data-campo="ocultarNumeros"' + (S.ocultarNumeros ? ' checked' : '') + '> Ocultar números</label>';
-    h += '<label><input type="checkbox" data-campo="ocultarMarcas"' + (S.ocultarMarcas ? ' checked' : '') + '> Ocultar marcas</label>';
-    if (S.solo) h += '<span class="etiqueta">Solo ' + esc(CRIT[S.solo].corto.toLowerCase()) + ' <button class="btn chico fantasma" data-a="soloFuera" style="height:18px;padding:0 4px">✕</button></span>';
-    h += '<span class="sep"></span>';
-    if (S.ev.materialId) h += '<button class="btn chico" data-a="verMateriales">Materiales de la prueba</button>';
-    h += '<button class="btn chico" data-a="deshacer"' + (S.deshacer.length ? '' : ' disabled') + ' title="Ctrl+Z">Deshacer</button>';
+    var ev = S.ev, lect = U.soloLectura();
+    var mas = ev.marcas.filter(function (m) { return EV[m.evidencia] && EV[m.evidencia].pol === '+'; }).length;
+    var menos = ev.marcas.length - mas + ev.generales.length;
+    var h = '<div class="barra-fila">';
+    if (!lect) h += '<button class="btn chico" data-a="deshacer"' + (S.deshacer.length ? '' : ' disabled') + ' title="Ctrl+Z">Deshacer</button>';
+    if (ev.materialId) h += '<button class="btn chico' + (S.consulta.abierta ? ' activo' : '') + '" data-a="consulta" aria-pressed="' + S.consulta.abierta + '">Materiales de la prueba</button>';
+    if (!lect) h += '<label title="Propone los marcadores discursivos del texto. Solo cuentan los que confirmes."><input type="checkbox" data-campo="detector"' + (S.detector ? ' checked' : '') + '> Sugerir marcadores</label>';
+    h += '<label><input type="checkbox" data-campo="verNumeros"' + (S.ocultarNumeros ? '' : ' checked') + '> Números</label>';
+    h += '<label><input type="checkbox" data-campo="verMarcas"' + (S.ocultarMarcas ? '' : ' checked') + '> Marcas</label>';
+    if (S.solo) h += '<span class="etiqueta">Solo ' + esc(CRIT[S.solo].corto.toLowerCase()) + ' <button class="btn chico fantasma" data-a="soloFuera" style="height:18px;padding:0 4px" aria-label="Ver todas">✕</button></span>';
+    h += '<span class="sep"></span><span class="contadores" title="Aciertos y errores marcados"><span class="mas">✓ ' + mas + '</span><span class="menos">✕ ' + menos + '</span></span></div>';
     $('herramientas').innerHTML = h;
   }
 
   function renderLeyenda() {
+    // Cada criterio con su color; agrupados por descriptor.
     var h = '<div class="leyenda">';
-    N.DESCRIPTORES.forEach(function (d) { h += '<span class="f-' + d.familia + '"><i></i>' + esc(d.corto) + '</span>'; });
-    h += '<span>Fondo de color, acierto. Subrayado ondulado, error. ‸, falta un signo.</span></div>';
+    N.DESCRIPTORES.forEach(function (d) {
+      h += '<span class="ley-grupo">' + N.RUBRICA.filter(function (c) { return c.d === d.id && !c.automatico; }).map(function (c) {
+        return '<span><i style="background:' + N.colorCriterio(c.id) + '"></i>' + esc(c.corto) + '</span>';
+      }).join('') + '</span>';
+    });
+    h += '</div><div class="leyenda-nota">Fondo de color, acierto. Subrayado ondulado, error. ‸, falta un signo.</div>';
     $('leyenda').innerHTML = h;
   }
 
-  // ───────── Paleta ─────────
-  function chip(e, extra) {
-    var c = CRIT[e.c];
-    return '<button class="chip f-' + U.fam(e.c) + (e.doc ? ' doc' : '') + '" data-a="marcar" data-ev="' + e.id + '" title="' + esc(c.corto + (e.doc ? ' · documental: no mueve la sugerencia' : '')) + '"><span class="punto-f"></span><span class="pol ' + (e.pol === '+' ? 'mas">✓' : 'menos">✕') + '</span>' + esc(e.nombre) + (extra ? ' <kbd>' + extra + '</kbd>' : (e.tecla ? ' <kbd>' + e.tecla + '</kbd>' : '')) + '</button>';
+
+  // ───────── Paleta (columna fija a la izquierda; hoja inferior en móvil) ─────────
+  function pildora(e, num) {
+    return '<button class="pildora f-' + U.fam(e.c) + (e.doc ? ' doc' : '') + '" data-a="marcar" data-ev="' + e.id + '" title="' + esc(CRIT[e.c].corto + (e.doc ? ': documental, no mueve la sugerencia' : '')) + '"><span class="punto-f" style="background:' + N.colorCriterio(e.c) + '"></span><span class="pol ' + (e.pol === '+' ? 'mas">✓' : 'menos">✕') + '</span>' + esc(e.nombre) + (num ? '<kbd>' + num + '</kbd>' : '') + '</button>';
+  }
+  function botonEv(e) {
+    return '<button class="ev-btn' + (e.doc ? ' doc' : '') + '" data-a="marcar" data-ev="' + e.id + '"' + (e.doc ? ' title="Documental: se registra para la devolución, no mueve la sugerencia"' : '') + '><span class="pol ' + (e.pol === '+' ? 'mas">✓' : 'menos">✕') + '</span><span class="nom">' + esc(e.nombre) + '</span>' + (e.tecla ? '<kbd>' + e.tecla + '</kbd>' : '') + '</button>';
   }
   function sugeridas(tipo) {
-    var orden = [];
-    N.SECCIONES.forEach(function (sec) { sec.criterios.forEach(function (cid) { N.CATALOGO.forEach(function (e) { if (e.c === cid && !e.general && e.tam && e.tam.indexOf(tipo) !== -1) orden.push(e); }); }); });
-    // Primero las que ya usaste en esta sesión; luego el orden de lectura. Ocho bastan: el catálogo completo está debajo.
-    var rec = orden.filter(function (e) { return S.recientes.indexOf(e.id) !== -1; });
-    var resto = orden.filter(function (e) { return S.recientes.indexOf(e.id) === -1; });
-    return rec.concat(resto).slice(0, 8);
+    return (N.SUGERIDAS[tipo] || []).map(function (id) { return EV[id]; }).filter(Boolean);
+  }
+  function htmlCatalogo() {
+    var secs = S.pestana === 'todo' ? N.SECCIONES : N.SECCIONES.filter(function (x) { return x.id === S.pestana; });
+    var h = '';
+    secs.forEach(function (sec) {
+      sec.criterios.forEach(function (cid) {
+        var evs = N.CATALOGO.filter(function (e) { return e.c === cid && !e.general; });
+        h += '<div class="pal-crit f-' + U.fam(cid) + '"><div class="pal-crit-nom"><span class="muestra" style="--k:' + N.colorCriterio(cid) + '" title="Color de sus marcas"></span>' + esc(CRIT[cid].corto) + '</div>' + evs.map(botonEv).join('') + '</div>';
+      });
+    });
+    return h;
   }
   function renderPaleta() {
     var p = $('paleta');
-    p.classList.toggle('con-seleccion', !!S.sel);
-    if (!S.sel) {
-      p.innerHTML = U.esMovil() ? '<div class="paleta-vacia">Toca una palabra o un espacio para marcar; ¶ toma el párrafo.</div>' : '<div class="paleta-vacia">Selecciona una palabra o una frase, haz clic en un espacio para marcar un hueco, o usa ¶ para tomar un párrafo entero.</div>';
+    if (!S.ev || U.soloLectura()) { p.innerHTML = ''; return; }
+    var movil = U.esMovil();
+    p.classList.toggle('abierta-movil', movil && (S.paletaMovil || !!S.sel));
+    if (!movil && S.paletaPlegada) {
+      p.innerHTML = '<button class="pal-plegada" data-a="plegarPaleta" aria-label="Abrir la paleta de marcas" title="Abrir la paleta"><span class="flecha">▸</span><span class="vertical">Marcas</span></button>';
       return;
     }
     var ev = S.ev, sel = S.sel;
-    var frag = sel.tipo === 'hueco' ? ev.texto.slice(Math.max(0, sel.inicio - 18), sel.inicio) + '‸' + ev.texto.slice(sel.inicio, sel.inicio + 18) : ev.texto.slice(sel.inicio, sel.fin);
-    var h = '<div class="paleta-abierta"><div class="pal-cab"><span class="pal-tipo">' + U.TIPO_NOMBRE[sel.tipo] + ', párrafo ' + (sel.parrafo + 1) + '</span><span class="pal-frag cita">«' + esc(frag) + '»</span><button class="btn chico fantasma" data-a="cancelarSel">Cancelar <span class="kbd">Esc</span></button></div>';
-    h += '<div class="pal-fila"><span class="pal-rot">Sugeridas</span>' + sugeridas(sel.tipo).map(function (e) { return chip(e); }).join('') + '</div>';
-    if (S.recientes.length) h += '<div class="pal-fila"><span class="pal-rot">Recientes</span>' + S.recientes.map(function (id, i) { return chip(EV[id], String(i + 1)); }).join('') + '</div>';
-    h += '<div class="pal-fila"><span class="pal-rot">Catálogo</span><input class="entrada pal-filtro" id="palFiltro" placeholder="Filtrar evidencias" value="' + esc(S.filtro) + '" autocomplete="off"></div>';
-    h += '<div class="pal-secciones" id="palSecciones">' + htmlSecciones() + '</div>';
-    h += '<div class="pal-ayuda">Mayúscula + clic o Mayúscula + tecla crea la marca con la gravedad siguiente. Ctrl+Z deshace.</div></div>';
-    p.innerHTML = h;
-  }
-  function htmlSecciones() {
-    var f = N.sinTildes(S.filtro.trim());
-    var h = '';
-    N.SECCIONES.forEach(function (sec) {
-      var bloque = '';
-      sec.criterios.forEach(function (cid) {
-        var evs = N.CATALOGO.filter(function (e) { return e.c === cid && !e.general && (!f || N.sinTildes(e.nombre + ' ' + CRIT[cid].corto).indexOf(f) !== -1); });
-        if (!evs.length) return;
-        bloque += '<div class="pal-crit"><div>' + esc(CRIT[cid].corto) + '</div><div class="chips">' + evs.map(function (e) { return chip(e); }).join('') + '</div></div>';
-      });
-      if (bloque) h += '<div class="pal-sec"><h4>' + sec.nombre + '</h4>' + bloque + '</div>';
+    var h = '<div class="pal-cab"><div class="pestanas-pal" role="tablist" aria-label="Secciones del catálogo">';
+    [{ id: 'todo', corto: 'Todo', nombre: 'Todo el catálogo' }].concat(N.SECCIONES).forEach(function (t) {
+      h += '<button role="tab" aria-selected="' + (S.pestana === t.id) + '" class="' + (S.pestana === t.id ? 'activa' : '') + '" data-a="pestanaPal" data-t="' + t.id + '" title="' + esc(t.nombre) + '">' + esc(t.corto) + '</button>';
     });
-    return h || '<p class="vacio">Ninguna evidencia coincide con el filtro.</p>';
+    h += '</div><button class="btn chico fantasma pal-plegar" data-a="plegarPaleta" aria-label="' + (movil ? 'Cerrar la paleta' : 'Plegar la paleta') + '" title="' + (movil ? 'Cerrar' : 'Plegar') + '">◂</button></div>';
+    h += '<div class="pal-cuerpo" id="palCuerpo">';
+    if (sel) {
+      var frag = sel.tipo === 'hueco' ? ev.texto.slice(Math.max(0, sel.inicio - 18), sel.inicio) + '‸' + ev.texto.slice(sel.inicio, sel.inicio + 18) : ev.texto.slice(sel.inicio, sel.fin);
+      if (frag.length > 220) frag = frag.slice(0, 120) + ' … ' + frag.slice(-70);
+      h += '<div class="pal-sel"><span class="cita">' + esc(frag) + '</span><small>' + U.TIPO_NOMBRE[sel.tipo] + ', párrafo ' + (sel.parrafo + 1) + '. Esc para cancelar</small></div>';
+    } else {
+      h += '<p class="pal-instr">Selecciona una palabra o una frase para marcarla. Haz clic en un espacio para marcar un hueco, o en ¶ para tomar el párrafo entero.</p>';
+    }
+    h += '<div class="pal-grupo"><h4>Recientes</h4>';
+    h += S.recientes.length ? '<div class="pildoras">' + S.recientes.map(function (id, i) { return pildora(EV[id], String(i + 1)); }).join('') + '</div>' : '<p class="pal-vacio">Aquí aparecen las cinco últimas evidencias que uses, con las teclas 1 a 5.</p>';
+    h += '</div>';
+    if (sel) h += '<div class="pal-grupo"><h4>Sugeridas para lo que seleccionaste</h4><div class="pildoras">' + sugeridas(sel.tipo).map(function (e) { return pildora(e); }).join('') + '</div></div>';
+    h += '<div class="pal-catalogo' + (sel ? '' : ' sin-sel') + '">' + htmlCatalogo() + '</div>';
+    h += '</div>';
+    var cuerpo = $('palCuerpo');
+    var scroll = cuerpo ? cuerpo.scrollTop : 0;
+    p.innerHTML = h;
+    // Con una selección nueva el cuerpo vuelve arriba para mostrar el fragmento; si no, conserva su posición.
+    if (!sel || !S.selRecien) $('palCuerpo').scrollTop = scroll;
+    S.selRecien = false;
+    // Las pestañas van en una línea: si con la fuente real no caben, se compactan.
+    var tl = p.querySelector('.pestanas-pal');
+    if (tl && tl.scrollWidth > tl.clientWidth + 1) tl.classList.add('compacta');
   }
   function asegurarVisible() {
     var s = document.querySelector('#texto .s.seleccion') || document.querySelector('#texto .parr[data-p="' + (S.sel ? S.sel.parrafo : 0) + '"]');
     if (!s || !S.sel) return;
-    var col = $('colTexto'), pal = $('paleta');
-    var r = s.getBoundingClientRect(), rp = pal.getBoundingClientRect();
+    var col = $('colTexto'), r = s.getBoundingClientRect();
     if (U.esMovil()) {
+      var rp = $('paleta').getBoundingClientRect();
       if (r.bottom > rp.top - 8) col.scrollTop += r.bottom - rp.top + 24;
-    } else if (r.top < rp.bottom + 8) col.scrollTop -= rp.bottom + 24 - r.top;
+      return;
+    }
+    var barra = $('barraTexto').getBoundingClientRect();
+    if (r.top < barra.bottom + 8) col.scrollTop -= barra.bottom + 24 - r.top;
+    else if (r.top > window.innerHeight - 40) col.scrollTop += r.top - window.innerHeight / 2;
   }
 
   // ───────── Selección ─────────
@@ -1725,17 +2051,24 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     var aj = inicio === fin ? { inicio: inicio, fin: fin } : N.ajustarAPalabras(ev.texto, inicio, fin);
     aj.inicio = Math.max(P.inicio, aj.inicio); aj.fin = Math.min(P.fin, aj.fin);
     S.sel = { inicio: aj.inicio, fin: aj.fin, parrafo: parrafo, tipo: N.tipoSeleccion(ev.texto, ev.parrafos, aj.inicio, aj.fin) };
+    S.selRecien = true;
     if (aj.inicio === aj.fin) S.sel.tipo = 'hueco';
     cerrarEditor();
     renderTexto(); renderPaleta(); asegurarVisible();
   }
   function limpiarSeleccion() {
     if (!S.sel) return;
-    S.sel = null; S.filtro = '';
+    S.sel = null;
     renderTexto(); renderPaleta();
   }
 
   function alSoltar(e) {
+    if (U.soloLectura()) {
+      var mk = e.target.closest && e.target.closest('.num, .punto, .barra-m, .s[data-m]');
+      window.getSelection().removeAllRanges();
+      if (mk) abrirMarca(mk.getAttribute('data-m').split(' ')[0]);
+      return;
+    }
     var ptr = S.ptr || {};
     var movio = ptr.x != null && (Math.abs(e.clientX - ptr.x) > 5 || Math.abs(e.clientY - ptr.y) > 5);
     var sel = window.getSelection();
@@ -1796,7 +2129,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     if (S.deshacer.length > 200) S.deshacer.shift();
   }
   function deshacer() {
-    if (!S.ev || !S.deshacer.length) return;
+    if (!S.ev || !S.deshacer.length || U.soloLectura()) return;
     var previo = S.deshacer.pop();
     // Los comentarios escritos después no se pierden.
     var com = {};
@@ -1813,7 +2146,8 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   }
   function crearMarca(evId, gravMas) {
     var e = EV[evId], sel = S.sel, ev = S.ev;
-    if (!e || !sel || e.general) return;
+    if (!e || e.general || U.soloLectura()) return;
+    if (!sel) { U.aviso('Primero selecciona en el texto una palabra, una frase o un hueco.'); return; }
     var P = ev.parrafos[sel.parrafo];
     var m = { id: N.nuevoId('m'), evidencia: evId, inicio: null, fin: null, punto: null, parrafo: sel.parrafo,
       insumo: null, gravedad: e.grav ? (gravMas ? 1 : 0) : null, funcion: e.extra === 'funcion' ? funcionProbable(sel.parrafo) : null,
@@ -1826,7 +2160,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     apilar();
     ev.marcas.push(m);
     S.recientes = [evId].concat(S.recientes.filter(function (x) { return x !== evId; })).slice(0, 5);
-    S.sel = null; S.filtro = '';
+    S.sel = null; S.paletaMovil = false;
     U.tocarEv();
     U.renderMarcado();
     if (e.extra === 'insumo') abrirMarca(m.id);
@@ -1843,6 +2177,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     renderTexto();
   }
   function borrarMarca(id) {
+    if (U.soloLectura()) return;
     var i = S.ev.marcas.findIndex(function (m) { return m.id === id; });
     if (i === -1) return;
     apilar();
@@ -1861,18 +2196,19 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   function tipoAncla(e) { return e.ancla === 'punto' || e.ancla === 'inicio' ? 'punto' : 'rango'; }
   function insumosDisponibles() {
     var mat = U.material(S.ev.materialId);
-    var docs = mat ? mat.docs.map(function (d) { return d.nombre; }).filter(function (n) { return !/^situaci/i.test(n); }) : [];
+    var docs = mat ? mat.documentos.filter(function (d) { return d.texto && !/^situaci/i.test(d.nom); }).map(function (d) { return d.nom; }) : [];
     return docs.length ? docs : N.INSUMOS_DEF;
   }
   function abrirMarca(id) {
     var m = S.ev.marcas.find(function (x) { return x.id === id; });
     if (!m) return;
+    if (U.soloLectura()) { verMarcaLectura(m); return; }
     S.sel = null; renderPaleta();
     S.abierta = id;
     var ed = $('editorMarca');
     if (!ed) { ed = document.createElement('div'); ed.id = 'editorMarca'; ed.className = 'editor-marca'; ed.setAttribute('role', 'dialog'); document.body.appendChild(ed); }
     var e = EV[m.evidencia], nums = numerar(S.ev);
-    ed.style.setProperty('--f', U.famVar(e.c));
+    ed.style.setProperty('--f', N.colorCriterio(e.c));
     var h = '<span class="cita">' + nums[m.id] + '. «' + esc(N.fragmento(S.ev, m)) + '»</span>';
     h += '<label class="campo"><span>Evidencia</span><select class="entrada" data-campo="m.evidencia">';
     N.RUBRICA.forEach(function (c) {
@@ -1901,6 +2237,18 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     ed.innerHTML = h;
     ubicarEditor(ed, m.id);
     renderTexto();
+  }
+  function verMarcaLectura(m) {
+    S.abierta = m.id;
+    var ed = $('editorMarca');
+    if (!ed) { ed = document.createElement('div'); ed.id = 'editorMarca'; ed.className = 'editor-marca'; ed.setAttribute('role', 'dialog'); document.body.appendChild(ed); }
+    var e = EV[m.evidencia], nums = numerar(S.ev), ex = [];
+    if (e.grav && m.gravedad) ex.push(N.GRAVEDADES[e.grav][m.gravedad].toLowerCase());
+    if (m.insumo) ex.push(m.insumo);
+    if (m.funcion) ex.push('función: ' + m.funcion);
+    ed.style.setProperty('--f', N.colorCriterio(e.c));
+    ed.innerHTML = '<span class="cita">' + nums[m.id] + '. «' + esc(N.fragmento(S.ev, m)) + '»</span><p style="margin:0 0 6px"><b>' + (e.pol === '+' ? '✓ ' : '✕ ') + esc(e.nombre) + '</b>' + (ex.length ? ' (' + esc(ex.join(', ')) + ')' : '') + '<br><small style="color:var(--tinta-3)">' + esc(CRIT[e.c].nombre) + '</small></p>' + (m.comentario ? '<p style="margin:0 0 8px">' + esc(m.comentario) + '</p>' : '') + '<div class="fila" style="justify-content:flex-end"><button class="btn chico" data-a="cerrarEditor">Cerrar</button></div>';
+    ubicarEditor(ed, m.id);
   }
   function ubicarEditor(ed, id) {
     if (U.esMovil()) return;
@@ -1933,10 +2281,22 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   }
 
   // ───────── Vista de marcado ─────────
+  // Las columnas las fija el código: plegar una no mueve la otra; el texto absorbe la diferencia.
+  var ANCHO_PALETA = 304, ANCHO_PALETA_PLEGADA = 46, ANCHO_RUBRICA = 420, ANCHO_RUBRICA_PLEGADA = 64;
+  function aplicarRejilla() {
+    var v = $('vistaMarcado'), lect = U.soloLectura();
+    var pal = lect ? null : (S.paletaPlegada ? ANCHO_PALETA_PLEGADA : ANCHO_PALETA);
+    var rub = S.colapsado ? ANCHO_RUBRICA_PLEGADA : ANCHO_RUBRICA;
+    $('paleta').hidden = lect;
+    v.style.gridTemplateColumns = (pal ? pal + 'px ' : '') + 'minmax(0, 1fr) ' + rub + 'px';
+    v.classList.toggle('sin-paleta', lect);
+    v.classList.toggle('panel-colapsado', S.colapsado);
+    $('fabPaleta').hidden = lect || !U.esMovil();
+  }
   function renderMarcado(o) {
     if (!S.ev) return;
-    $('vistaMarcado').classList.toggle('panel-colapsado', S.colapsado);
-    U.renderCabecera(); renderHerramientas(); renderLeyenda(); renderTexto(); renderPaleta(); U.renderPanel();
+    aplicarRejilla();
+    U.renderCabecera(); renderHerramientas(); U.renderConsulta(); renderLeyenda(); renderTexto(); renderPaleta(); U.renderPanel();
     if (o && o.editor && S.abierta) abrirMarca(S.abierta);
   }
 
@@ -1952,7 +2312,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
 
   Object.assign(U, {
     numerar: numerar, htmlTexto: htmlTexto, esParrafoEntero: esParrafoEntero, renderTexto: renderTexto, renderPaleta: renderPaleta,
-    htmlSecciones: htmlSecciones, fijarSeleccion: fijarSeleccion, limpiarSeleccion: limpiarSeleccion, alSoltar: alSoltar,
+    htmlCatalogo: htmlCatalogo, aplicarRejilla: aplicarRejilla, fijarSeleccion: fijarSeleccion, limpiarSeleccion: limpiarSeleccion, alSoltar: alSoltar,
     seleccionarParrafo: seleccionarParrafo, crearMarca: crearMarca, borrarMarca: borrarMarca, abrirMarca: abrirMarca,
     cerrarEditor: cerrarEditor, cambiarCampoMarca: cambiarCampoMarca, deshacer: deshacer, apilar: apilar,
     confirmarPropuesta: confirmarPropuesta, descartarPropuesta: descartarPropuesta, renderMarcado: renderMarcado,
@@ -1976,7 +2336,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     var nivel = dec && dec.nivel;
     var k = conteos(ev, c.id);
     var h = '<div class="tarjeta f-' + U.fam(c.id) + (S.enfoque === c.id ? ' enfocada' : '') + '" id="tar-' + c.id + '" data-c="' + c.id + '">';
-    h += '<div class="t-cab"><span class="t-nombre">' + esc(c.nombre) + '</span>';
+    h += '<div class="t-cab">' + (c.automatico ? '' : '<span class="muestra" style="--k:' + N.colorCriterio(c.id) + '" title="Color de sus marcas en el texto"></span>') + '<span class="t-nombre">' + esc(c.nombre) + '</span>';
     if (!c.automatico) h += '<span class="t-conteo"><span class="mas">✓' + k.mas + '</span><span class="menos">✕' + k.menos + '</span></span>';
     h += '</div>';
     if (sug.nivel) h += '<div class="t-sug">Sugerido: <b>' + N.NOMBRE_NIVEL[sug.nivel] + '</b>. ' + esc(sug.razon) + '</div>';
@@ -1984,13 +2344,13 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     h += '<div class="t-niveles" role="group" aria-label="Nivel de ' + esc(c.corto) + '">';
     N.NIVELES.forEach(function (n) {
       var cls = 'nv' + (nivel === n ? ' elegido' : '') + (sug.nivel === n ? ' sugerido' : '');
-      h += '<button class="' + cls + '" data-a="nivel" data-c="' + c.id + '" data-n="' + n + '" aria-pressed="' + (nivel === n) + '">' + N.NOMBRE_NIVEL[n] + '<span class="p">' + N.fmt2(c.valores[n]) + '</span></button>';
+      h += '<button class="' + cls + '" data-a="nivel" data-c="' + c.id + '" data-n="' + n + '" aria-pressed="' + (nivel === n) + '"' + (U.soloLectura() ? ' disabled' : '') + '>' + N.NOMBRE_NIVEL[n] + '<span class="p">' + N.fmt2(c.valores[n]) + '</span></button>';
     });
     h += '</div>';
     if (nivel) {
       h += '<div class="t-decision"><b>' + N.NOMBRE_NIVEL[nivel] + '</b>&ensp;<span class="pt">' + N.fmt2(c.valores[nivel]) + ' / ' + N.fmt2(c.valores.experto) + '</span>';
       h += '<p>' + esc(c.niveles[nivel]) + (c.incompletos && c.incompletos.indexOf(nivel) !== -1 ? '<span class="incompleto" title="El texto de este nivel llegó cortado en la rúbrica fuente. Se muestra tal cual.">texto incompleto en la fuente</span>' : '') + '</p></div>';
-      if (sug.nivel && sug.nivel !== nivel) {
+      if (sug.nivel && sug.nivel !== nivel && !U.soloLectura()) {
         h += '<label class="campo desvio"><small>Te apartas de la sugerencia. ¿Por qué? (opcional; no sale en el PDF)</small><input class="entrada" data-campo="desvio" data-c="' + c.id + '" value="' + esc(dec.motivoDesvio || '') + '"></label>';
       }
     }
@@ -2006,11 +2366,11 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
           if (e.grav && m.gravedad) extra.push(N.GRAVEDADES[e.grav][m.gravedad].toLowerCase());
           if (m.insumo) extra.push(m.insumo);
           if (m.funcion) extra.push(m.funcion);
-          h += '<li data-a="irMarca" data-id="' + m.id + '"><span class="n">' + nums[m.id] + '</span><span class="fr"><span style="color:' + (e.pol === '+' ? 'var(--ok)' : 'var(--err)') + '">' + (e.pol === '+' ? '✓' : '✕') + '</span> ' + esc(e.nombre) + (extra.length ? ' (' + esc(extra.join(', ')) + ')' : '') + ' <span class="cita">«' + esc(N.fragmento(ev, m)) + '»</span></span>' + (m.comentario ? '<span class="co">' + esc(m.comentario) + '</span>' : '') + '</li>';
+          h += '<li data-a="irMarca" data-id="' + m.id + '"><span class="n" style="color:' + N.colorCriterio(c.id) + '">' + nums[m.id] + '</span><span class="fr"><span style="color:' + (e.pol === '+' ? 'var(--ok)' : 'var(--err)') + '">' + (e.pol === '+' ? '✓' : '✕') + '</span> ' + esc(e.nombre) + (extra.length ? ' (' + esc(extra.join(', ')) + ')' : '') + ' <span class="cita">«' + esc(N.fragmento(ev, m)) + '»</span></span>' + (m.comentario ? '<span class="co">' + esc(m.comentario) + '</span>' : '') + '</li>';
         });
         h += '</ul>';
       } else h += '<p class="vacio" style="padding:6px 0">Sin marcas en el texto.</p>';
-      if (gen.length) {
+      if (gen.length && !U.soloLectura()) {
         h += '<div class="generales">';
         gen.forEach(function (g) {
           var reg = ev.generales.find(function (x) { return x.evidencia === g.id; });
@@ -2031,13 +2391,13 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     if (!recs.length) h += '<p class="vacio">Aparecen al decidir un criterio por debajo de Experto, ordenadas por lo que más subiría el puntaje.</p>';
     function fila(r) {
       var ex = ev.recExcluidas.indexOf(r.c) !== -1;
-      return '<label class="rec' + (ex ? ' excluida' : '') + '"><input type="checkbox" data-campo="rec" data-c="' + r.c + '"' + (ex ? '' : ' checked') + ' aria-label="Incluir en el PDF"><span>' + esc(r.texto) + '<small>' + esc(CRIT[r.c].corto) + ', ' + N.NOMBRE_NIVEL[r.nivel].toLowerCase() + '; ' + N.fmt2(r.perdidos) + ' puntos por ganar</small></span></label>';
+      return '<label class="rec' + (ex ? ' excluida' : '') + '"><input type="checkbox" data-campo="rec" data-c="' + r.c + '"' + (ex ? '' : ' checked') + (U.soloLectura() ? ' disabled' : '') + ' aria-label="Incluir en el PDF"><span>' + esc(r.texto) + '<small>' + esc(CRIT[r.c].corto) + ', ' + N.NOMBRE_NIVEL[r.nivel].toLowerCase() + '; ' + N.fmt2(r.perdidos) + ' puntos por ganar</small></span></label>';
     }
     if (recs.length) {
       h += '<h4>Lo que más subiría tu puntaje</h4>' + recs.slice(0, 3).map(fila).join('');
       if (recs.length > 3) h += '<h4>Otros aspectos para revisar</h4>' + recs.slice(3).map(fila).join('');
     }
-    h += '<h3 style="margin-top:20px">Observaciones del evaluador</h3><textarea class="entrada" data-campo="obs" placeholder="Salen al final del PDF.">' + esc(ev.observaciones || '') + '</textarea>';
+    h += '<h3 style="margin-top:20px">Observaciones del evaluador</h3><textarea class="entrada" data-campo="obs" placeholder="Salen al final del PDF."' + (U.soloLectura() ? ' readonly' : '') + '>' + esc(ev.observaciones || '') + '</textarea>';
     return h + '</section>';
   }
 
@@ -2071,6 +2431,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   }
 
   function decidir(cid, nivel) {
+    if (U.soloLectura()) return;
     var ev = S.ev, d = ev.decisiones[cid];
     // Quitar la decisión conserva el motivo de desvío por si se vuelve a elegir.
     ev.decisiones[cid] = { nivel: d && d.nivel === nivel ? null : nivel, motivoDesvio: d ? d.motivoDesvio || '' : '' };
@@ -2119,65 +2480,190 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     $('btnConfirmar').onclick = function () { cerrarVentana(); alAceptar(); };
   }
 
-  // ───────── Pruebas (materiales) ─────────
-  var DOCS_BASE = ['Situación', 'Actor 1', 'Actor 2', 'Actor 3', 'Información complementaria'];
+  // ───────── Pruebas: situación controversial, tabla de datos, posturas de los actores e imágenes ─────────
   function usos(id) { return S.datos.evaluaciones.filter(function (e) { return e.materialId === id; }).length; }
+  function nEval(n) { return n === 1 ? '1 evaluación' : n + ' evaluaciones'; }
   function verPruebas() {
     var mats = S.datos.materiales;
-    var h = '<p class="nota">Una prueba reúne los materiales de un simulacro. Se guarda una vez y se reutiliza con muchos estudiantes. Si editas una prueba ya usada, se crea una versión nueva y las evaluaciones anteriores conservan la original.</p>';
+    var h = '<p class="nota">Una prueba reúne los materiales de un simulacro: la situación controversial, la tabla de datos, las posturas de los tres actores y, si hace falta, imágenes. Se guarda una vez y sirve para muchos estudiantes. Si cambias el texto de una prueba ya usada, se crea una versión nueva y lo ya evaluado conserva la suya.</p>';
     if (!mats.length) h += '<p class="vacio">No hay pruebas guardadas.</p>';
     else {
-      h += '<table class="tabla"><thead><tr><th>Prueba</th><th>Documentos</th><th>Usada en</th><th></th></tr></thead><tbody>';
+      h += '<div style="overflow-x:auto"><table class="tabla"><thead><tr><th>Prueba</th><th>Documentos</th><th>Subrayados</th><th>Usada en</th><th></th></tr></thead><tbody>';
       mats.forEach(function (m) {
-        h += '<tr><td>' + esc(m.titulo) + '</td><td>' + m.docs.length + '</td><td>' + usos(m.id) + ' evaluaciones</td><td style="text-align:right"><button class="btn chico" data-a="editarPrueba" data-id="' + m.id + '">Editar</button></td></tr>';
+        var llenos = m.documentos.filter(function (d) { return d.texto || (d.imagenes || []).length; }).length;
+        h += '<tr><td>' + esc(m.titulo) + '</td><td>' + llenos + ' de ' + m.documentos.length + '</td><td>' + m.subrayados.length + '</td><td>' + nEval(usos(m.id)) + '</td><td style="text-align:right;white-space:nowrap"><button class="btn chico" data-a="consultarPrueba" data-id="' + m.id + '">Consultar</button> <button class="btn chico" data-a="editarPrueba" data-id="' + m.id + '">Editar</button></td></tr>';
       });
-      h += '</tbody></table>';
+      h += '</tbody></table></div>';
     }
     ventana('Pruebas', h, '<button class="btn primario" data-a="nuevaPrueba">Nueva prueba</button>', true);
   }
+  // Imágenes en edición: se guardan aparte hasta pulsar Guardar prueba.
+  var imgsBorrador = {};
   function editorPrueba(id) {
     var m = id ? S.datos.materiales.find(function (x) { return x.id === id; }) : null;
-    var docs = m ? U.copia(m.docs) : DOCS_BASE.map(function (n) { return { nombre: n, texto: '' }; });
+    var docs = m ? U.copia(m.documentos) : N.nuevaPrueba('').documentos;
+    imgsBorrador = {};
+    docs.forEach(function (d) { imgsBorrador[d.id] = U.copia(d.imagenes || []); });
     var h = '';
-    if (m && usos(m.id)) h += '<p class="nota">Esta prueba ya se usó en ' + usos(m.id) + ' evaluaciones. Al guardar se creará una prueba nueva; esas evaluaciones conservan la versión actual.</p>';
-    h += '<label class="campo"><span>Título</span><input class="entrada" id="prTitulo" value="' + esc(m ? m.titulo : '') + '" placeholder="Ejemplo: simulacro de marzo, residuos en el campus"></label>';
+    if (m && usos(m.id)) h += '<p class="nota">Esta prueba ya se usó en ' + nEval(usos(m.id)) + '. Si cambias el texto de algún documento, se creará una prueba nueva y lo ya evaluado conservará la actual. Cambiar el título, los nombres o las imágenes no crea versión.</p>';
+    h += '<label class="campo"><span>Título</span><input class="entrada" id="prTitulo" value="' + esc(m ? m.titulo : '') + '" placeholder="Ejemplo: simulacro de marzo"></label>';
+    h += '<p class="campo" style="margin-bottom:8px"><small>Pega cada documento tal como viene. La tabla de datos conserva sus espacios y tabulaciones y se muestra en fuente monoespaciada para que las columnas se lean. Cualquier documento admite imágenes (una gráfica, la tabla escaneada, un afiche): súbelas con el botón o pégalas con Ctrl+V dentro del documento. Puedes renombrar los documentos, dejar alguno vacío o añadir otro, por ejemplo «Información complementaria».</small></p>';
     h += '<div id="prDocs">' + docs.map(docEd).join('') + '</div>';
-    h += '<button class="btn chico" data-a="agregarDoc">Agregar documento</button>';
+    h += '<button class="btn chico" data-a="agregarDoc">Añadir documento</button>';
     ventana(m ? 'Editar prueba' : 'Nueva prueba', h, '<button class="btn" data-a="cerrarVentana">Cancelar</button><button class="btn primario" data-a="guardarPrueba" data-id="' + (m ? m.id : '') + '">Guardar prueba</button>', true);
   }
+  function htmlMiniaturas(docId) {
+    var imgs = imgsBorrador[docId] || [];
+    return imgs.map(function (i) {
+      return '<figure class="mini"><img src="' + esc(i.src) + '" alt=""><input class="entrada img-nom" data-doc="' + docId + '" data-img="' + i.id + '" value="' + esc(i.nom || '') + '" placeholder="Pie de imagen" aria-label="Pie de imagen"><button class="btn chico fantasma peligro" data-a="quitarImg" data-doc="' + docId + '" data-img="' + i.id + '">Quitar</button></figure>';
+    }).join('');
+  }
   function docEd(d) {
-    return '<div class="doc-ed"><div class="fila" style="margin-bottom:6px"><input class="entrada pr-nombre" value="' + esc(d.nombre) + '" style="flex:1" aria-label="Nombre del documento"><button class="btn chico fantasma" data-a="quitarDoc">Quitar</button></div><textarea class="entrada pr-texto" aria-label="Texto del documento">' + esc(d.texto) + '</textarea></div>';
+    var id = d.id || N.nuevoId('doc');
+    if (!imgsBorrador[id]) imgsBorrador[id] = U.copia(d.imagenes || []);
+    return '<div class="doc-ed" data-doc="' + id + '"><div class="fila" style="margin-bottom:6px"><input class="entrada pr-nombre" value="' + esc(d.nom) + '" style="flex:1;min-width:0" aria-label="Nombre del documento"><label class="pr-mono"><input type="checkbox" class="pr-mono-c"' + (d.mono ? ' checked' : '') + '> Tabla (monoespaciada)</label><button class="btn chico fantasma" data-a="quitarDoc">Quitar</button></div><textarea class="entrada pr-texto' + (d.mono ? ' mono' : '') + '" aria-label="Texto de ' + esc(d.nom) + '" spellcheck="false" wrap="' + (d.mono ? 'off' : 'soft') + '">' + esc(d.texto) + '</textarea>'
+      + '<div class="mini-lista" id="mini-' + id + '">' + htmlMiniaturas(id) + '</div><label class="btn chico subir-img">Añadir imagen<input type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple class="img-archivo" data-doc="' + id + '" hidden></label></div>';
+  }
+  // Reduce imágenes grandes para que quepan en el navegador (el almacenamiento local ronda los 5 MB).
+  function leerImagen(archivo) {
+    return new Promise(function (res, rej) {
+      if (!/^image\/(png|jpe?g|gif|webp)$/.test(archivo.type)) { rej(new Error('formato')); return; }
+      var fr = new FileReader();
+      fr.onerror = function () { rej(new Error('lectura')); };
+      fr.onload = function () {
+        var src = fr.result;
+        if (archivo.size <= 300 * 1024) { res(src); return; }
+        var img = new Image();
+        img.onerror = function () { rej(new Error('imagen')); };
+        img.onload = function () {
+          var max = 1600, esc2 = Math.min(1, max / Math.max(img.width, img.height));
+          var c = document.createElement('canvas');
+          c.width = Math.round(img.width * esc2); c.height = Math.round(img.height * esc2);
+          var ctx = c.getContext('2d');
+          ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+          ctx.drawImage(img, 0, 0, c.width, c.height);
+          res(c.toDataURL('image/jpeg', 0.85));
+        };
+        img.src = src;
+      };
+      fr.readAsDataURL(archivo);
+    });
+  }
+  function agregarImagenes(docId, archivos) {
+    var lista = Array.prototype.slice.call(archivos || []).filter(function (f) { return /^image\//.test(f.type); });
+    if (!lista.length) return;
+    Promise.all(lista.map(function (f) {
+      return leerImagen(f).then(function (src) { return { id: N.nuevoId('img'), nom: (f.name || '').replace(/\.[a-z0-9]+$/i, '').replace(/^image$/, ''), src: src }; }, function () { return null; });
+    })).then(function (imgs) {
+      imgs = imgs.filter(Boolean);
+      if (!imgs.length) { U.aviso('No se pudo leer la imagen. Usa PNG, JPG, GIF o WebP.'); return; }
+      imgsBorrador[docId] = (imgsBorrador[docId] || []).concat(imgs);
+      var l = $('mini-' + docId);
+      if (l) l.innerHTML = htmlMiniaturas(docId);
+      U.aviso(imgs.length === 1 ? 'Imagen añadida.' : imgs.length + ' imágenes añadidas.');
+    });
   }
   function guardarPrueba(id) {
     var titulo = $('prTitulo').value.trim();
     if (!titulo) { U.aviso('Ponle un título a la prueba.'); $('prTitulo').focus(); return; }
     var docs = [];
     document.querySelectorAll('#prDocs .doc-ed').forEach(function (el) {
-      var n = el.querySelector('.pr-nombre').value.trim(), t = el.querySelector('.pr-texto').value.trim();
-      if (n || t) docs.push({ nombre: n || 'Documento', texto: t });
+      var nom = el.querySelector('.pr-nombre').value.trim();
+      // El texto se guarda tal cual: solo se quitan saltos de línea sobrantes al inicio y al final.
+      var t = el.querySelector('.pr-texto').value.replace(/\r\n?/g, '\n').replace(/^\n+|\s+$/g, '');
+      var d = { id: el.getAttribute('data-doc'), nom: nom || 'Documento', texto: t };
+      if (el.querySelector('.pr-mono-c').checked) d.mono = true;
+      var imgs = (imgsBorrador[d.id] || []).filter(function (i) { return U.imagenSegura(i.src); });
+      if (imgs.length) d.imagenes = imgs;
+      docs.push(d);
     });
+    var respaldo = U.copia(S.datos.materiales);
     var previo = id ? S.datos.materiales.find(function (x) { return x.id === id; }) : null;
-    var nuevo;
-    if (previo && !usos(previo.id)) {
-      previo.titulo = titulo; previo.docs = docs; previo.modificada = U.ahora(); nuevo = previo;
+    var cambiaTexto = previo && (previo.documentos.length !== docs.length || docs.some(function (d) {
+      var v = previo.documentos.find(function (x) { return x.id === d.id; });
+      return !v || v.texto !== d.texto;
+    }));
+    var nuevo, perdidos = 0;
+    if (previo && !(usos(previo.id) && cambiaTexto)) {
+      var vigentes = N.subrayadosVigentes(previo, docs);
+      perdidos = previo.subrayados.length - vigentes.length;
+      previo.titulo = titulo; previo.documentos = docs; previo.subrayados = vigentes; previo.modificada = U.ahora();
+      nuevo = previo;
     } else {
-      nuevo = { id: N.nuevoId('mat'), titulo: titulo, docs: docs, creada: U.ahora(), modificada: U.ahora() };
-      if (previo && titulo === previo.titulo) nuevo.titulo = titulo + ' (versión nueva)';
+      nuevo = N.nuevaPrueba(titulo);
+      nuevo.documentos = docs;
+      if (previo) {
+        nuevo.subrayados = U.copia(N.subrayadosVigentes(previo, docs));
+        perdidos = previo.subrayados.length - nuevo.subrayados.length;
+        if (titulo === previo.titulo) nuevo.titulo = titulo + ' (versión nueva)';
+      }
       S.datos.materiales.unshift(nuevo);
     }
-    U.guardar();
+    if (!U.guardar() && S.sinEspacio) {
+      S.datos.materiales = respaldo; S.sinEspacio = false;
+      U.aviso('No cabe en el almacenamiento del navegador. Quita alguna imagen o usa imágenes más livianas.');
+      return;
+    }
     S.borrador.materialId = nuevo.id;
     cerrarVentana();
-    U.aviso('Prueba guardada.');
-    if (!S.ev) U.renderInicio();
+    U.aviso('Prueba guardada' + (perdidos ? '. Se quitaron ' + perdidos + ' subrayados de documentos cuyo texto cambió.' : '.'));
+    if (!S.ev) U.renderInicio(); else U.renderMarcado();
   }
-  function verMateriales(i) {
-    var m = U.material(S.ev && S.ev.materialId);
-    if (!m) return;
-    i = i || 0;
-    var h = '<div class="pestanas">' + m.docs.map(function (d, k) { return '<button class="' + (k === i ? 'activa' : '') + '" data-a="pestana" data-i="' + k + '">' + esc(d.nombre) + '</button>'; }).join('') + '</div>';
-    h += m.docs[i] ? '<div class="doc-texto">' + esc(m.docs[i].texto || 'Sin texto.') + '</div>' : '<p class="vacio">Esta prueba no tiene documentos.</p>';
-    ventana(m.titulo, h, '', true);
+
+  // ───────── Ponderación ─────────
+  function numero(v) { return Number(String(v).replace(',', '.').trim()); }
+  function verPonderacion() {
+    var p = N.normalizarPonderacion(S.datos.ponderacion || S.ponderacionPublica);
+    var h = '<p class="nota">El peso de cada criterio es su puntaje en Experto. Avanzado e Intermedio salen de multiplicar el peso por su proporción, redondeado a dos decimales; Inicial vale 0. Los niveles ya decididos no cambian: cambia cuánto vale cada uno, en todas las evaluaciones.</p>';
+    h += '<div class="pond-prop"><label>Proporción de Avanzado <input class="entrada" data-prop="avanzado" inputmode="decimal" value="' + N.fmt2(p.proporciones.avanzado) + '"></label><label>Proporción de Intermedio <input class="entrada" data-prop="intermedio" inputmode="decimal" value="' + N.fmt2(p.proporciones.intermedio) + '"></label></div>';
+    h += '<div style="overflow-x:auto"><table class="tabla pond"><thead><tr><th>Criterio</th><th>Peso</th><th>Experto</th><th>Avanzado</th><th>Intermedio</th><th>Inicial</th></tr></thead><tbody>';
+    N.DESCRIPTORES.forEach(function (d) {
+      h += '<tr class="pond-desc f-' + d.familia + '"><td colspan="6">' + esc(d.corto) + ' <span class="st" data-sub="' + d.id + '"></span></td></tr>';
+      N.RUBRICA.filter(function (c) { return c.d === d.id; }).forEach(function (c) {
+        h += '<tr data-fila="' + c.id + '"><td title="' + esc(c.nombre) + '">' + esc(c.corto) + '</td><td><input class="entrada" data-peso="' + c.id + '" inputmode="decimal" value="' + N.fmt2(p.pesos[c.id]) + '" aria-label="Peso de ' + esc(c.corto) + '"></td><td class="v" data-v="experto"></td><td class="v" data-v="avanzado"></td><td class="v" data-v="intermedio"></td><td class="v">0,00</td></tr>';
+      });
+    });
+    h += '</tbody></table></div><p class="pond-total" id="pondTotal"></p>';
+    ventana('Ponderación', h, '<button class="btn" data-a="restablecerPonderacion">Restablecer</button><span style="flex:1"></span><button class="btn" data-a="cerrarVentana">Cancelar</button><button class="btn primario" data-a="guardarPonderacion">Guardar</button>', true);
+    recalcularPonderacion();
+  }
+  function leerPonderacion() {
+    var p = { pesos: {}, proporciones: {} };
+    document.querySelectorAll('[data-peso]').forEach(function (i) { p.pesos[i.getAttribute('data-peso')] = numero(i.value); });
+    document.querySelectorAll('[data-prop]').forEach(function (i) { p.proporciones[i.getAttribute('data-prop')] = numero(i.value); });
+    return p;
+  }
+  function validaPonderacion(p) {
+    var malos = [];
+    Object.keys(p.pesos).forEach(function (k) { if (!isFinite(p.pesos[k]) || p.pesos[k] < 0) malos.push(N.CRIT[k].corto); });
+    Object.keys(p.proporciones).forEach(function (k) { var v = p.proporciones[k]; if (!isFinite(v) || v < 0 || v > 1) malos.push('proporción de ' + k); });
+    return malos;
+  }
+  function recalcularPonderacion() {
+    var p = leerPonderacion(), n = N.normalizarPonderacion(p), total = 0, sub = {};
+    N.RUBRICA.forEach(function (c) {
+      var fila = document.querySelector('[data-fila="' + c.id + '"]');
+      var v = N.valoresDe(n.pesos[c.id], n.proporciones);
+      ['experto', 'avanzado', 'intermedio'].forEach(function (k) { fila.querySelector('[data-v="' + k + '"]').textContent = N.fmt2(v[k]); });
+      fila.classList.toggle('invalido', !isFinite(p.pesos[c.id]) || p.pesos[c.id] < 0);
+      total += v.experto; sub[c.d] = (sub[c.d] || 0) + v.experto;
+    });
+    Object.keys(sub).forEach(function (d) { var e = document.querySelector('[data-sub="' + d + '"]'); if (e) e.textContent = N.fmt2(sub[d]); });
+    total = Math.round(total * 100) / 100;
+    var malos = validaPonderacion(p);
+    $('pondTotal').innerHTML = 'Puntaje máximo: <b>' + N.fmt2(total) + '</b>' + (Math.abs(total - 5) > 0.001 ? ' <span class="aviso-pond">No suma 5,00. Se puede guardar así; los totales se mostrarán sobre ' + N.fmt2(total) + '.</span>' : '') + (malos.length ? ' <span class="aviso-pond">Revisa: ' + esc(malos.join(', ')) + '.</span>' : '');
+  }
+  function guardarPonderacion() {
+    var p = leerPonderacion();
+    var malos = validaPonderacion(p);
+    if (malos.length) { U.aviso('Hay valores que no son números válidos: ' + malos.join(', ') + '.'); return; }
+    var n = N.normalizarPonderacion(p);
+    S.datos.ponderacion = N.esPonderacionPorDefecto(n) ? null : n;
+    N.aplicarPonderacion(S.datos.ponderacion || S.ponderacionPublica || null);
+    U.guardar(); cerrarVentana();
+    if (S.ev) U.renderMarcado(); else U.renderInicio();
+    U.renderCabecera();
+    U.aviso('Ponderación guardada. Puntaje máximo: ' + N.fmt2(N.puntajeMaximo()) + '.');
   }
 
   // ───────── Umbrales ─────────
@@ -2243,8 +2729,11 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     descargarHistorial();
   }
   function construirHistorial(datos, clave) {
+    // Capa pública: solo evaluaciones marcadas como públicas, sin nombres ni pruebas, y la ponderación para que sus totales cuadren.
+    // Las etiquetas, las pruebas y sus subrayados viajan solo en la capa cifrada.
     var publico = { evaluaciones: datos.evaluaciones.filter(function (e) { return e.visibilidad === 'publica'; }).map(N.capaPublica) };
-    return N.cifrar({ evaluaciones: datos.evaluaciones, materiales: datos.materiales, borradas: datos.borradas, umbrales: datos.umbrales }, clave).then(function (pkg) {
+    if (datos.ponderacion) publico.ponderacion = datos.ponderacion;
+    return N.cifrar({ evaluaciones: datos.evaluaciones, materiales: datos.materiales, etiquetas: datos.etiquetas, borradas: datos.borradas, umbrales: datos.umbrales, ponderacion: datos.ponderacion }, clave).then(function (pkg) {
       // Las etiquetas se arman por partes para que su texto literal solo exista una vez en la página.
       function bloque(html, nombre, valor) {
         var abre = '<' + 'script type="application/json" id="n2-' + nombre + '">', cierra = '<' + '/script>';
@@ -2265,7 +2754,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       document.body.appendChild(a); a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
       var pub = S.datos.evaluaciones.filter(function (e) { return e.visibilidad === 'publica'; }).length;
-      ventana('Historial descargado', '<p>El archivo trae ' + S.datos.evaluaciones.length + ' evaluaciones cifradas y ' + pub + ' públicas.</p><p>Para publicarlo, renómbralo a <b>index.html</b> y súbelo a tu repositorio en lugar del anterior.</p><div class="nota"><p style="margin:0 0 6px">Antes de publicar, ten en cuenta:</p><ul style="margin:0;padding-left:18px"><li>Un repositorio guarda la historia de cada archivo. Lo que publiques quedará ahí aunque después lo borres.</li><li>La contraseña protege un archivo público: cualquiera puede descargarlo e intentar abrirlo.</li><li>Pide autorización a los estudiantes cuyos textos publiques como ejemplo.</li></ul></div>', '<button class="btn primario" data-a="cerrarVentana">Entendido</button>');
+      ventana('Historial descargado', '<p>El archivo trae ' + (S.datos.evaluaciones.length === 1 ? '1 evaluación cifrada' : S.datos.evaluaciones.length + ' evaluaciones cifradas') + ', ' + S.datos.materiales.length + (S.datos.materiales.length === 1 ? ' prueba' : ' pruebas') + ' con sus subrayados y ' + (pub === 1 ? '1 evaluación pública' : pub + ' evaluaciones públicas') + '.</p><p>Para publicarlo, renómbralo a <b>index.html</b> y súbelo a tu repositorio en lugar del anterior.</p><div class="nota"><p style="margin:0 0 6px">Antes de publicar, ten en cuenta:</p><ul style="margin:0;padding-left:18px"><li>Un repositorio guarda la historia de cada archivo. Lo que publiques quedará ahí aunque después lo borres.</li><li>La contraseña protege un archivo público: cualquiera puede descargarlo e intentar abrirlo.</li><li>Pide autorización a los estudiantes cuyos textos publiques como ejemplo.</li></ul></div>', '<button class="btn primario" data-a="cerrarVentana">Entendido</button>');
     }).catch(function () { U.aviso('No se pudo cifrar el historial en este navegador.'); });
   }
   function desbloquear() {
@@ -2279,9 +2768,10 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     N.descifrar(S.cifradoEmbebido, clave).then(function (d) {
       S.datos = N.fusionar(d, S.datos);
       S.clave = clave; S.desbloqueado = true;
+      U.migrar();
       U.guardar(); cerrarVentana(); U.renderAvisoSup(); U.renderCabecera();
-      if (!S.ev) U.renderInicio();
-      U.aviso('Historial desbloqueado: ' + S.datos.evaluaciones.length + ' evaluaciones.');
+      if (!S.ev) U.renderInicio(); else U.abrirEval(S.ev.id);
+      U.aviso('Historial desbloqueado: ' + (S.datos.evaluaciones.length === 1 ? '1 evaluación.' : S.datos.evaluaciones.length + ' evaluaciones.'));
     }).catch(function () {
       if (btn) { btn.disabled = false; btn.textContent = 'Desbloquear'; }
       U.aviso('Esa contraseña no abre este historial.');
@@ -2303,7 +2793,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     var t = N.calcularTotal(ev), nums = U.numerar(ev), mat = U.material(ev.materialId);
     var h = '<div class="imp"><h1>Retroalimentación de escritura, nivel 2</h1>';
     h += '<div class="meta">' + esc(ev.estudiante || ev.etiquetaPublica || '') + (mat ? '&emsp;' + esc(mat.titulo) : '') + '&emsp;' + U.fecha(ev.modificada) + '&emsp;' + ev.palabras + ' palabras</div>';
-    h += '<div><span class="tot">' + N.fmt2(t.total) + '</span> <span style="color:#666">de 5,00</span>' + (t.decididos < t.criterios ? '&emsp;<span class="nota-imp">' + t.decididos + ' de ' + t.criterios + ' criterios decididos</span>' : '') + '</div>';
+    h += '<div><span class="tot">' + N.fmt2(t.total) + '</span> <span style="color:#666">de ' + N.fmt2(N.puntajeMaximo()) + '</span>' + (t.decididos < t.criterios ? '&emsp;<span class="nota-imp">' + t.decididos + ' de ' + t.criterios + ' criterios decididos</span>' : '') + '</div>';
     h += '<h2>Resultado por criterio</h2><table class="tabla-res"><thead><tr><th>Criterio</th><th>Nivel</th><th>Puntaje</th><th>Descripción del nivel</th></tr></thead><tbody>';
     N.DESCRIPTORES.forEach(function (d) {
       var st = t.subtotales[d.id];
@@ -2321,7 +2811,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       var gs = N.generalesDe(ev, c.id);
       if (!ms.length && !gs.length) return;
       hayEv = true;
-      bloque += '<h3 style="font-size:10.5pt;margin:10pt 0 3pt">' + esc(c.corto) + '</h3><ul class="ev-imp f-' + U.fam(c.id) + '">';
+      bloque += '<h3 style="font-size:10.5pt;margin:10pt 0 3pt">' + esc(c.corto) + '</h3><ul class="ev-imp" style="--f:' + N.colorCriterio(c.id) + '">';
       ms.forEach(function (m) {
         var e = EV[m.evidencia], ex = [];
         if (e.grav && m.gravedad) ex.push(N.GRAVEDADES[e.grav][m.gravedad].toLowerCase());
@@ -2358,10 +2848,38 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       case 'nuevaPrueba': editorPrueba(null); return;
       case 'editarPrueba': editorPrueba(id); return;
       case 'guardarPrueba': guardarPrueba(id); return;
-      case 'agregarDoc': $('prDocs').insertAdjacentHTML('beforeend', docEd({ nombre: '', texto: '' })); return;
+      case 'agregarDoc': $('prDocs').insertAdjacentHTML('beforeend', docEd({ id: N.nuevoId('doc'), nom: '', texto: '' })); var ns = document.querySelectorAll('#prDocs .pr-nombre'); ns[ns.length - 1].focus(); return;
       case 'quitarDoc': el.closest('.doc-ed').remove(); return;
-      case 'verMateriales': S.menu = false; U.renderCabecera(); verMateriales(0); return;
-      case 'pestana': verMateriales(+el.getAttribute('data-i')); return;
+      case 'consulta':
+        S.menu = false;
+        if (!U.material(S.ev && S.ev.materialId)) { U.aviso('Esta evaluación no tiene una prueba asociada.'); return; }
+        S.consulta.abierta = !S.consulta.abierta; S.consulta.sel = null; S.consulta.sub = null;
+        U.renderCabecera(); U.renderHerramientas(); U.renderConsulta(); return;
+      case 'docPestana': S.consulta.doc = id; S.consulta.sel = null; S.consulta.sub = null; U.renderConsulta(); return;
+      case 'consultarPrueba': U.verPruebaLectura(id); return;
+      case 'verPruebaDoc': U.verPruebaLectura($('docVistaLectura').getAttribute('data-prueba'), id); return;
+      case 'verImagen': U.verImagen(el.getAttribute('data-src-doc'), el.getAttribute('data-img')); return;
+      case 'cerrarVisor': U.cerrarVisor(); return;
+      case 'quitarImg':
+        imgsBorrador[el.getAttribute('data-doc')] = (imgsBorrador[el.getAttribute('data-doc')] || []).filter(function (x) { return x.id !== el.getAttribute('data-img'); });
+        $('mini-' + el.getAttribute('data-doc')).innerHTML = htmlMiniaturas(el.getAttribute('data-doc')); return;
+      case 'ponderacion': S.menu = false; U.renderCabecera(); verPonderacion(); return;
+      case 'restablecerPonderacion':
+        var def = N.ponderacionPorDefecto();
+        document.querySelectorAll('[data-peso]').forEach(function (i) { i.value = N.fmt2(def.pesos[i.getAttribute('data-peso')]); });
+        document.querySelectorAll('[data-prop]').forEach(function (i) { i.value = N.fmt2(def.proporciones[i.getAttribute('data-prop')]); });
+        recalcularPonderacion(); return;
+      case 'guardarPonderacion': guardarPonderacion(); return;
+      case 'etiquetar': U.etiquetar(el.getAttribute('data-et')); return;
+      case 'quitarSub': U.quitarSub(); return;
+      case 'etiquetas': U.verEtiquetas(); return;
+      case 'etColor': case 'etNueva': case 'etEliminar': case 'etEliminarYa': U.accionEtiqueta(a, el); return;
+      case 'etCancelar': U.verEtiquetas(); return;
+      case 'pestanaPal': S.pestana = el.getAttribute('data-t'); U.renderPaleta(); var pc = $('palCuerpo'); if (pc) pc.querySelector('.pal-catalogo').scrollIntoView({ block: 'start' }); return;
+      case 'plegarPaleta':
+        if (U.esMovil()) { S.paletaMovil = false; S.sel = null; U.renderTexto(); U.renderPaleta(); return; }
+        S.paletaPlegada = !S.paletaPlegada; U.guardarPref(); U.aplicarRejilla(); U.renderPaleta(); return;
+      case 'abrirPaletaMovil': S.paletaMovil = true; U.renderPaleta(); return;
       case 'umbrales': S.menu = false; U.renderCabecera(); verUmbrales(); return;
       case 'restablecerUmbrales': document.querySelectorAll('[data-umbral]').forEach(function (i) { i.value = N.umbralesPorDefecto()[i.getAttribute('data-umbral')]; }); return;
       case 'guardarUmbrales': guardarUmbrales(); return;
@@ -2392,7 +2910,7 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
       case 'quitarGeneral': U.quitarGeneral(id); return;
       case 'irMarca': U.irAMarca(id); return;
       case 'irCrit': U.irCrit(el.getAttribute('data-c')); return;
-      case 'colapsar': S.colapsado = !S.colapsado; U.renderMarcado(); return;
+      case 'colapsar': S.colapsado = !S.colapsado; U.guardarPref(); U.renderMarcado(); return;
       case 'cerrarPanel': $('panel').classList.remove('abierto-movil'); return;
     }
   }
@@ -2426,7 +2944,9 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     if (t.id === 'entradaTexto') { S.borrador.texto = t.value; U.renderContador(); return; }
     if (t.id === 'entEstudiante') { S.borrador.estudiante = t.value; return; }
     if (t.id === 'entEtiqueta') { S.borrador.etiqueta = t.value; return; }
-    if (t.id === 'palFiltro') { S.filtro = t.value; $('palSecciones').innerHTML = U.htmlSecciones(); return; }
+    if (t.hasAttribute && t.hasAttribute('data-et-nom')) { U.renombrarEtiqueta(t.getAttribute('data-et-nom'), t.value); return; }
+    if (t.hasAttribute && (t.hasAttribute('data-peso') || t.hasAttribute('data-prop'))) { recalcularPonderacion(); return; }
+    if (t.classList && t.classList.contains('img-nom')) { var im = (imgsBorrador[t.getAttribute('data-doc')] || []).find(function (x) { return x.id === t.getAttribute('data-img'); }); if (im) im.nom = t.value; return; }
     var campo = t.getAttribute('data-campo');
     if (!campo || !S.ev) return;
     if (campo === 'm.comentario') { U.cambiarCampoMarca('comentario', t.value); return; }
@@ -2437,11 +2957,15 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   document.addEventListener('change', function (e) {
     var t = e.target;
     if (t.id === 'entMaterial') { S.borrador.materialId = t.value; return; }
+    if (t.classList && t.classList.contains('img-archivo')) { agregarImagenes(t.getAttribute('data-doc'), t.files); t.value = ''; return; }
+    if (t.classList && t.classList.contains('pr-mono-c')) { var ta = t.closest('.doc-ed').querySelector('.pr-texto'); ta.classList.toggle('mono', t.checked); ta.setAttribute('wrap', t.checked ? 'off' : 'soft'); return; }
     if (t.name === 'vis') { S.borrador.visibilidad = t.value; return; }
     var campo = t.getAttribute('data-campo');
     if (!campo) return;
     if (campo.indexOf('m.') === 0 && campo !== 'm.comentario') { U.cambiarCampoMarca(campo.slice(2), t.value); return; }
-    if (campo === 'detector' || campo === 'ocultarNumeros' || campo === 'ocultarMarcas') { S[campo] = t.checked; U.renderTexto(); return; }
+    if (campo === 'detector') { S.detector = t.checked; U.renderTexto(); return; }
+    if (campo === 'verNumeros') { S.ocultarNumeros = !t.checked; U.renderTexto(); return; }
+    if (campo === 'verMarcas') { S.ocultarMarcas = !t.checked; U.renderTexto(); return; }
     if (campo === 'solo') { S.solo = t.checked ? t.getAttribute('data-c') : null; U.renderMarcado(); return; }
     if (campo === 'rec') {
       var c = t.getAttribute('data-c');
@@ -2455,6 +2979,13 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     if (d.classList && d.classList.contains('t-mas')) S.expandidos[d.getAttribute('data-c')] = d.open;
   }, true);
   document.addEventListener('paste', function (e) {
+    // Pegar una imagen dentro de un documento de la prueba la añade a ese documento.
+    var ed = e.target.closest && e.target.closest('.doc-ed');
+    if (ed) {
+      var fs = Array.prototype.slice.call((e.clipboardData && e.clipboardData.files) || []).filter(function (f) { return /^image\//.test(f.type); });
+      if (fs.length) { e.preventDefault(); agregarImagenes(ed.getAttribute('data-doc'), fs); }
+      return;
+    }
     if (e.target.id !== 'entradaTexto') return;
     e.preventDefault();
     var bruto = (e.clipboardData || window.clipboardData).getData('text');
@@ -2469,13 +3000,16 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
   document.addEventListener('keydown', function (e) {
     var t = e.target, enCampo = /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);
     if (e.key === 'Escape') {
+      if (U.cerrarVisor()) return;
       if ($('velo')) { cerrarVentana(); return; }
       if (S.abierta) { U.cerrarEditor(); U.renderTexto(); return; }
       if (S.menu) { S.menu = false; U.renderCabecera(); return; }
-      if (S.sel) { U.limpiarSeleccion(); return; }
+      if (S.sel) { S.paletaMovil = false; U.limpiarSeleccion(); return; }
+      if (S.consulta.sel || S.consulta.sub) { S.consulta.sel = null; S.consulta.sub = null; U.renderConsulta(); return; }
+      if (S.paletaMovil) { S.paletaMovil = false; U.renderPaleta(); return; }
       return;
     }
-    if (!S.ev || $('velo')) return;
+    if (!S.ev || $('velo') || U.soloLectura()) return;
     if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z' && !enCampo) { e.preventDefault(); U.deshacer(); return; }
     if (enCampo || e.ctrlKey || e.metaKey || e.altKey) return;
     if (S.abierta && (e.key === 'Delete' || e.key === 'Supr' || e.key === 'Backspace')) { e.preventDefault(); U.borrarMarca(S.abierta); return; }
@@ -2489,13 +3023,279 @@ textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
     var ev = letra && N.CATALOGO.find(function (x) { return x.tecla === letra; });
     if (ev) { e.preventDefault(); U.crearMarca(ev.id, e.shiftKey); }
   });
-  window.addEventListener('resize', function () { if (S.ev) { U.renderCabecera(); U.renderPanel(); } });
+  var tResize;
+  window.addEventListener('resize', function () { clearTimeout(tResize); tResize = setTimeout(function () { if (S.ev) U.renderMarcado(); }, 120); });
+  $('fabPaleta').addEventListener('click', function () { S.paletaMovil = true; U.renderPaleta(); });
 
   // ───────── Arranque ─────────
   U.cargar();
+  U.migrar();
   U.renderAvisoSup();
   U.irInicio();
-  Object.assign(U, { imprimir: imprimir, construirHistorial: construirHistorial, verPruebas: verPruebas, verUmbrales: verUmbrales, cerrarVentana: cerrarVentana });
+  Object.assign(U, { ventana: ventana, imprimir: imprimir, construirHistorial: construirHistorial, verPruebas: verPruebas, verUmbrales: verUmbrales, cerrarVentana: cerrarVentana });
+})();
+
+(function () {
+  'use strict';
+  var N = window.N2, U = window.__N2, S = U.S, $ = U.$, esc = U.esc;
+
+  function pruebaEnUso() { return S.ev ? U.material(S.ev.materialId) : null; }
+  function tocarEtiqueta(e) { e.modificada = U.ahora(); }
+  function imagenSegura(src) { return /^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=]+$/.test(src || ''); }
+
+  // ───────── Pintado de un documento ─────────
+  // Se corta el texto en los límites de sus subrayados y se arman fragmentos escapados:
+  // el texto original no se altera, y lo pintado, concatenado, es idéntico a él.
+  function htmlDoc(m, d, seleccion, subElegido) {
+    var t = d.texto || '';
+    var h = '';
+    if (t) {
+      var subs = m.subrayados.filter(function (s) { return s.documento === d.id && s.fin <= t.length; });
+      var sel = seleccion && seleccion.documento === d.id ? seleccion : null;
+      var cortes = {}; cortes[0] = 1; cortes[t.length] = 1;
+      subs.forEach(function (s) { cortes[s.inicio] = 1; cortes[s.fin] = 1; });
+      if (sel) { cortes[sel.inicio] = 1; cortes[sel.fin] = 1; }
+      var c = Object.keys(cortes).map(Number).sort(function (a, b) { return a - b; });
+      var tabs = d.mono && t.indexOf('\t') !== -1 ? N.anchosTabulacion(t) : null;
+      var pintar = function (x, y) {
+        if (!tabs) return esc(t.slice(x, y));
+        var r = '';
+        for (var q = x; q < y; q++) r += t[q] === '\t' ? '<span class="tab" style="width:' + tabs[q] + 'ch">\t</span>' : esc(t[q]);
+        return r;
+      };
+      var cuerpo = '';
+      for (var k = 0; k < c.length - 1; k++) {
+        var x = c[k], y = c[k + 1];
+        // Si dos subrayados se superponen en parte, manda el añadido después.
+        var cubre = subs.filter(function (s) { return s.inicio <= x && s.fin >= y; });
+        var ultimo = cubre.length ? cubre[cubre.length - 1] : null;
+        var cls = 'ds', st = '', attrs = '';
+        if (ultimo) {
+          var et = U.etiqueta(ultimo.etiqueta);
+          cls += ' sub' + (subElegido === ultimo.id ? ' elegido' : '');
+          st = ' style="--c:' + N.colorHex(et ? et.color : 'gris') + '"';
+          attrs = ' data-sb="' + ultimo.id + '" title="' + esc(et ? et.nom : 'Etiqueta eliminada') + '"';
+        }
+        if (sel && x >= sel.inicio && y <= sel.fin) cls += ' sel-doc';
+        cuerpo += '<span class="' + cls + '"' + st + attrs + '>' + pintar(x, y) + '</span>';
+      }
+      h += '<div class="doc-cuerpo" data-doc="' + d.id + '">' + cuerpo + '</div>';
+    }
+    var imgs = (d.imagenes || []).filter(function (i) { return imagenSegura(i.src); });
+    if (imgs.length) {
+      h += '<div class="doc-imagenes">' + imgs.map(function (i) {
+        return '<figure><button class="img-btn" data-a="verImagen" data-src-doc="' + d.id + '" data-img="' + i.id + '" aria-label="Ampliar ' + esc(i.nom || 'imagen') + '"><img src="' + esc(i.src) + '" alt="' + esc(i.nom || 'Imagen del documento') + '" loading="lazy"></button>' + (i.nom ? '<figcaption>' + esc(i.nom) + '</figcaption>' : '') + '</figure>';
+      }).join('') + '</div>';
+    }
+    if (!t && !imgs.length) h = '<p class="vacio">Este documento está vacío. Puedes llenarlo desde Pruebas.</p>';
+    return h;
+  }
+
+  function pestanas(m, activo, accion) {
+    var h = '<div class="doc-pestanas" role="tablist" aria-label="Documentos de la prueba">';
+    m.documentos.forEach(function (x) {
+      var n = m.subrayados.filter(function (s) { return s.documento === x.id; }).length;
+      var vacio = !x.texto && !(x.imagenes || []).length;
+      h += '<button role="tab" aria-selected="' + (x.id === activo) + '" class="' + (x.id === activo ? 'activa' : '') + (vacio ? ' vacia' : '') + '" data-a="' + accion + '" data-id="' + x.id + '">' + esc(x.nom) + ((x.imagenes || []).length ? ' <span class="n" title="Imágenes">▣ ' + x.imagenes.length + '</span>' : '') + (n ? ' <span class="n" title="Subrayados">' + n + '</span>' : '') + '</button>';
+    });
+    return h + '</div>';
+  }
+  function primerDoc(m, id) {
+    var d = m.documentos.find(function (x) { return x.id === id; });
+    return d || m.documentos.find(function (x) { return x.texto || (x.imagenes || []).length; }) || m.documentos[0] || null;
+  }
+
+  // ───────── Panel de consulta al evaluar ─────────
+  function renderConsulta() {
+    var el = $('consulta'), m = pruebaEnUso();
+    if (!S.ev || !S.consulta.abierta || !m) { el.innerHTML = ''; el.hidden = true; return; }
+    el.hidden = false;
+    var vista = $('docVista');
+    if (vista && S.consulta.docPintado) { S.consulta.scroll = S.consulta.scroll || {}; S.consulta.scroll[S.consulta.docPintado] = vista.scrollTop; }
+    var d = primerDoc(m, S.consulta.doc);
+    S.consulta.doc = d ? d.id : null;
+    var sub = S.consulta.sub ? m.subrayados.find(function (x) { return x.id === S.consulta.sub; }) : null;
+    if (!sub) S.consulta.sub = null;
+    var h = '<div class="sub-barra" role="toolbar" aria-label="Subrayado">';
+    S.datos.etiquetas.forEach(function (e) {
+      var activa = sub && sub.etiqueta === e.id;
+      h += '<button class="pildora-et' + (activa ? ' activa' : '') + '" data-a="etiquetar" data-et="' + e.id + '" style="--c:' + N.colorHex(e.color) + '" aria-pressed="' + !!activa + '"><span class="punto-c"></span>' + esc(e.nom) + '</button>';
+    });
+    if (!S.datos.etiquetas.length) h += '<span class="pal-vacio">No hay etiquetas. Créalas en Etiquetas…</span>';
+    if (sub) h += '<button class="btn chico peligro" data-a="quitarSub">Quitar</button>';
+    h += '<span class="sep"></span><button class="btn chico fantasma" data-a="etiquetas">Etiquetas…</button><button class="btn chico fantasma" data-a="consulta" aria-label="Cerrar los materiales">✕</button></div>';
+    var ayuda;
+    if (S.consulta.sel) ayuda = 'Elige una etiqueta para subrayar lo que seleccionaste.';
+    else if (sub) ayuda = 'Subrayado seleccionado. Elige otra etiqueta para cambiarla, o quítalo.';
+    else ayuda = 'Selecciona un fragmento de cualquier documento y elige una etiqueta para subrayarlo.';
+    h += '<p class="sub-ayuda">' + ayuda + '</p>';
+    h += pestanas(m, S.consulta.doc, 'docPestana');
+    h += '<div class="doc-vista' + (d && d.mono ? ' mono' : '') + '" id="docVista" role="tabpanel" data-zona="consulta">' + (d ? htmlDoc(m, d, S.consulta.sel, S.consulta.sub) : '') + '</div>';
+    el.innerHTML = h;
+    if (d) {
+      S.consulta.docPintado = d.id;
+      $('docVista').scrollTop = (S.consulta.scroll && S.consulta.scroll[d.id]) || 0;
+    }
+  }
+
+  // ───────── Consulta de una prueba desde el historial: solo lectura ─────────
+  function verPruebaLectura(id, docId) {
+    var m = U.material(id);
+    if (!m) return;
+    var d = primerDoc(m, docId);
+    var usadas = {};
+    m.subrayados.forEach(function (s) { usadas[s.etiqueta] = 1; });
+    var h = '<p class="nota">Vista de consulta, en solo lectura. Para subrayar, abre una evaluación de esta prueba y usa Materiales de la prueba.</p>';
+    var ets = S.datos.etiquetas.filter(function (e) { return usadas[e.id]; });
+    if (ets.length) h += '<div class="sub-barra leyenda-et">' + ets.map(function (e) { return '<span class="pildora-et quieta" style="--c:' + N.colorHex(e.color) + '"><span class="punto-c"></span>' + esc(e.nom) + '</span>'; }).join('') + '</div>';
+    h += pestanas(m, d ? d.id : null, 'verPruebaDoc');
+    h += '<div class="doc-vista lectura' + (d && d.mono ? ' mono' : '') + '" id="docVistaLectura" data-prueba="' + m.id + '">' + (d ? htmlDoc(m, d, null, null) : '') + '</div>';
+    U.ventana(m.titulo, h, '<button class="btn" data-a="pruebas">Volver a Pruebas</button><button class="btn primario" data-a="cerrarVentana">Cerrar</button>', true);
+  }
+
+  // ───────── Selección dentro de un documento ─────────
+  function offsetEn(cuerpo, node, off) {
+    if (!cuerpo.contains(node.nodeType === 3 ? node.parentNode : node)) return null;
+    var r = document.createRange();
+    r.setStart(cuerpo, 0);
+    try { r.setEnd(node, off); } catch (e) { return null; }
+    return r.toString().length;
+  }
+  function alSoltarEnDoc(e) {
+    var vista = $('docVista');
+    var cuerpo = vista && vista.querySelector('.doc-cuerpo');
+    if (!cuerpo) return;
+    var m = pruebaEnUso();
+    var docId = cuerpo.getAttribute('data-doc');
+    var d = m && m.documentos.find(function (x) { return x.id === docId; });
+    if (!d) return;
+    var sel = window.getSelection();
+    if (sel && sel.rangeCount && !sel.isCollapsed) {
+      var r = sel.getRangeAt(0);
+      var a = offsetEn(cuerpo, r.startContainer, r.startOffset), b = offsetEn(cuerpo, r.endContainer, r.endOffset);
+      sel.removeAllRanges();
+      if (a == null && b == null) return;
+      if (a == null) a = 0;
+      if (b == null) b = d.texto.length;
+      // La selección se ajusta a palabras completas y se descarta si queda vacía.
+      var aj = N.ajustarAPalabras(d.texto, a, b);
+      if (aj.fin <= aj.inicio) { S.consulta.sel = null; renderConsulta(); return; }
+      // Una selección nueva manda sobre un subrayado seleccionado.
+      S.consulta.sel = { documento: docId, inicio: aj.inicio, fin: aj.fin };
+      S.consulta.sub = null;
+      renderConsulta();
+      return;
+    }
+    var sb = e.target.closest && e.target.closest('.ds.sub');
+    S.consulta.sel = null;
+    S.consulta.sub = sb ? sb.getAttribute('data-sb') : null;
+    renderConsulta();
+  }
+
+  function etiquetar(etId) {
+    var m = pruebaEnUso();
+    if (!m || !U.etiqueta(etId)) return;
+    if (S.consulta.sel) {
+      var r = N.agregarSubrayado(m, S.consulta.sel.documento, S.consulta.sel.inicio, S.consulta.sel.fin, etId);
+      S.consulta.sel = null; S.consulta.sub = null;
+      U.guardar(); renderConsulta();
+      if (r) U.aviso('Subrayado: ' + U.etiqueta(etId).nom + (r.absorbidos ? '. Absorbió ' + r.absorbidos + (r.absorbidos === 1 ? ' subrayado' : ' subrayados') + ' que quedaban dentro.' : '.'));
+      return;
+    }
+    if (S.consulta.sub) {
+      var s = m.subrayados.find(function (x) { return x.id === S.consulta.sub; });
+      if (s) { s.etiqueta = etId; U.guardar(); renderConsulta(); }
+      return;
+    }
+    U.aviso('Primero selecciona un fragmento en un documento.');
+  }
+  function quitarSub() {
+    var m = pruebaEnUso();
+    if (!m || !S.consulta.sub) return;
+    m.subrayados = m.subrayados.filter(function (x) { return x.id !== S.consulta.sub; });
+    S.consulta.sub = null;
+    U.guardar(); renderConsulta();
+    U.aviso('Subrayado quitado.');
+  }
+
+  // ───────── Ventana de etiquetas (globales) ─────────
+  function htmlEtiquetas(confirmando) {
+    var h = '<p class="nota">Las etiquetas son las mismas para todas las pruebas. Cambiar un nombre o un color se ve de inmediato en los subrayados ya hechos.</p><div class="et-lista">';
+    if (!S.datos.etiquetas.length) h += '<p class="vacio">No hay etiquetas.</p>';
+    S.datos.etiquetas.forEach(function (e) {
+      var n = N.usosEtiqueta(S.datos, e.id);
+      h += '<div class="et-fila" style="--c:' + N.colorHex(e.color) + '">';
+      if (confirmando === e.id) {
+        h += '<span class="et-aviso">' + (n === 1 ? 'Se perderá 1 subrayado' : 'Se perderán ' + n + ' subrayados') + ' con la etiqueta «' + esc(e.nom) + '».</span><button class="btn chico" data-a="etCancelar">Cancelar</button><button class="btn chico peligro" data-a="etEliminarYa" data-id="' + e.id + '">Eliminar</button>';
+      } else {
+        h += '<span class="punto-c grande"></span><input class="entrada" data-et-nom="' + e.id + '" value="' + esc(e.nom) + '" aria-label="Nombre de la etiqueta">';
+        h += '<span class="colores" role="radiogroup" aria-label="Color">' + N.COLORES.map(function (c) { return '<button class="color' + (c.id === e.color ? ' elegido' : '') + '" role="radio" aria-checked="' + (c.id === e.color) + '" style="--c:' + c.hex + '" data-a="etColor" data-id="' + e.id + '" data-color="' + c.id + '" title="' + c.nombre + '" aria-label="' + c.nombre + '"></button>'; }).join('') + '</span>';
+        h += '<span class="et-n">' + (n ? n + ' subr.' : '') + '</span><button class="btn chico fantasma peligro" data-a="etEliminar" data-id="' + e.id + '">Eliminar</button>';
+      }
+      h += '</div>';
+    });
+    return h + '</div>';
+  }
+  function verEtiquetas(confirmando) {
+    var v = $('velo');
+    if (v && v.getAttribute('data-ventana') === 'etiquetas') { $('ventanaCuerpo').innerHTML = htmlEtiquetas(confirmando); return; }
+    U.ventana('Etiquetas de subrayado', htmlEtiquetas(confirmando), '<button class="btn" data-a="etNueva">Añadir etiqueta</button><span style="flex:1"></span><button class="btn primario" data-a="cerrarVentana">Listo</button>');
+    $('velo').setAttribute('data-ventana', 'etiquetas');
+  }
+  function accionEtiqueta(a, el) {
+    var id = el.getAttribute('data-id'), e = U.etiqueta(id);
+    if (a === 'etColor' && e) { e.color = el.getAttribute('data-color'); tocarEtiqueta(e); }
+    else if (a === 'etNueva') {
+      var usados = S.datos.etiquetas.map(function (x) { return x.color; });
+      var libre = N.COLORES.find(function (c) { return usados.indexOf(c.id) === -1; }) || N.COLORES[S.datos.etiquetas.length % N.COLORES.length];
+      S.datos.etiquetas.push({ id: N.nuevoId('et'), nom: 'Etiqueta nueva', color: libre.id, modificada: U.ahora() });
+    } else if (a === 'etEliminar' && e) {
+      if (N.usosEtiqueta(S.datos, id)) { verEtiquetas(id); return; }
+      N.eliminarEtiqueta(S.datos, id);
+    } else if (a === 'etEliminarYa' && e) {
+      var perdidos = N.eliminarEtiqueta(S.datos, id);
+      U.aviso('Etiqueta eliminada con ' + perdidos + (perdidos === 1 ? ' subrayado.' : ' subrayados.'));
+    }
+    U.guardar(); verEtiquetas(); renderConsulta();
+    if (a === 'etNueva') { var ins = document.querySelectorAll('[data-et-nom]'); var ult = ins[ins.length - 1]; if (ult) { ult.focus(); ult.select(); } }
+  }
+  function renombrarEtiqueta(id, nom) {
+    var e = U.etiqueta(id);
+    if (!e) return;
+    e.nom = nom.trim() || 'Sin nombre';
+    tocarEtiqueta(e);
+    U.guardar(); renderConsulta();
+  }
+
+  // ───────── Visor de imágenes ─────────
+  function verImagen(docId, imgId) {
+    var src = null, nom = '';
+    S.datos.materiales.some(function (m) {
+      return m.documentos.some(function (d) {
+        if (d.id !== docId) return false;
+        var i = (d.imagenes || []).find(function (x) { return x.id === imgId; });
+        if (i) { src = i.src; nom = i.nom; }
+        return !!i;
+      });
+    });
+    if (!imagenSegura(src)) return;
+    var v = document.createElement('div');
+    v.className = 'visor'; v.id = 'visor'; v.setAttribute('role', 'dialog'); v.setAttribute('aria-label', nom || 'Imagen');
+    v.innerHTML = '<img src="' + esc(src) + '" alt="' + esc(nom || 'Imagen') + '"><button class="btn chico" data-a="cerrarVisor">Cerrar</button>';
+    document.body.appendChild(v);
+  }
+  function cerrarVisor() { var v = $('visor'); if (v) { v.remove(); return true; } return false; }
+
+  document.addEventListener('pointerup', function (e) {
+    if (e.target.closest && e.target.closest('#docVista .doc-cuerpo')) setTimeout(function () { alSoltarEnDoc(e); }, 0);
+  });
+  document.addEventListener('click', function (e) {
+    if (e.target.id === 'visor') cerrarVisor();
+  });
+
+  Object.assign(U, { renderConsulta: renderConsulta, etiquetar: etiquetar, quitarSub: quitarSub, verEtiquetas: verEtiquetas,
+    accionEtiqueta: accionEtiqueta, renombrarEtiqueta: renombrarEtiqueta, htmlDoc: htmlDoc, verPruebaLectura: verPruebaLectura,
+    verImagen: verImagen, cerrarVisor: cerrarVisor, imagenSegura: imagenSegura });
 })();
 
 </script>
