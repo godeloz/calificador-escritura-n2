@@ -1,0 +1,2503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Calificación manual · Escritura, nivel 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&display=swap">
+<style>
+:root {
+  --papel: #FCFCFA; --hoja: #FFFFFF; --tinta: #1A1A18; --tinta-2: #55534C; --tinta-3: #8A877E;
+  --linea: #E4E1DA; --linea-2: #F0EEE8; --seleccion: #E6E3DB;
+  --ok: #15803D; --ok-fondo: #E8F5EC; --err: #B91C1C; --err-fondo: #FBECEC;
+  --sit: #1D4ED8; --coh: #B45309; --org: #6D28D9; --cor: #BE185D;
+  --radio: 6px; --cab: 56px; --panel: 420px;
+  --ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Source Serif 4', 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+  --sombra: 0 8px 28px rgba(26, 26, 24, .14), 0 1px 3px rgba(26, 26, 24, .08);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --papel: #16161A; --hoja: #1E1E23; --tinta: #ECEAE4; --tinta-2: #B5B2A9; --tinta-3: #85827A;
+    --linea: #34343B; --linea-2: #28282E; --seleccion: #3A3A42;
+    --ok: #4ADE80; --ok-fondo: #16301F; --err: #F87171; --err-fondo: #3A1C1C;
+    --sit: #7FA2F7; --coh: #E59A55; --org: #B69CFB; --cor: #F07AB6;
+    --sombra: 0 8px 28px rgba(0, 0, 0, .5), 0 1px 3px rgba(0, 0, 0, .4);
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--papel); color: var(--tinta); font: 400 14px/1.5 var(--ui); -webkit-font-smoothing: antialiased; overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--sit); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.f-sit { --f: var(--sit); } .f-coh { --f: var(--coh); } .f-org { --f: var(--org); } .f-cor { --f: var(--cor); }
+
+/* ── Botones ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--hoja); font-weight: 500; font-size: 13px; white-space: nowrap; }
+.btn:hover { border-color: var(--tinta-3); }
+.btn.primario { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.btn.primario:hover { opacity: .9; }
+.btn.peligro { color: var(--err); }
+.btn.fantasma { border-color: transparent; background: transparent; }
+.btn.fantasma:hover { background: var(--linea-2); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btn.chico { height: 26px; padding: 0 8px; font-size: 12px; }
+
+/* ── Cabecera ── */
+.cabecera { height: var(--cab); display: flex; align-items: center; gap: 16px; padding: 0 16px; border-bottom: 1px solid var(--linea); background: var(--hoja); position: relative; z-index: 30; }
+.marca { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.marca b { font-weight: 600; font-size: 14px; }
+.marca span { font-size: 12px; color: var(--tinta-3); }
+.cab-eval { flex: 1; min-width: 0; font-size: 13px; color: var(--tinta-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cab-eval b { color: var(--tinta); font-weight: 500; }
+.cab-total { display: flex; align-items: baseline; gap: 6px; }
+.cifra { font-family: var(--serif); font-size: 28px; font-variant-numeric: tabular-nums lining-nums; font-weight: 500; letter-spacing: -.01em; }
+.cifra-de { font-family: var(--serif); color: var(--tinta-3); font-size: 15px; font-variant-numeric: tabular-nums; }
+.decididos { font-size: 12px; color: var(--tinta-3); margin-left: 6px; white-space: nowrap; }
+.cab-acciones { display: flex; gap: 6px; align-items: center; }
+.menu { position: relative; }
+.menu-lista { position: absolute; right: 0; top: 38px; min-width: 240px; background: var(--hoja); border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: var(--sombra); padding: 4px; z-index: 50; }
+.menu-lista button { display: block; width: 100%; text-align: left; padding: 8px 10px; border: 0; background: none; border-radius: 4px; font-size: 13px; }
+.menu-lista button:hover { background: var(--linea-2); }
+.menu-lista hr { border: 0; border-top: 1px solid var(--linea); margin: 4px 0; }
+.solo-movil { display: none; }
+
+/* ── Aviso superior ── */
+.aviso-sup { display: flex; gap: 12px; align-items: center; padding: 8px 16px; background: var(--linea-2); border-bottom: 1px solid var(--linea); font-size: 13px; }
+
+/* ── Vistas ── */
+.vista { height: calc(100% - var(--cab)); }
+.con-aviso .vista { height: calc(100% - var(--cab) - 45px); }
+
+/* Inicio */
+.inicio { overflow: auto; padding: 32px 24px 64px; }
+.inicio-rejilla { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 32px; }
+.inicio h1 { font-family: var(--serif); font-weight: 500; font-size: 26px; margin: 0 0 4px; letter-spacing: -.01em; }
+.inicio .sub { color: var(--tinta-2); margin: 0 0 20px; max-width: 60ch; }
+.area-texto { width: 100%; min-height: 440px; resize: vertical; padding: 20px 22px; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--hoja); font: 17px/1.8 var(--serif); }
+.contador { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; font-size: 13px; color: var(--tinta-2); font-variant-numeric: tabular-nums; }
+.contador .aviso-norm { color: var(--tinta-3); }
+.campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.campo > span { font-size: 12px; font-weight: 500; color: var(--tinta-2); }
+.campo small { color: var(--tinta-3); font-size: 12px; }
+.entrada { height: 34px; padding: 0 10px; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--hoja); }
+textarea.entrada { height: auto; padding: 8px 10px; resize: vertical; }
+.fila { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.opciones { display: flex; gap: 14px; font-size: 13px; }
+.opciones label { display: flex; gap: 6px; align-items: center; }
+.lista-evals { max-width: 1120px; margin: 40px auto 0; }
+.lista-evals h2 { font-size: 13px; font-weight: 600; margin: 0 0 8px; color: var(--tinta-2); }
+.tabla { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tabla th { text-align: left; font-weight: 500; color: var(--tinta-3); font-size: 12px; padding: 6px 8px; border-bottom: 1px solid var(--linea); }
+.tabla td { padding: 8px; border-bottom: 1px solid var(--linea-2); vertical-align: middle; }
+.tabla td.num { font-family: var(--serif); font-size: 16px; font-variant-numeric: tabular-nums; }
+.tabla tr.abrible { cursor: pointer; }
+.tabla tr.abrible:hover td { background: var(--linea-2); }
+.etiqueta { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 10px; background: var(--linea-2); color: var(--tinta-2); }
+.vacio { color: var(--tinta-3); font-size: 13px; padding: 16px 0; }
+
+/* Marcado */
+.marcado { display: grid; grid-template-columns: minmax(0, 1fr) var(--panel); }
+.marcado.panel-colapsado { grid-template-columns: minmax(0, 1fr) 64px; }
+.col-texto { overflow: auto; position: relative; }
+.herramientas { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; padding: 10px 24px; border-bottom: 1px solid var(--linea-2); font-size: 12px; color: var(--tinta-2); }
+.herramientas label { display: flex; gap: 5px; align-items: center; }
+.herramientas .sep { flex: 1; }
+.hoja { max-width: calc(72ch + 64px); margin: 0 auto; padding: 28px 24px 120px 12px; }
+
+/* Paleta */
+.paleta { position: sticky; top: 0; z-index: 20; background: var(--hoja); border-bottom: 1px solid var(--linea); }
+.paleta-vacia { padding: 10px 24px; font-size: 13px; color: var(--tinta-3); }
+.paleta-abierta { padding: 10px 24px 12px; max-height: 46vh; overflow: auto; }
+.pal-cab { display: flex; gap: 10px; align-items: baseline; margin-bottom: 8px; }
+.pal-tipo { font-size: 12px; font-weight: 600; color: var(--tinta-2); }
+.cita { font-family: var(--serif); font-style: italic; }
+.pal-frag { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; }
+.pal-fila { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.pal-rot { font-size: 11px; color: var(--tinta-3); width: 72px; flex: none; }
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 9px; border: 1px solid var(--linea); border-radius: 14px; background: var(--hoja); font-size: 12.5px; }
+.chip:hover { border-color: var(--f, var(--tinta-3)); background: color-mix(in srgb, var(--f, var(--tinta-3)) 8%, var(--hoja)); }
+.chip .punto-f { width: 8px; height: 8px; border-radius: 50%; background: var(--f); flex: none; }
+.chip .pol { font-weight: 600; }
+.chip .pol.mas { color: var(--ok); } .chip .pol.menos { color: var(--err); }
+.chip kbd, .kbd { font: 500 10.5px var(--ui); color: var(--tinta-3); border: 1px solid var(--linea); border-radius: 3px; padding: 0 4px; line-height: 16px; }
+.chip.doc { border-style: dashed; }
+.pal-filtro { width: 220px; height: 28px; font-size: 12.5px; }
+.pal-secciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; margin-top: 4px; }
+.pal-sec h4 { margin: 0 0 6px; font-size: 11.5px; font-weight: 600; color: var(--tinta-2); }
+.pal-crit { margin-bottom: 8px; }
+.pal-crit > div:first-child { font-size: 11px; color: var(--tinta-3); margin-bottom: 3px; }
+.pal-crit .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.pal-crit .chip { height: 24px; font-size: 12px; padding: 0 7px; }
+.pal-ayuda { font-size: 11.5px; color: var(--tinta-3); margin-top: 6px; }
+
+/* Texto del estudiante */
+.parr { display: grid; grid-template-columns: 52px minmax(0, 1fr); margin-bottom: 1.1em; }
+.margen { display: flex; justify-content: flex-end; align-items: stretch; gap: 3px; padding-right: 10px; position: relative; }
+.asa { align-self: flex-start; width: 22px; height: 22px; margin-top: 4px; border: 0; background: none; color: var(--tinta-3); font-family: var(--serif); font-size: 15px; border-radius: 4px; opacity: .35; }
+.parr:hover .asa, .asa:focus-visible { opacity: 1; }
+.asa:hover { background: var(--linea-2); color: var(--tinta); }
+.barra-m { width: 5px; border: 0; padding: 0; border-radius: 3px; background: var(--f); position: relative; }
+.barra-m.error { background: repeating-linear-gradient(to bottom, var(--f) 0 6px, transparent 6px 10px); }
+.barra-m .num { position: absolute; top: -2px; right: 7px; }
+.ptexto { margin: 0; font: 17px/1.8 var(--serif); max-width: 72ch; white-space: pre-wrap; overflow-wrap: break-word; }
+.ptexto .s { border-radius: 2px; }
+.s.acierto { background: color-mix(in srgb, var(--fa) 17%, transparent); }
+.s.error { text-decoration: underline wavy var(--f); text-decoration-thickness: 1.4px; text-underline-offset: 4px; text-decoration-skip-ink: none; }
+.s.error.grave { text-decoration-thickness: 2.4px; }
+.s.error2 { box-shadow: inset 0 -2px 0 var(--f2); }
+.s.seleccion { background: var(--seleccion); outline: 1px solid var(--tinta-3); }
+.s.prop { outline: 1.5px dotted var(--coh); outline-offset: 1px; cursor: pointer; }
+.s.destello { animation: destello 1.2s ease-out; }
+@keyframes destello { 0%, 30% { background: color-mix(in srgb, var(--f, var(--tinta-3)) 45%, transparent); } }
+.punto { color: var(--f); font-family: var(--ui); font-weight: 700; cursor: pointer; }
+.punto::before { content: attr(data-c); }
+.num { font: 600 9.5px/1 var(--ui); color: var(--f); vertical-align: super; margin-left: 1px; cursor: pointer; user-select: none; -webkit-user-select: none; }
+.num::after { content: attr(data-n); }
+.sin-numeros .num { display: none; }
+.sin-marcas .s.acierto { background: none; }
+.sin-marcas .s.error, .sin-marcas .s.error2 { text-decoration: none; box-shadow: none; }
+.sin-marcas .punto, .sin-marcas .barra-m, .sin-marcas .num { visibility: hidden; }
+.leyenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--tinta-3); padding: 0 0 18px 52px; }
+.leyenda span { display: inline-flex; align-items: center; gap: 5px; }
+.leyenda i { width: 10px; height: 10px; border-radius: 50%; background: var(--f); display: inline-block; }
+
+/* Panel de rúbrica */
+.panel { border-left: 1px solid var(--linea); background: var(--hoja); overflow: auto; }
+.panel-cab { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--hoja); border-bottom: 1px solid var(--linea); }
+.panel-cab b { font-size: 13px; font-weight: 600; }
+.desc { border-bottom: 1px solid var(--linea); }
+.desc-cab { display: flex; gap: 10px; align-items: baseline; padding: 14px 14px 8px; border-left: 3px solid var(--f); }
+.desc-cab .n { flex: 1; font-size: 12.5px; font-weight: 600; }
+.desc-cab .n small { display: block; font-weight: 400; color: var(--tinta-3); font-size: 11.5px; }
+.desc-cab .st { font-family: var(--serif); font-size: 15px; font-variant-numeric: tabular-nums; color: var(--tinta-2); white-space: nowrap; }
+.tarjeta { padding: 10px 14px 12px 17px; border-top: 1px solid var(--linea-2); font-size: 12.5px; }
+.tarjeta.enfocada { background: color-mix(in srgb, var(--f) 5%, var(--hoja)); }
+.t-cab { display: flex; gap: 8px; align-items: flex-start; }
+.t-nombre { flex: 1; font-weight: 500; font-size: 13px; line-height: 1.35; }
+.t-conteo { font-size: 11.5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.t-conteo .mas { color: var(--ok); } .t-conteo .menos { color: var(--err); margin-left: 6px; }
+.t-sug { margin: 6px 0 8px; color: var(--tinta-2); line-height: 1.4; }
+.t-sug b { font-weight: 600; color: var(--tinta); }
+.t-sug.falta { color: var(--tinta-3); font-style: italic; }
+.t-niveles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.nv { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 5px 2px; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--hoja); font-size: 11.5px; line-height: 1.25; }
+.nv .p { font-family: var(--serif); font-size: 13px; color: var(--tinta-3); font-variant-numeric: tabular-nums; }
+.nv:hover { border-color: var(--tinta-3); }
+.nv.sugerido { border-style: dashed; border-color: var(--f); }
+.nv.elegido { background: var(--f); border-color: var(--f); color: #fff; }
+.nv.elegido .p { color: rgba(255, 255, 255, .85); }
+@media (prefers-color-scheme: dark) { .nv.elegido { color: #16161A; } .nv.elegido .p { color: rgba(22, 22, 26, .8); } }
+.t-decision { margin-top: 8px; padding: 8px 10px; border-radius: var(--radio); background: var(--linea-2); }
+.t-decision .pt { font-family: var(--serif); font-size: 14px; font-variant-numeric: tabular-nums; }
+.t-decision p { margin: 4px 0 0; color: var(--tinta-2); line-height: 1.45; }
+.incompleto { display: inline-block; margin-left: 4px; font-size: 11px; color: var(--coh); }
+.desvio { margin-top: 8px; }
+.desvio input { width: 100%; }
+.t-mas { margin-top: 8px; }
+.t-mas summary { cursor: pointer; color: var(--tinta-2); font-size: 12px; list-style: none; }
+.t-mas summary::-webkit-details-marker { display: none; }
+.t-mas summary::before { content: '▸ '; color: var(--tinta-3); }
+.t-mas[open] summary::before { content: '▾ '; }
+.ev-lista { list-style: none; margin: 6px 0 0; padding: 0; }
+.ev-lista li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 4px 6px; padding: 5px 0; border-top: 1px solid var(--linea-2); cursor: pointer; }
+.ev-lista li:hover { background: var(--linea-2); }
+.ev-lista .n { font: 600 10.5px var(--ui); color: var(--f); padding-top: 2px; text-align: right; }
+.ev-lista .fr { color: var(--tinta-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev-lista .co { grid-column: 2; color: var(--tinta-3); font-size: 11.5px; }
+.generales { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.general { display: flex; flex-direction: column; gap: 4px; padding: 6px 8px; border: 1px dashed var(--err); border-radius: var(--radio); background: var(--err-fondo); }
+.general .fila { justify-content: space-between; }
+.solo-toggle { font-size: 12px; color: var(--tinta-2); display: flex; gap: 6px; align-items: center; margin-top: 8px; }
+.recs { padding: 16px 14px 40px; border-top: 1px solid var(--linea); }
+.recs h3 { font-size: 13px; margin: 0 0 8px; font-weight: 600; }
+.recs h4 { font-size: 12px; margin: 14px 0 6px; font-weight: 500; color: var(--tinta-2); }
+.rec { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; font-size: 12.5px; padding: 6px 0; line-height: 1.45; }
+.rec.excluida { opacity: .45; }
+.rec small { display: block; color: var(--tinta-3); font-size: 11px; }
+.recs textarea { width: 100%; min-height: 90px; margin-top: 6px; }
+
+/* Panel contraído */
+.tira { display: flex; flex-direction: column; gap: 4px; padding: 8px 6px; }
+.tira button { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 2px; border: 1px solid var(--linea); border-left: 3px solid var(--f); border-radius: 4px; background: var(--hoja); font-size: 10.5px; line-height: 1.2; }
+.tira .nv-i { font-weight: 600; font-size: 11px; }
+.tira .nv-i.no { color: var(--tinta-3); font-weight: 400; }
+.tira .cn { color: var(--tinta-3); }
+
+/* Emergentes */
+.velo { position: fixed; inset: 0; background: rgba(20, 20, 18, .28); z-index: 60; display: flex; align-items: flex-start; justify-content: center; padding: 6vh 16px; overflow: auto; }
+.modal { width: 100%; max-width: 640px; background: var(--hoja); border-radius: 10px; box-shadow: var(--sombra); border: 1px solid var(--linea); }
+.modal.ancho { max-width: 880px; }
+.modal-cab { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--linea); }
+.modal-cab h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.modal-cuerpo { padding: 16px 18px; }
+.modal-pie { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--linea); flex-wrap: wrap; }
+.modal p { line-height: 1.55; }
+.nota { font-size: 12.5px; color: var(--tinta-2); background: var(--linea-2); border-radius: var(--radio); padding: 10px 12px; }
+.nota.alerta { background: var(--err-fondo); color: var(--tinta); }
+.editor-marca { position: fixed; z-index: 55; width: 340px; background: var(--hoja); border: 1px solid var(--linea); border-top: 3px solid var(--f); border-radius: var(--radio); box-shadow: var(--sombra); padding: 12px 14px; font-size: 12.5px; }
+.editor-marca .cita { font-size: 15px; display: block; margin-bottom: 8px; max-height: 5.5em; overflow: auto; }
+.editor-marca select, .editor-marca textarea { width: 100%; }
+.editor-marca .campo { margin-bottom: 10px; }
+.grav { display: flex; gap: 4px; flex-wrap: wrap; }
+.grav label { display: flex; gap: 4px; align-items: center; padding: 3px 7px; border: 1px solid var(--linea); border-radius: 12px; font-size: 11.5px; }
+.grav label:has(input:checked) { border-color: var(--f); background: color-mix(in srgb, var(--f) 12%, transparent); }
+.umb-grupo { margin-bottom: 14px; }
+.umb-grupo h3 { font-size: 12px; font-weight: 600; margin: 0 0 6px; color: var(--tinta-2); }
+.umb { display: grid; grid-template-columns: minmax(0, 1fr) 76px; gap: 8px; align-items: center; padding: 3px 0; font-size: 12.5px; }
+.umb input { height: 28px; text-align: right; }
+.doc-ed { border: 1px solid var(--linea); border-radius: var(--radio); padding: 10px; margin-bottom: 10px; }
+.doc-ed textarea { width: 100%; min-height: 110px; font: 14px/1.6 var(--serif); }
+.pestanas { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+.pestanas button { border: 1px solid var(--linea); background: var(--hoja); border-radius: 14px; padding: 3px 10px; font-size: 12px; }
+.pestanas button.activa { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.doc-texto { font: 16px/1.75 var(--serif); white-space: pre-wrap; max-width: 72ch; }
+.aviso { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--tinta); color: var(--papel); padding: 9px 14px; border-radius: var(--radio); font-size: 13px; z-index: 80; box-shadow: var(--sombra); max-width: calc(100% - 32px); }
+.fab { display: none; }
+#impresion { display: none; }
+
+/* ── Móvil ── */
+@media (max-width: 860px) {
+  body { font-size: 15px; }
+  .cabecera { gap: 8px; padding: 0 10px; }
+  .marca span, .cab-eval, .decididos, .solo-escritorio { display: none; }
+  .solo-movil { display: inline-flex; }
+  .cifra { font-size: 22px; }
+  .inicio { padding: 20px 14px 80px; }
+  .inicio-rejilla { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .area-texto { min-height: 300px; padding: 14px; font-size: 16px; }
+  .marcado, .marcado.panel-colapsado { grid-template-columns: minmax(0, 1fr); }
+  .herramientas { padding: 8px 12px; }
+  .hoja { padding: 16px 12px 140px 0; }
+  .parr { grid-template-columns: 30px minmax(0, 1fr); }
+  .margen { padding-right: 6px; }
+  .leyenda { padding-left: 30px; }
+  .ptexto { font-size: 16.5px; }
+  .panel { position: fixed; inset: var(--cab) 0 0 0; z-index: 40; border-left: 0; display: none; }
+  .panel.abierto-movil { display: block; }
+  .paleta.con-seleccion { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 45; border-top: 1px solid var(--linea); border-bottom: 0; box-shadow: var(--sombra); border-radius: 12px 12px 0 0; }
+  .paleta-abierta { max-height: 55vh; padding: 12px 14px 20px; }
+  .pal-secciones { grid-template-columns: minmax(0, 1fr); }
+  .pal-filtro { width: 100%; }
+  .pal-rot { width: 100%; }
+  .chip { height: 34px; font-size: 13.5px; }
+  .pal-crit .chip { height: 32px; font-size: 13px; }
+  .chip kbd, .pal-cab .kbd, .pal-ayuda, .editor-marca .kbd { display: none; }
+  .nv { padding: 8px 2px; font-size: 12px; }
+  .fab { display: flex; position: fixed; right: 14px; bottom: 16px; z-index: 35; align-items: baseline; gap: 4px; height: 48px; padding: 0 16px; border-radius: 24px; border: 0; background: var(--tinta); color: var(--papel); box-shadow: var(--sombra); }
+  .fab .cifra { font-size: 20px; }
+  .fab small { font-size: 11px; opacity: .8; }
+  .editor-marca { left: 8px !important; right: 8px; top: auto !important; bottom: 8px; width: auto; max-height: 70vh; overflow: auto; }
+  .velo { padding: 0; }
+  .modal { border-radius: 0; min-height: 100%; }
+  .aviso { bottom: 76px; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ── Impresión ── */
+@media print {
+  @page { margin: 16mm 16mm 18mm; }
+  html, body { height: auto; overflow: visible; background: #fff; color: #111; }
+  body > *:not(#impresion) { display: none !important; }
+  #impresion { display: block; font: 10.5pt/1.5 var(--ui); color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { --sit: #1D4ED8; --coh: #B45309; --org: #6D28D9; --cor: #BE185D; --ok: #15803D; --err: #B91C1C; --linea: #ddd; --linea-2: #eee; --tinta-2: #444; --tinta-3: #777; }
+}
+.imp h1 { font: 500 20pt/1.2 var(--serif); margin: 0 0 2pt; }
+.imp .meta { color: #555; margin-bottom: 12pt; }
+.imp .tot { font: 500 26pt var(--serif); font-variant-numeric: tabular-nums; }
+.imp h2 { font: 600 12pt var(--ui); margin: 18pt 0 6pt; break-after: avoid; }
+.imp h3 { break-after: avoid; }
+.imp .tabla-res { table-layout: fixed; }
+.imp .tabla-res th:nth-child(1) { width: 30%; }
+.imp .tabla-res th:nth-child(2) { width: 12%; }
+.imp .tabla-res th:nth-child(3) { width: 11%; }
+.imp .tabla-res th:nth-child(4) { width: 47%; }
+.imp table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+.imp th, .imp td { text-align: left; vertical-align: top; padding: 5pt 6pt; border-bottom: 1px solid #ddd; }
+.imp th { font-weight: 600; color: #444; }
+.imp tr { break-inside: avoid; }
+.imp .grupo td { background: #f4f4f2; font-weight: 600; }
+.imp .grupo td:first-child { border-left: 3px solid var(--f); }
+.imp .pts { font-family: var(--serif); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.imp .texto-imp .ptexto { font-size: 11.5pt; line-height: 1.75; max-width: none; }
+.imp .texto-imp .parr { grid-template-columns: 22pt minmax(0, 1fr); margin-bottom: 7pt; break-inside: auto; }
+.imp .texto-imp .asa { display: none; }
+.imp .ev-imp { margin: 0 0 8pt; padding-left: 0; list-style: none; font-size: 9.5pt; }
+.imp .ev-imp li { padding: 2pt 0; break-inside: avoid; }
+.imp .ev-imp .n { display: inline-block; min-width: 18pt; font-weight: 600; color: var(--f); }
+.imp .rec-imp li { margin-bottom: 5pt; }
+.imp .nota-imp { font-size: 9pt; color: #666; }
+
+</style>
+</head>
+<body>
+<header class="cabecera" id="cabecera"></header>
+<div id="avisoSup"></div>
+<main class="vista inicio" id="vistaInicio"></main>
+<main class="vista marcado" id="vistaMarcado" hidden>
+  <section class="col-texto" id="colTexto">
+    <div class="paleta" id="paleta"></div>
+    <div class="herramientas" id="herramientas"></div>
+    <div class="hoja"><div id="leyenda"></div><article id="texto" aria-label="Texto del estudiante"></article></div>
+  </section>
+  <aside class="panel" id="panel" aria-label="Rúbrica"></aside>
+</main>
+<button class="fab" id="fab" hidden></button>
+<div id="emergentes"></div>
+<div id="impresion"></div>
+<script type="application/json" id="n2-publico">{"evaluaciones":[]}</script>
+<script type="application/json" id="n2-cifrado">null</script>
+<script>
+/* Núcleo lógico de la herramienta manual de calificación, escritura nivel 2.
+   Sin DOM. Se ejecuta igual en el navegador y en Node (pruebas). */
+(function (global) {
+  'use strict';
+
+  // ───────────────────────── Rúbrica (textos literales de la fuente) ─────────────────────────
+  var COMPETENCIA = 'Escribe textos expositivos y argumentativos con corrección, claridad y persuasión.';
+
+  var DESCRIPTORES = [
+    { id: 'd1', familia: 'sit', nombre: 'Adapta el texto a la situación comunicativa.', corto: 'Situación comunicativa' },
+    { id: 'd2', familia: 'coh', nombre: 'Mantiene la continuidad entre las ideas mediante mecanismos de cohesión textual.', corto: 'Cohesión' },
+    { id: 'd3', familia: 'org', nombre: 'Organiza las partes del texto de manera que sean coherentes entre sí.', corto: 'Organización' },
+    { id: 'd4', familia: 'cor', nombre: 'Redacta textos con corrección gramatical.', corto: 'Corrección gramatical' }
+  ];
+
+  var NIVELES = ['experto', 'avanzado', 'intermedio', 'inicial'];
+  var NOMBRE_NIVEL = { experto: 'Experto', avanzado: 'Avanzado', intermedio: 'Intermedio', inicial: 'Inicial' };
+
+  // valores: puntaje por nivel, tal como quedó en el CSV ponderado (peso × 1 / 0,66 / 0,33 / 0, a dos decimales)
+  var RUBRICA = [
+    { id: 'c1', d: 'd1', corto: 'Postura', peso: 0.40,
+      nombre: 'Formula una postura clara frente al tema propuesto de acuerdo con el propósito comunicativo.',
+      valores: { experto: 0.40, avanzado: 0.26, intermedio: 0.13, inicial: 0 },
+      niveles: {
+        experto: 'El texto presenta, desde el párrafo introductorio, una postura explícita y comprensible frente a la situación controversial planteada.',
+        avanzado: 'El texto presenta una postura explícita y comprensible frente a la situación controversial planteada, pero esta aparece en una parte distinta del párrafo introductorio. La posición defendida es reconocible, aunque su ubicación retrasa la orientación del lector.',
+        intermedio: 'El texto permite inferir una postura frente a la situación controversial planteada, pero esta no está formulada de manera explícita. La posición del autor se reconoce a partir de valoraciones dispersas.',
+        inicial: 'El texto no expresa ni permite inferir una postura comprensible frente a la situación controversial planteada.'
+      } },
+    { id: 'c2', d: 'd1', corto: 'Justificación', peso: 0.75,
+      nombre: 'Justifica su postura mediante razones de acuerdo con los criterios del género.',
+      valores: { experto: 0.75, avanzado: 0.50, intermedio: 0.25, inicial: 0 },
+      niveles: {
+        experto: 'Justifica su postura mediante razones desarrolladas y pertinentes frente a la situación controversial planteada. Las razones utilizan de manera explícita información de los insumos proporcionados como evidencia relevante para sustentar sus argumentos. El lector puede comprender cómo esas razones conducen a la postura defendida.',
+        avanzado: 'Justifica su postura mediante razones desarrolladas y pertinentes frente a la situación controversial planteada, de manera que el lector puede comprender cómo esas razones conducen a la postura defendida. El texto, sin embargo, no se refiere explícitamente a la información de los insumos proporcionados.',
+        intermedio: 'Justifica su postura mediante razones pertinentes frente a la situación controversial planteada. El lector no siempre puede comprender con claridad cómo esa información conduce a la postura defendida.',
+        inicial: 'No justifica su postura mediante razones desarrolladas ni pertinentes frente a la situación controversial planteada. El lector no es capaz de comprender con claridad cómo esa información conduce a la postura defendida.'
+      } },
+    { id: 'c3', d: 'd1', corto: 'Rol comunicativo', peso: 0.25,
+      nombre: 'Adopta un rol comunicativo adecuado en el texto, considerando el propósito y el destinatario.',
+      valores: { experto: 0.25, avanzado: 0.17, intermedio: 0.08, inicial: 0 },
+      niveles: {
+        experto: 'Asume de manera clara y consistente el rol asignado, desde una voz situada que se dirige a un destinatario que debe tomar una decisión. Utiliza un tono y un registro que corresponden al rol.',
+        avanzado: 'Asume de manera clara el rol asignado, desde una voz situada que se dirige a un destinatario que debe tomar una decisión, sin embargo no es consistente a lo largo del texto. El tono y el registro corresponden al rol pero presenta algunas imprecisiones',
+        intermedio: 'Asume el rol asignado pero no se dirige a un destinatario que debe tomar una decisión. El tono y el registro no siempre corresponden al rol.',
+        inicial: 'No logra asumir el rol asignado. El tono y el registro no corresponden al rol.'
+      } },
+    { id: 'c4', d: 'd1', corto: 'Refutación', peso: 0.40,
+      nombre: 'Refuta una postura contraria a la defendida',
+      valores: { experto: 0.40, avanzado: 0.26, intermedio: 0.13, inicial: 0 },
+      niveles: {
+        experto: 'Teniendo en cuenta las posturas presentadas en el caso, el texto retoma una postura contraria a la defendida y alguna de sus razones para refutarla. El texto refuta una de las razones de esa postura o presenta nuevas razones en su contra.',
+        avanzado: 'Teniendo en cuenta las posturas presentadas en el caso, el texto retoma una postura contraria a la defendida para refutarla. El texto presenta razones en contra de esta posición, pero no tiene en cuenta ninguna de las razones que la soportan.',
+        intermedio: 'Teniendo en cuenta las posturas presentadas en el caso, el texto menciona una postura contraria a la defendida, pero no elabora una refutación evidente ni presenta nuevas razones en su contra.',
+        inicial: 'El texto no tiene en cuenta las posturas presentadas en el caso, o no reconoce una postura contraria a la defendida.'
+      } },
+    { id: 'c5', d: 'd1', corto: 'Extensión', peso: 0.20, automatico: true,
+      nombre: 'Adecúa la extensión del texto a la situación comunicativa.',
+      valores: { experto: 0.20, avanzado: 0.13, intermedio: 0.07, inicial: 0 },
+      niveles: {
+        experto: 'El texto ajusta su extensión al rango establecido de 500 a 550 palabras.',
+        avanzado: 'El texto presenta una extensión de 470 a 499 palabras o de 551 a 580 palabras.',
+        intermedio: 'El texto presenta una extensión de 440 a 469 palabras o de 581 a 610 palabras.',
+        inicial: 'El texto presenta menos de 440 palabras o más de 610 palabras.'
+      } },
+    { id: 'c6', d: 'd2', corto: 'Puntuación', peso: 0.30,
+      nombre: 'Organiza las ideas mediante el uso de los signos de puntuación de acuerdo con la norma.',
+      valores: { experto: 0.30, avanzado: 0.20, intermedio: 0.10, inicial: 0 },
+      niveles: {
+        experto: 'Organiza las ideas del texto mediante un uso adecuado y consistente de los signos de puntuación. La puntuación segmenta correctamente las oraciones y establece relaciones entre las ideas, lo que favorece una lectura fluida y una comprensión clara del texto.',
+        avanzado: 'Organiza las ideas del texto mediante un uso adecuado de los signos de puntuación. Aunque presenta algunos errores en la segmentación de las oraciones, estos no afectan la comprensión del texto.',
+        intermedio: 'La puntuación afecta la organización de algunas partes del texto. Los errores en la segmentación de las oraciones y en la relación entre las ideas obligan a releer algunos fragmentos para comprenderlos.',
+        inicial: 'Los errores recurrentes de puntuación afectan la segmentación de las oraciones y la relación entre las ideas, de manera que la relectura no es suficiente para comprender varias partes del texto.'
+      } },
+    { id: 'c7', d: 'd2', corto: 'Marcadores discursivos', peso: 0.35,
+      nombre: 'Enlaza ideas, oraciones y párrafos mediante marcadores discursivos.',
+      valores: { experto: 0.35, avanzado: 0.23, intermedio: 0.12, inicial: 0 },
+      niveles: {
+        experto: 'El texto enlaza ideas, oraciones y párrafos mediante marcadores discursivos pertinentes y diversos de manera consistente. Estos recursos permiten al lector identificar las relaciones lógicas y comprender el sentido global del texto.',
+        avanzado: 'El texto enlaza ideas, oraciones y párrafos mediante marcadores discursivos pertinentes de manera consistente. Estos permiten al lector identificar las relaciones lógicas principales y comprender el sentido global del texto, aunque algunas reiteraciones reducen su fluidez.',
+        intermedio: 'El texto enlaza ideas, oraciones y párrafos mediante marcadores discursivos, aunque de manera inconsistente. Varias relaciones se expresan mediante marcadores repetitivos o poco pertinentes, lo que obliga a releer ciertos fragmentos para comprender la conexión entre las ideas.',
+        inicial: 'El texto presenta dificultades para enlazar ideas, oraciones y párrafos mediante marcadores discursivos pertinentes y diversos. Esto dificulta identificar las relaciones lógicas y comprender la continuidad del texto.'
+      } },
+    { id: 'c8', d: 'd2', corto: 'Relaciones léxicas y sintácticas', peso: 0.35,
+      nombre: 'Enlaza ideas, oraciones y párrafos mediante relaciones léxicas y sintácticas.',
+      valores: { experto: 0.35, avanzado: 0.23, intermedio: 0.12, inicial: 0 },
+      niveles: {
+        experto: 'El texto mantiene la continuidad entre ideas y elementos ya mencionados mediante el uso preciso de relaciones léxicas y sintácticas que evitan repeticiones innecesarias. Estos recursos permiten seguir el desarrollo del texto con fluidez y reconocer la relación entre sus partes.',
+        avanzado: 'El texto mantiene la continuidad mediante relaciones léxicas y sintácticas precisas en la mayoría de los casos. Aunque presenta algunas repeticiones innecesarias, estas no impiden seguir el desarrollo del texto con fluidez ni reconocer la relación entre sus partes.',
+        intermedio: 'La continuidad del texto presenta algunas dificultades debido al uso poco preciso de las relaciones léxicas y sintácticas. Las repeticiones innecesarias recurrentes impiden seguir el desarrollo del texto con fluidez, por lo que es necesaria una relectura para comprenderlo.',
+        inicial: 'El texto presenta relaciones léxicas y sintácticas imprecisas, acompañadas de repeticiones innecesarias recurrentes. Estas dificultades impiden seguir el desarrollo del texto con fluidez y reconocer la relación entre sus partes.'
+      } },
+    { id: 'c9', d: 'd3', corto: 'Progresión temática', peso: 0.70,
+      nombre: 'Organiza la información siguiendo una progresión temática.',
+      valores: { experto: 0.70, avanzado: 0.46, intermedio: 0.23, inicial: 0 },
+      niveles: {
+        experto: 'Organiza la información en una secuencia en la que cada parte retoma la anterior y aporta nueva información. La comprensión del texto se logra porque este desarrolla el tema sin saltos, repeticiones innecesarias ni cambios abruptos de foco.',
+        avanzado: 'La organización de la información presenta saltos temáticos, repeticiones innecesarias o cambios de foco en la secuencia del texto, pero estos no afectan la comprensión general.',
+        intermedio: 'La organización de la información presenta saltos temáticos, repeticiones innecesarias o cambios abruptos de foco en la secuencia del texto, los cuales obligan a releerlo para comprenderlo.',
+        inicial: 'La organización de la información presenta saltos temáticos, repeticiones innecesarias o cambios abruptos de foco con tal recurrencia que impiden comprender el texto.'
+      } },
+    { id: 'c10', d: 'd3', corto: 'Párrafos', peso: 0.30,
+      nombre: 'Desarrolla el texto mediante párrafos diferenciados según su función.',
+      valores: { experto: 0.30, avanzado: 0.20, intermedio: 0.10, inicial: 0 },
+      niveles: {
+        experto: 'Desarrolla el texto mediante al menos tres párrafos diferenciados según su función: apertura, desarrollo y cierre.',
+        avanzado: 'Desarrolla el texto mediante al menos tres párrafos, pero uno de ellos no cumple su función.',
+        intermedio: 'Desarrolla el texto mediante al menos tres párrafos, pero dos de ellos no cumplen su función.',
+        inicial: 'El texto presenta menos de tres párrafos o ninguno de los párrafos presentados cumple su función.'
+      } },
+    { id: 'c11', d: 'd4', corto: 'Acentuación', peso: 0.25,
+      nombre: 'Aplica las normas de acentuación en la escritura de palabras.',
+      valores: { experto: 0.25, avanzado: 0.17, intermedio: 0.08, inicial: 0 },
+      niveles: {
+        experto: 'El texto aplica de manera consistente las normas de acentuación en los distintos usos de la tilde, lo que facilita la fluidez de la lectura.',
+        avanzado: 'El texto aplica, en general, las normas de acentuación. Presenta fallas puntuales y no sistemáticas, sin evidenciar un desconocimiento sostenido de una regla. La corrección global y la fluidez de la lectura se mantienen.',
+        intermedio: 'El texto presenta errores recurrentes en una misma norma de acentuación. Esta recurrencia afecta la corrección del texto y evidencia vacilación en la aplicación de las normas.',
+        inicial: 'El texto presenta errores frecuentes o sistemáticos de acentuación. Las fallas evidencian dificultades para aplicar las normas básicas. Esta situación compromete la corrección general y genera interrupciones reiteradas durante la lectura.'
+      } },
+    { id: 'c12', d: 'd4', corto: 'Ortografía', peso: 0.30,
+      nombre: 'Aplica correctamente las normas ortográficas.',
+      valores: { experto: 0.30, avanzado: 0.20, intermedio: 0.10, inicial: 0 },
+      niveles: {
+        experto: 'El texto aplica de manera consistente las normas ortográficas en la escritura de las palabras, lo que facilita la fluidez de la lectura.',
+        avanzado: 'El texto aplica, en general, las normas ortográficas. Presenta fallas puntuales y no sistemáticas en palabras específicas, en el uso de mayúsculas o en la unión o separación de palabras. Estas fallas no comprometen la corrección global ni la fluidez de la lectura.',
+        intermedio: 'El texto presenta errores ortográficos recurrentes en una misma regla. Esta recurrencia afecta la corrección del texto y evidencia vacilación en la aplicación de las normas.',
+        inicial: 'El texto presenta errores ortográficos frecuentes o sistemáticos que evidencian dificultades para aplicar las normas básicas. Esta situación compromete la corrección general y genera interferencias reiteradas durante la lectura.'
+      } },
+    { id: 'c13', d: 'd4', corto: 'Gramática', peso: 0.45,
+      nombre: 'Emplea oraciones gramaticalmente correctas según la norma.',
+      valores: { experto: 0.45, avanzado: 0.30, intermedio: 0.15, inicial: 0 },
+      incompletos: ['experto', 'avanzado', 'inicial'],
+      niveles: {
+        experto: 'El texto construye oraciones completas y gramaticalmente correctas de manera consistente. Mantiene la concordancia, el uso normativo de tiempos verbales, preposiciones y pronombres, y',
+        avanzado: 'El texto construye, en general, oraciones completas y gramaticalmente correctas. Presenta fallas puntuales y no sistemáticas de concordancia, tiempos verbales, preposiciones, pronombres u orden sintáctico,',
+        intermedio: 'El texto presenta errores gramaticales recurrentes. Las fallas se repiten en una misma estructura. Esta recurrencia obliga a releer algunos fragmentos para comprenderlos.',
+        inicial: 'El texto presenta errores gramaticales frecuentes o sistemáticos. Las fallas afectan la construcción de varias oraciones y dificultan reconocer la relación entre sus elementos. Esta situación compromete la'
+      } }
+  ];
+
+  var CRIT = {};
+  RUBRICA.forEach(function (c) { CRIT[c.id] = c; });
+  var DESC = {};
+  DESCRIPTORES.forEach(function (d) { DESC[d.id] = d; });
+  function familiaDe(cid) { return DESC[CRIT[cid].d].familia; }
+
+  // ───────────────────────── Catálogo de evidencias ─────────────────────────
+  // ancla: 'sel' la selección · 'parrafo' el párrafo entero · 'punto' un punto al final de la selección · 'inicio' el inicio del párrafo
+  // tam: tamaños de selección para los que se sugiere: hueco, signo, palabra, frase, parrafo
+  // grav: escala de gravedad · extra: dato adicional (insumo, funcion) · doc: documental (no mueve la sugerencia)
+  var GRAVEDADES = {
+    punt: ['No afecta la comprensión', 'Obliga a releer', 'La relectura no basta'],
+    prog: ['No afecta la comprensión', 'Obliga a releer', 'Impide comprender'],
+    gram: ['No compromete la comprensión', 'Obliga a releer']
+  };
+  var FUNCIONES = ['apertura', 'desarrollo', 'cierre'];
+  var INSUMOS_DEF = ['Actor 1', 'Actor 2', 'Actor 3', 'Información complementaria'];
+
+  var SECCIONES = [
+    { id: 'correccion', nombre: 'Corrección', criterios: ['c11', 'c12', 'c13'] },
+    { id: 'cohesion', nombre: 'Cohesión y organización', criterios: ['c6', 'c7', 'c8', 'c9', 'c10'] },
+    { id: 'contenido', nombre: 'Contenido', criterios: ['c1', 'c2', 'c3', 'c4'] }
+  ];
+
+  var CATALOGO = [
+    // Postura
+    { id: 'c1.explicita', c: 'c1', pol: '+', nombre: 'Postura explícita', ancla: 'sel', tam: ['frase', 'parrafo'], tecla: 'X' },
+    { id: 'c1.implicita', c: 'c1', pol: '-', nombre: 'Postura solo inferible', ancla: 'sel', tam: ['frase', 'parrafo'] },
+    { id: 'c1.contradictoria', c: 'c1', pol: '-', nombre: 'Valoración contradictoria', ancla: 'sel', tam: ['frase'], doc: true },
+    { id: 'c1.noidentificable', c: 'c1', pol: '-', nombre: 'Postura no identificable', general: true },
+    // Justificación
+    { id: 'c2.razonInsumo', c: 'c2', pol: '+', nombre: 'Razón desarrollada con insumos', ancla: 'sel', tam: ['frase', 'parrafo'], extra: 'insumo', tecla: 'Q' },
+    { id: 'c2.razon', c: 'c2', pol: '+', nombre: 'Razón desarrollada sin referir insumos', ancla: 'sel', tam: ['frase', 'parrafo'] },
+    { id: 'c2.enunciada', c: 'c2', pol: '-', nombre: 'Razón solo enunciada', ancla: 'sel', tam: ['frase'] },
+    { id: 'c2.relacion', c: 'c2', pol: '-', nombre: 'No se ve cómo conduce a la postura', ancla: 'sel', tam: ['frase', 'parrafo'] },
+    { id: 'c2.impertinente', c: 'c2', pol: '-', nombre: 'Razón no pertinente', ancla: 'sel', tam: ['frase', 'parrafo'] },
+    { id: 'c2.nojustifica', c: 'c2', pol: '-', nombre: 'No justifica la postura', general: true },
+    // Rol
+    { id: 'c3.voz', c: 'c3', pol: '+', nombre: 'Voz situada en el rol', ancla: 'sel', tam: ['palabra', 'frase'] },
+    { id: 'c3.destinatario', c: 'c3', pol: '+', nombre: 'Se dirige a quien decide', ancla: 'sel', tam: ['palabra', 'frase'] },
+    { id: 'c3.cambio', c: 'c3', pol: '-', nombre: 'Rol no sostenido', ancla: 'sel', tam: ['frase', 'parrafo'] },
+    { id: 'c3.tono', c: 'c3', pol: '-', nombre: 'Tono o registro que no corresponde', ancla: 'sel', tam: ['palabra', 'frase'] },
+    { id: 'c3.noasume', c: 'c3', pol: '-', nombre: 'No asume el rol asignado', general: true },
+    { id: 'c3.sindestinatario', c: 'c3', pol: '-', nombre: 'No se dirige a quien decide', general: true },
+    // Refutación
+    { id: 'c4.postura', c: 'c4', pol: '+', nombre: 'Retoma la postura contraria', ancla: 'sel', tam: ['frase', 'parrafo'] },
+    { id: 'c4.razon', c: 'c4', pol: '+', nombre: 'Retoma una razón de esa postura', ancla: 'sel', tam: ['frase'] },
+    { id: 'c4.refuta', c: 'c4', pol: '+', nombre: 'Refuta o da razones en contra', ancla: 'sel', tam: ['frase', 'parrafo'] },
+    { id: 'c4.mencion', c: 'c4', pol: '-', nombre: 'Postura contraria solo mencionada', ancla: 'sel', tam: ['frase'] },
+    { id: 'c4.noreconoce', c: 'c4', pol: '-', nombre: 'No reconoce una postura contraria', general: true },
+    // Puntuación
+    { id: 'c6.falta', c: 'c6', pol: '-', nombre: 'Falta signo', ancla: 'punto', tam: ['hueco', 'palabra'], grav: 'punt', tecla: 'P' },
+    { id: 'c6.sobrante', c: 'c6', pol: '-', nombre: 'Signo sobrante', ancla: 'sel', tam: ['signo'], grav: 'punt', tecla: 'S' },
+    { id: 'c6.sujetoverbo', c: 'c6', pol: '-', nombre: 'Coma entre sujeto y verbo', ancla: 'sel', tam: ['signo'], grav: 'punt' },
+    { id: 'c6.fusionadas', c: 'c6', pol: '-', nombre: 'Oraciones fusionadas', ancla: 'sel', tam: ['frase'], grav: 'punt', tecla: 'F' },
+    { id: 'c6.equivocado', c: 'c6', pol: '-', nombre: 'Signo equivocado', ancla: 'sel', tam: ['signo'], grav: 'punt' },
+    // Marcadores
+    { id: 'c7.pertinente', c: 'c7', pol: '+', nombre: 'Marcador pertinente', ancla: 'sel', tam: ['palabra', 'frase'], tecla: 'K' },
+    { id: 'c7.equivocado', c: 'c7', pol: '-', nombre: 'Relación lógica equivocada', ancla: 'sel', tam: ['palabra', 'frase'] },
+    { id: 'c7.reiterado', c: 'c7', pol: '-', nombre: 'Marcador reiterado', ancla: 'sel', tam: ['palabra', 'frase'] },
+    { id: 'c7.sintransicion', c: 'c7', pol: '-', nombre: 'Falta transición entre párrafos', ancla: 'inicio', tam: ['parrafo', 'hueco'] },
+    { id: 'c7.yuxtapuestas', c: 'c7', pol: '-', nombre: 'Ideas yuxtapuestas', ancla: 'sel', tam: ['frase'] },
+    // Relaciones léxicas y sintácticas
+    { id: 'c8.sustitucion', c: 'c8', pol: '+', nombre: 'Sustitución eficaz', ancla: 'sel', tam: ['palabra', 'frase'], doc: true },
+    { id: 'c8.repeticion', c: 'c8', pol: '-', nombre: 'Repetición innecesaria', ancla: 'sel', tam: ['palabra', 'frase'], tecla: 'R' },
+    { id: 'c8.ambiguo', c: 'c8', pol: '-', nombre: 'Referente ambiguo', ancla: 'sel', tam: ['palabra', 'frase'], tecla: 'A' },
+    // Progresión
+    { id: 'c9.retoma', c: 'c9', pol: '+', nombre: 'Retoma y aporta información nueva', ancla: 'sel', tam: ['frase', 'parrafo'], doc: true },
+    { id: 'c9.salto', c: 'c9', pol: '-', nombre: 'Salto temático', ancla: 'sel', tam: ['frase', 'parrafo'], grav: 'prog' },
+    { id: 'c9.repite', c: 'c9', pol: '-', nombre: 'Repite contenido ya dicho', ancla: 'sel', tam: ['frase', 'parrafo'], grav: 'prog' },
+    { id: 'c9.foco', c: 'c9', pol: '-', nombre: 'Cambio abrupto de foco', ancla: 'sel', tam: ['frase', 'parrafo'], grav: 'prog' },
+    // Párrafos
+    { id: 'c10.cumple', c: 'c10', pol: '+', nombre: 'El párrafo cumple su función', ancla: 'parrafo', tam: ['parrafo', 'frase', 'palabra'], extra: 'funcion' },
+    { id: 'c10.nocumple', c: 'c10', pol: '-', nombre: 'El párrafo no cumple su función', ancla: 'parrafo', tam: ['parrafo', 'frase', 'palabra'], extra: 'funcion' },
+    // Acentuación
+    { id: 'c11.aguda', c: 'c11', pol: '-', nombre: 'Tilde: aguda', ancla: 'sel', tam: ['palabra'], tecla: 'T' },
+    { id: 'c11.llana', c: 'c11', pol: '-', nombre: 'Tilde: llana', ancla: 'sel', tam: ['palabra'], tecla: 'L' },
+    { id: 'c11.esdrujula', c: 'c11', pol: '-', nombre: 'Tilde: esdrújula', ancla: 'sel', tam: ['palabra'], tecla: 'E' },
+    { id: 'c11.diacritica', c: 'c11', pol: '-', nombre: 'Tilde diacrítica o interrogativa', ancla: 'sel', tam: ['palabra'], tecla: 'D' },
+    { id: 'c11.hiato', c: 'c11', pol: '-', nombre: 'Tilde: hiato', ancla: 'sel', tam: ['palabra'], tecla: 'H' },
+    { id: 'c11.indebida', c: 'c11', pol: '-', nombre: 'Tilde indebida', ancla: 'sel', tam: ['palabra'], tecla: 'J' },
+    // Ortografía
+    { id: 'c12.grafia', c: 'c12', pol: '-', nombre: 'Grafía', ancla: 'sel', tam: ['palabra'], tecla: 'O' },
+    { id: 'c12.mayuscula', c: 'c12', pol: '-', nombre: 'Mayúscula', ancla: 'sel', tam: ['palabra'], tecla: 'M' },
+    { id: 'c12.union', c: 'c12', pol: '-', nombre: 'Unión o separación de palabras', ancla: 'sel', tam: ['palabra', 'frase'], tecla: 'U' },
+    { id: 'c12.malescrita', c: 'c12', pol: '-', nombre: 'Palabra mal escrita', ancla: 'sel', tam: ['palabra'], tecla: 'W' },
+    // Gramática
+    { id: 'c13.concordancia', c: 'c13', pol: '-', nombre: 'Concordancia', ancla: 'sel', tam: ['palabra', 'frase'], grav: 'gram', tecla: 'C' },
+    { id: 'c13.verbal', c: 'c13', pol: '-', nombre: 'Tiempo o modo verbal', ancla: 'sel', tam: ['palabra', 'frase'], grav: 'gram', tecla: 'V' },
+    { id: 'c13.preposicion', c: 'c13', pol: '-', nombre: 'Preposición', ancla: 'sel', tam: ['palabra', 'frase'], grav: 'gram', tecla: 'B' },
+    { id: 'c13.pronombre', c: 'c13', pol: '-', nombre: 'Pronombre', ancla: 'sel', tam: ['palabra', 'frase'], grav: 'gram', tecla: 'N' },
+    { id: 'c13.orden', c: 'c13', pol: '-', nombre: 'Orden sintáctico', ancla: 'sel', tam: ['frase'], grav: 'gram', tecla: 'Y' },
+    { id: 'c13.incompleta', c: 'c13', pol: '-', nombre: 'Oración incompleta', ancla: 'sel', tam: ['frase'], grav: 'gram', tecla: 'I' }
+  ];
+  var EV = {};
+  CATALOGO.forEach(function (e) { EV[e.id] = e; });
+
+  // ───────────────────────── Umbrales (todos editables desde la interfaz) ─────────────────────────
+  // Ninguna de estas cifras está en la rúbrica salvo los rangos de extensión. Se declaran aquí y en DECISIONES.
+  var UMBRALES_DEF = [
+    { k: 'base', g: 'General', t: 'Base de palabras para ajustar conteos de textos cortos', v: 525 },
+    { k: 'ext_e_min', g: 'Extensión (de la rúbrica)', t: 'Experto desde', v: 500 },
+    { k: 'ext_e_max', g: 'Extensión (de la rúbrica)', t: 'Experto hasta', v: 550 },
+    { k: 'ext_a_min', g: 'Extensión (de la rúbrica)', t: 'Avanzado desde', v: 470 },
+    { k: 'ext_a_max', g: 'Extensión (de la rúbrica)', t: 'Avanzado hasta', v: 580 },
+    { k: 'ext_i_min', g: 'Extensión (de la rúbrica)', t: 'Intermedio desde', v: 440 },
+    { k: 'ext_i_max', g: 'Extensión (de la rúbrica)', t: 'Intermedio hasta', v: 610 },
+    { k: 'c2_relacion_inter', g: 'Justificación', t: 'Razones cuyo vínculo con la postura no se ve → Intermedio', v: 1 },
+    { k: 'c3_tono_inter', g: 'Rol comunicativo', t: 'Marcas de tono o registro impropio → Intermedio', v: 3 },
+    { k: 'c3_cambio_av', g: 'Rol comunicativo', t: 'Cambios de rol o de tono → Avanzado', v: 1 },
+    { k: 'p_leve_av', g: 'Puntuación', t: 'Errores que no afectan → Avanzado', v: 3 },
+    { k: 'p_leve_inter', g: 'Puntuación', t: 'Errores que no afectan → Intermedio', v: 6 },
+    { k: 'p_releer_av', g: 'Puntuación', t: 'Errores que obligan a releer → Avanzado', v: 1 },
+    { k: 'p_releer_inter', g: 'Puntuación', t: 'Errores que obligan a releer → Intermedio', v: 2 },
+    { k: 'p_releer_ini', g: 'Puntuación', t: 'Errores que obligan a releer → Inicial', v: 4 },
+    { k: 'p_nobasta_inter', g: 'Puntuación', t: 'Errores donde la relectura no basta → Intermedio', v: 1 },
+    { k: 'p_nobasta_ini', g: 'Puntuación', t: 'Errores donde la relectura no basta → Inicial', v: 2 },
+    { k: 'm_pert_ini', g: 'Marcadores', t: 'Marcadores pertinentes iguales o menos → Inicial', v: 2 },
+    { k: 'm_equiv_inter', g: 'Marcadores', t: 'Relaciones equivocadas → Intermedio', v: 2 },
+    { k: 'm_trans_inter', g: 'Marcadores', t: 'Párrafos sin transición → Intermedio', v: 2 },
+    { k: 'm_yux_inter', g: 'Marcadores', t: 'Ideas yuxtapuestas → Intermedio', v: 2 },
+    { k: 'm_reit_inter', g: 'Marcadores', t: 'Marcadores reiterados → Intermedio', v: 3 },
+    { k: 'm_exp_pert', g: 'Marcadores', t: 'Pertinentes para Experto', v: 5 },
+    { k: 'm_exp_formas', g: 'Marcadores', t: 'Formas distintas para Experto', v: 4 },
+    { k: 'l_rep_av', g: 'Relaciones léxicas', t: 'Repeticiones → Avanzado', v: 2 },
+    { k: 'l_rep_inter', g: 'Relaciones léxicas', t: 'Repeticiones → Intermedio', v: 4 },
+    { k: 'l_rep_ini', g: 'Relaciones léxicas', t: 'Repeticiones → Inicial', v: 7 },
+    { k: 'l_amb_av', g: 'Relaciones léxicas', t: 'Referentes ambiguos → Avanzado', v: 1 },
+    { k: 'l_amb_inter', g: 'Relaciones léxicas', t: 'Referentes ambiguos → Intermedio', v: 2 },
+    { k: 'l_amb_ini', g: 'Relaciones léxicas', t: 'Referentes ambiguos → Inicial', v: 3 },
+    { k: 'g_noafecta_av', g: 'Progresión', t: 'Problemas que no afectan → Avanzado', v: 1 },
+    { k: 'g_releer_inter', g: 'Progresión', t: 'Problemas que obligan a releer → Intermedio', v: 1 },
+    { k: 'g_releer_ini', g: 'Progresión', t: 'Problemas que obligan a releer → Inicial', v: 3 },
+    { k: 'g_impide_inter', g: 'Progresión', t: 'Problemas que impiden comprender → Intermedio', v: 1 },
+    { k: 'g_impide_ini', g: 'Progresión', t: 'Problemas que impiden comprender → Inicial', v: 2 },
+    { k: 't_av', g: 'Acentuación', t: 'Total de errores → Avanzado', v: 2 },
+    { k: 't_inter_total', g: 'Acentuación', t: 'Total de errores → Intermedio', v: 4 },
+    { k: 't_inter_misma', g: 'Acentuación', t: 'Errores en una misma regla → Intermedio', v: 2 },
+    { k: 't_ini_total', g: 'Acentuación', t: 'Total de errores → Inicial', v: 7 },
+    { k: 't_ini_reglas', g: 'Acentuación', t: 'Reglas con errores repetidos → Inicial', v: 3 },
+    { k: 'o_av', g: 'Ortografía', t: 'Total de errores → Avanzado', v: 2 },
+    { k: 'o_inter_total', g: 'Ortografía', t: 'Total de errores → Intermedio', v: 4 },
+    { k: 'o_inter_misma', g: 'Ortografía', t: 'Errores en una misma regla → Intermedio', v: 2 },
+    { k: 'o_ini_total', g: 'Ortografía', t: 'Total de errores → Inicial', v: 7 },
+    { k: 'o_ini_reglas', g: 'Ortografía', t: 'Reglas con errores repetidos → Inicial', v: 3 },
+    { k: 'r_av', g: 'Gramática', t: 'Total de errores → Avanzado', v: 2 },
+    { k: 'r_inter_total', g: 'Gramática', t: 'Total de errores → Intermedio', v: 4 },
+    { k: 'r_inter_mismo', g: 'Gramática', t: 'Errores de un mismo tipo → Intermedio', v: 2 },
+    { k: 'r_ini_total', g: 'Gramática', t: 'Total de errores → Inicial', v: 6 },
+    { k: 'r_ini_releer', g: 'Gramática', t: 'Errores que obligan a releer → Inicial', v: 3 }
+  ];
+  function umbralesPorDefecto() {
+    var u = {};
+    UMBRALES_DEF.forEach(function (d) { u[d.k] = d.v; });
+    return u;
+  }
+
+  // ───────────────────────── Utilidades de texto ─────────────────────────
+  var RE_LETRA = /[\p{L}\p{N}]/u;
+  function esLetra(ch) { return !!ch && RE_LETRA.test(ch); }
+
+  function contarPalabras(texto) {
+    if (!texto) return 0;
+    var n = 0;
+    texto.split(/\s+/).forEach(function (t) { if (t && RE_LETRA.test(t)) n++; });
+    return n;
+  }
+
+  function percentil(arr, p) {
+    if (!arr.length) return 0;
+    var a = arr.slice().sort(function (x, y) { return x - y; });
+    var i = Math.min(a.length - 1, Math.max(0, Math.round((a.length - 1) * p)));
+    return a[i];
+  }
+
+  // Une líneas cortadas por un PDF. Devuelve { texto, unidas, guiones, duro }.
+  function normalizarTexto(bruto) {
+    var t = String(bruto || '').replace(/\r\n?/g, '\n').replace(/\u00A0/g, ' ').replace(/[ \t]+/g, ' ');
+    var lineas = t.split('\n').map(function (l) { return l.trim(); });
+    var llenas = lineas.filter(function (l) { return l.length > 0; });
+    var largos = llenas.map(function (l) { return l.length; });
+    var med = percentil(largos, 0.5);
+    var ancho = percentil(largos, 0.75);
+    var maximo = percentil(largos, 0.95);
+    var cerca = largos.filter(function (n) { return Math.abs(n - ancho) <= ancho * 0.25; }).length;
+    // ¿Parece un bloque con saltos duros? Muchas líneas de ancho parecido y corto.
+    var duro = llenas.length >= 6 && med > 0 && ancho <= 130 && cerca >= llenas.length * 0.5;
+    var parrafos = [];
+    var actual = '';
+    var unidas = 0, guiones = 0;
+    function cerrar() { if (actual.trim()) parrafos.push(actual.trim()); actual = ''; }
+    for (var i = 0; i < lineas.length; i++) {
+      var l = lineas[i];
+      if (!l) { cerrar(); continue; }
+      if (!duro) { actual = l; cerrar(); continue; }
+      if (actual) {
+        var m = /(\p{L})-$/u.exec(actual);
+        if (m && /^\p{Ll}/u.test(l)) { actual = actual.slice(0, -1) + l; guiones++; }
+        else if (m) { actual = actual + l; guiones++; }
+        else actual = actual + ' ' + l;
+        unidas++;
+      } else actual = l;
+      var finFrase = /[.!?…:»"”)]$/.test(l);
+      // Cierra el párrafo si la línea es corta o si la primera palabra de la siguiente habría cabido en ella:
+      // un salto que no obligaba el ancho es un salto de párrafo.
+      var sig = lineas[i + 1] || '';
+      var primera = sig.split(' ')[0] || '';
+      var cabia = sig && l.length + 1 + primera.length <= maximo;
+      if (finFrase && (l.length < ancho * 0.85 || cabia)) cerrar();
+    }
+    cerrar();
+    return { texto: parrafos.join('\n'), unidas: unidas, guiones: guiones, duro: duro };
+  }
+
+  function calcularParrafos(texto) {
+    var res = [];
+    var ini = 0;
+    for (var i = 0; i <= texto.length; i++) {
+      if (i === texto.length || texto[i] === '\n') {
+        if (i > ini) res.push({ inicio: ini, fin: i });
+        ini = i + 1;
+      }
+    }
+    return res;
+  }
+
+  function parrafoDe(parrafos, pos) {
+    for (var i = 0; i < parrafos.length; i++) {
+      if (pos >= parrafos[i].inicio && pos <= parrafos[i].fin) return i;
+    }
+    return parrafos.length ? parrafos.length - 1 : 0;
+  }
+
+  // Ajusta una selección a palabras completas sin salir del párrafo.
+  function ajustarAPalabras(texto, inicio, fin) {
+    if (fin < inicio) { var x = inicio; inicio = fin; fin = x; }
+    while (inicio < fin && /\s/.test(texto[inicio])) inicio++;
+    while (fin > inicio && /\s/.test(texto[fin - 1])) fin--;
+    if (inicio === fin) return { inicio: inicio, fin: fin };
+    while (inicio > 0 && esLetra(texto[inicio - 1]) && esLetra(texto[inicio])) inicio--;
+    while (fin < texto.length && esLetra(texto[fin]) && esLetra(texto[fin - 1])) fin++;
+    return { inicio: inicio, fin: fin };
+  }
+
+  function palabraEn(texto, pos) {
+    var i = pos, f = pos;
+    if (!esLetra(texto[pos])) {
+      if (esLetra(texto[pos - 1])) { i = pos - 1; f = pos - 1; } else return null;
+    }
+    while (i > 0 && esLetra(texto[i - 1])) i--;
+    while (f < texto.length && esLetra(texto[f])) f++;
+    if (f === i) f = i + 1;
+    return { inicio: i, fin: f };
+  }
+
+  function tipoSeleccion(texto, parrafos, inicio, fin) {
+    if (inicio === fin) return 'hueco';
+    var frag = texto.slice(inicio, fin);
+    var p = parrafos[parrafoDe(parrafos, inicio)];
+    if (p && inicio <= p.inicio && fin >= p.fin) return 'parrafo';
+    if (!RE_LETRA.test(frag) && frag.trim().length <= 3) return 'signo';
+    if (!/\s/.test(frag.trim())) return 'palabra';
+    return 'frase';
+  }
+
+  function sinTildes(s) {
+    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
+  // ───────────────────────── Conteos sobre una evaluación ─────────────────────────
+  function marcasDe(ev, cid) {
+    return (ev.marcas || []).filter(function (m) { return EV[m.evidencia] && EV[m.evidencia].c === cid; });
+  }
+  function generalesDe(ev, cid) {
+    return (ev.generales || []).filter(function (g) { return EV[g.evidencia] && EV[g.evidencia].c === cid; });
+  }
+  function contar(ev, evId, filtro) {
+    return (ev.marcas || []).filter(function (m) { return m.evidencia === evId && (!filtro || filtro(m)); }).length;
+  }
+  function tieneGeneral(ev, evId) {
+    return (ev.generales || []).some(function (g) { return g.evidencia === evId; });
+  }
+  function fragmento(ev, m) {
+    if (m.punto != null) {
+      var a = Math.max(0, m.punto - 12), b = Math.min(ev.texto.length, m.punto + 12);
+      return ev.texto.slice(a, m.punto) + '‸' + ev.texto.slice(m.punto, b);
+    }
+    return ev.texto.slice(m.inicio, m.fin);
+  }
+
+  function factor(ev, u) {
+    var p = ev.palabras || contarPalabras(ev.texto || '');
+    if (!p || p >= u.base) return 1;
+    return u.base / p;
+  }
+  function fmtNum(x) {
+    var r = Math.round(x * 10) / 10;
+    return (r % 1 === 0 ? String(r) : r.toFixed(1)).replace('.', ',');
+  }
+  function plural(n, s, p) { return n + ' ' + (n === 1 ? s : p); }
+  function ajuste(n, f, u) {
+    return f > 1 && n > 0 ? ' (' + fmtNum(n * f) + ' ajustado a ' + u.base + ' palabras)' : '';
+  }
+
+  // ───────────────────────── Reglas de sugerencia ─────────────────────────
+  // Cada una devuelve { nivel, razon }. nivel null = falta marcar algo; la razón dice qué.
+  var REGLAS = {
+    c1: function (ev) {
+      if (tieneGeneral(ev, 'c1.noidentificable')) return { nivel: 'inicial', razon: 'Registraste que la postura no es identificable.' };
+      var exp = (ev.marcas || []).filter(function (m) { return m.evidencia === 'c1.explicita'; });
+      if (exp.some(function (m) { return m.parrafo === 0; })) return { nivel: 'experto', razon: 'Postura explícita en el párrafo introductorio.' };
+      if (exp.length) {
+        var p = exp.map(function (m) { return m.parrafo + 1; }).sort(function (a, b) { return a - b; })[0];
+        return { nivel: 'avanzado', razon: 'Postura explícita, pero aparece en el párrafo ' + p + ', no en la introducción.' };
+      }
+      var imp = contar(ev, 'c1.implicita');
+      if (imp) return { nivel: 'intermedio', razon: 'La postura solo se infiere de ' + plural(imp, 'valoración', 'valoraciones') + '.' };
+      return { nivel: null, razon: 'Marca dónde aparece la postura, o registra que no es identificable.' };
+    },
+    c2: function (ev, u) {
+      if (tieneGeneral(ev, 'c2.nojustifica')) return { nivel: 'inicial', razon: 'Registraste que el texto no justifica la postura.' };
+      var ins = contar(ev, 'c2.razonInsumo'), sin = contar(ev, 'c2.razon');
+      var enu = contar(ev, 'c2.enunciada'), rel = contar(ev, 'c2.relacion'), imp = contar(ev, 'c2.impertinente');
+      var des = ins + sin;
+      if (!des && !enu && !rel && !imp) return { nivel: null, razon: 'Marca las razones que sostienen la postura.' };
+      if (!des && !enu && !rel && imp) return { nivel: 'inicial', razon: 'Solo hay razones no pertinentes (' + imp + ').' };
+      if (!des) return { nivel: 'intermedio', razon: 'Hay razones pertinentes, pero ninguna desarrollada' + (rel ? '; en ' + plural(rel, 'caso', 'casos') + ' no se ve cómo conduce a la postura.' : '.') };
+      if (rel >= u.c2_relacion_inter) return { nivel: 'intermedio', razon: plural(des, 'razón desarrollada', 'razones desarrolladas') + ', pero en ' + plural(rel, 'caso', 'casos') + ' no se ve cómo conduce a la postura.' };
+      if (ins) {
+        var usados = insumosUsados(ev);
+        return { nivel: 'experto', razon: plural(ins, 'razón desarrollada', 'razones desarrolladas') + ' con uso explícito de insumos' + (usados.length ? ' (' + usados.join(', ') + ')' : '') + '.' };
+      }
+      return { nivel: 'avanzado', razon: plural(sin, 'razón desarrollada', 'razones desarrolladas') + ', sin referencia explícita a los insumos.' };
+    },
+    c3: function (ev, u) {
+      if (tieneGeneral(ev, 'c3.noasume')) return { nivel: 'inicial', razon: 'Registraste que no asume el rol asignado.' };
+      var voz = contar(ev, 'c3.voz'), des = contar(ev, 'c3.destinatario');
+      var cam = contar(ev, 'c3.cambio'), ton = contar(ev, 'c3.tono');
+      var sinDest = tieneGeneral(ev, 'c3.sindestinatario');
+      if (!voz && !des && !cam && !ton && !sinDest) return { nivel: null, razon: 'Marca la voz del rol y la interpelación a quien decide.' };
+      if (!voz && !des && ton >= u.c3_tono_inter) return { nivel: 'inicial', razon: 'No hay marcas del rol y el tono o registro no corresponde (' + ton + ').' };
+      if (sinDest || !des) return { nivel: 'intermedio', razon: 'Asume el rol, pero no se dirige a quien debe decidir' + (sinDest ? ' (registrado).' : ': no hay interpelación marcada.') };
+      if (ton >= u.c3_tono_inter) return { nivel: 'intermedio', razon: 'El tono o registro no corresponde en ' + plural(ton, 'lugar', 'lugares') + '.' };
+      if (cam + ton >= u.c3_cambio_av) return { nivel: 'avanzado', razon: 'Se dirige a quien decide, pero el rol no se sostiene (' + plural(cam + ton, 'desliz', 'deslices') + ').' };
+      if (!voz) return { nivel: 'avanzado', razon: 'Se dirige a quien decide, pero no hay marcas de la voz del rol.' };
+      return { nivel: 'experto', razon: 'Voz del rol sostenida y dirigida a quien decide, sin cambios de tono.' };
+    },
+    c4: function (ev) {
+      if (tieneGeneral(ev, 'c4.noreconoce')) return { nivel: 'inicial', razon: 'Registraste que no reconoce una postura contraria.' };
+      var pos = contar(ev, 'c4.postura'), raz = contar(ev, 'c4.razon'), ref = contar(ev, 'c4.refuta'), men = contar(ev, 'c4.mencion');
+      if (!pos && !raz && !ref && !men) return { nivel: null, razon: 'Marca la postura contraria y la refutación, o registra que no aparece.' };
+      if (ref && raz) return { nivel: 'experto', razon: 'Retoma una razón de la postura contraria y la refuta.' };
+      if (ref) return { nivel: 'avanzado', razon: 'Da razones en contra, pero no retoma ninguna razón de la postura contraria.' };
+      return { nivel: 'intermedio', razon: 'Menciona la postura contraria sin refutarla.' };
+    },
+    c5: function (ev, u) {
+      var p = ev.palabras || 0;
+      var rango = 'el rango pedido es de ' + u.ext_e_min + ' a ' + u.ext_e_max;
+      var r = plural(p, 'palabra', 'palabras') + '; ' + rango + '.';
+      if (p >= u.ext_e_min && p <= u.ext_e_max) return { nivel: 'experto', razon: r };
+      if (p >= u.ext_a_min && p <= u.ext_a_max) return { nivel: 'avanzado', razon: r };
+      if (p >= u.ext_i_min && p <= u.ext_i_max) return { nivel: 'intermedio', razon: r };
+      return { nivel: 'inicial', razon: r };
+    },
+    c6: function (ev, u) {
+      var ms = marcasDe(ev, 'c6'), f = factor(ev, u);
+      var g = [0, 0, 0];
+      ms.forEach(function (m) { g[m.gravedad || 0]++; });
+      var parr = {};
+      ms.forEach(function (m) { if ((m.gravedad || 0) >= 1) parr[m.parrafo] = 1; });
+      var nParr = Object.keys(parr).length;
+      var desc = [];
+      if (g[0]) desc.push(plural(g[0], 'que no afecta', 'que no afectan'));
+      if (g[1]) desc.push(plural(g[1], 'que obliga a releer', 'que obligan a releer'));
+      if (g[2]) desc.push(plural(g[2], 'donde releer no basta', 'donde releer no basta'));
+      var tot = g[0] + g[1] + g[2];
+      var r = tot ? plural(tot, 'error', 'errores') + ': ' + desc.join(', ') + ajuste(tot, f, u) + '.' : 'No hay errores de puntuación marcados.';
+      if (g[2] * f >= u.p_nobasta_ini || g[1] * f >= u.p_releer_ini || nParr >= 3) return { nivel: 'inicial', razon: r + (nParr >= 3 ? ' Afectan ' + nParr + ' párrafos.' : '') };
+      if (g[2] * f >= u.p_nobasta_inter || g[1] * f >= u.p_releer_inter || g[0] * f >= u.p_leve_inter) return { nivel: 'intermedio', razon: r };
+      if (g[1] * f >= u.p_releer_av || g[0] * f >= u.p_leve_av) return { nivel: 'avanzado', razon: r };
+      return { nivel: 'experto', razon: tot ? r : r + ' Si ya revisaste la puntuación, corresponde Experto.' };
+    },
+    c7: function (ev, u) {
+      var per = (ev.marcas || []).filter(function (m) { return m.evidencia === 'c7.pertinente'; });
+      var formas = {};
+      per.forEach(function (m) { formas[sinTildes(ev.texto.slice(m.inicio, m.fin)).trim()] = 1; });
+      var nf = Object.keys(formas).length;
+      var eq = contar(ev, 'c7.equivocado'), re = contar(ev, 'c7.reiterado'), tr = contar(ev, 'c7.sintransicion'), yu = contar(ev, 'c7.yuxtapuestas');
+      var err = eq + re + tr + yu;
+      if (!per.length && !err) return { nivel: null, razon: 'Marca los marcadores del texto o usa Sugerir marcadores.' };
+      var partes = [plural(per.length, 'pertinente', 'pertinentes') + ' en ' + plural(nf, 'forma', 'formas')];
+      if (eq) partes.push(plural(eq, 'relación equivocada', 'relaciones equivocadas'));
+      if (re) partes.push(plural(re, 'reiterado', 'reiterados'));
+      if (tr) partes.push(plural(tr, 'párrafo sin transición', 'párrafos sin transición'));
+      if (yu) partes.push(plural(yu, 'yuxtaposición', 'yuxtaposiciones'));
+      var r = partes.join(', ') + '.';
+      if (per.length <= u.m_pert_ini || eq > per.length) return { nivel: 'inicial', razon: r };
+      if (eq >= u.m_equiv_inter || tr >= u.m_trans_inter || yu >= u.m_yux_inter || re >= u.m_reit_inter) return { nivel: 'intermedio', razon: r };
+      if (!err && per.length >= u.m_exp_pert && nf >= u.m_exp_formas) return { nivel: 'experto', razon: r };
+      return { nivel: 'avanzado', razon: r + (!err ? ' Para Experto hacen falta ' + u.m_exp_pert + ' pertinentes en ' + u.m_exp_formas + ' formas.' : '') };
+    },
+    c8: function (ev, u) {
+      var f = factor(ev, u);
+      var rep = contar(ev, 'c8.repeticion'), amb = contar(ev, 'c8.ambiguo');
+      var r = (rep || amb) ? [rep ? plural(rep, 'repetición innecesaria', 'repeticiones innecesarias') : '', amb ? plural(amb, 'referente ambiguo', 'referentes ambiguos') : ''].filter(Boolean).join(', ') + ajuste(rep + amb, f, u) + '.' : 'No hay repeticiones ni referentes ambiguos marcados.';
+      if (rep * f >= u.l_rep_ini || amb * f >= u.l_amb_ini) return { nivel: 'inicial', razon: r };
+      if (rep * f >= u.l_rep_inter || amb * f >= u.l_amb_inter) return { nivel: 'intermedio', razon: r };
+      if (rep * f >= u.l_rep_av || amb * f >= u.l_amb_av) return { nivel: 'avanzado', razon: r };
+      return { nivel: 'experto', razon: r };
+    },
+    c9: function (ev, u) {
+      var ms = marcasDe(ev, 'c9').filter(function (m) { return EV[m.evidencia].pol === '-'; });
+      var g = [0, 0, 0];
+      ms.forEach(function (m) { g[m.gravedad || 0]++; });
+      var desc = [];
+      if (g[0]) desc.push(plural(g[0], 'que no afecta', 'que no afectan'));
+      if (g[1]) desc.push(plural(g[1], 'que obliga a releer', 'que obligan a releer'));
+      if (g[2]) desc.push(plural(g[2], 'que impide comprender', 'que impiden comprender'));
+      var r = ms.length ? plural(ms.length, 'problema', 'problemas') + ' de progresión: ' + desc.join(', ') + '.' : 'No hay saltos, repeticiones ni cambios de foco marcados.';
+      if (g[2] >= u.g_impide_ini || g[1] >= u.g_releer_ini) return { nivel: 'inicial', razon: r };
+      if (g[2] >= u.g_impide_inter || g[1] >= u.g_releer_inter) return { nivel: 'intermedio', razon: r };
+      if (g[0] >= u.g_noafecta_av) return { nivel: 'avanzado', razon: r };
+      return { nivel: 'experto', razon: r };
+    },
+    c10: function (ev) {
+      var n = (ev.parrafos || []).length;
+      if (n < 3) return { nivel: 'inicial', razon: 'El texto tiene ' + plural(n, 'párrafo', 'párrafos') + '; la rúbrica pide al menos tres.' };
+      var no = {}, si = {};
+      (ev.marcas || []).forEach(function (m) {
+        if (m.evidencia === 'c10.nocumple') no[m.parrafo] = 1;
+        if (m.evidencia === 'c10.cumple') si[m.parrafo] = 1;
+      });
+      Object.keys(no).forEach(function (k) { delete si[k]; });
+      var nNo = Object.keys(no).length;
+      var r = plural(n, 'párrafo', 'párrafos') + '; ' + (nNo ? plural(nNo, 'no cumple', 'no cumplen') + ' su función.' : 'ninguno marcado como sin función.');
+      if (nNo >= n) return { nivel: 'inicial', razon: 'Ninguno de los ' + n + ' párrafos cumple su función.' };
+      if (nNo >= 2) return { nivel: 'intermedio', razon: r };
+      if (nNo === 1) return { nivel: 'avanzado', razon: r };
+      return { nivel: 'experto', razon: r };
+    },
+    c11: function (ev, u) { return reglaCorreccion(ev, u, 'c11', 't', 'tilde'); },
+    c12: function (ev, u) { return reglaCorreccion(ev, u, 'c12', 'o', 'ortografía'); },
+    c13: function (ev, u) {
+      var ms = marcasDe(ev, 'c13'), f = factor(ev, u);
+      var porTipo = {};
+      ms.forEach(function (m) { porTipo[m.evidencia] = (porTipo[m.evidencia] || 0) + 1; });
+      var max = 0, maxId = null;
+      Object.keys(porTipo).forEach(function (k) { if (porTipo[k] > max) { max = porTipo[k]; maxId = k; } });
+      var rel = ms.filter(function (m) { return (m.gravedad || 0) >= 1; }).length;
+      var tot = ms.length;
+      var r = tot ? plural(tot, 'error', 'errores') + ' gramaticales' + (rel ? ', ' + rel + ' obligan a releer' : '') + (max >= 2 ? '; ' + max + ' de ' + EV[maxId].nombre.toLowerCase() : '') + ajuste(tot, f, u) + '.' : 'No hay errores gramaticales marcados.';
+      if (tot * f >= u.r_ini_total || rel >= u.r_ini_releer) return { nivel: 'inicial', razon: r };
+      if (max >= u.r_inter_mismo || tot * f >= u.r_inter_total) return { nivel: 'intermedio', razon: r };
+      if (tot * f >= u.r_av) return { nivel: 'avanzado', razon: r };
+      return { nivel: 'experto', razon: tot ? r : r + ' Si ya revisaste la gramática, corresponde Experto.' };
+    }
+  };
+
+  function reglaCorreccion(ev, u, cid, p, nombre) {
+    var ms = marcasDe(ev, cid), f = factor(ev, u);
+    var porRegla = {};
+    ms.forEach(function (m) { porRegla[m.evidencia] = (porRegla[m.evidencia] || 0) + 1; });
+    var repetidas = Object.keys(porRegla).filter(function (k) { return porRegla[k] >= 2; });
+    var max = 0, maxId = null;
+    Object.keys(porRegla).forEach(function (k) { if (porRegla[k] > max) { max = porRegla[k]; maxId = k; } });
+    var tot = ms.length;
+    var r = tot ? plural(tot, 'error', 'errores') + ' de ' + nombre + (repetidas.length ? '; ' + plural(repetidas.length, 'regla repetida', 'reglas repetidas') + ' (' + repetidas.map(function (k) { return EV[k].nombre.replace(/^Tilde: /, '').toLowerCase() + ' ×' + porRegla[k]; }).join(', ') + ')' : '') + ajuste(tot, f, u) + '.' : 'No hay errores de ' + nombre + ' marcados.';
+    if (tot * f >= u[p + '_ini_total'] || repetidas.length >= u[p + '_ini_reglas']) return { nivel: 'inicial', razon: r };
+    if (max >= u[p + '_inter_misma'] || tot * f >= u[p + '_inter_total']) return { nivel: 'intermedio', razon: r };
+    if (tot * f >= u[p + '_av']) return { nivel: 'avanzado', razon: r };
+    return { nivel: 'experto', razon: tot ? r : r + ' Si ya revisaste ' + (nombre === 'tilde' ? 'las tildes' : 'la ortografía') + ', corresponde Experto.' };
+  }
+
+  function insumosUsados(ev) {
+    var vistos = {}, orden = [];
+    (ev.marcas || []).forEach(function (m) {
+      if (m.evidencia === 'c2.razonInsumo' && m.insumo && !vistos[m.insumo]) { vistos[m.insumo] = 1; orden.push(m.insumo); }
+    });
+    return orden;
+  }
+
+  function sugerir(ev, cid, u) {
+    return REGLAS[cid](ev, u || umbralesPorDefecto());
+  }
+
+  // ───────────────────────── Puntajes ─────────────────────────
+  function redondear2(x) { return Math.round(x * 100 + 1e-9) / 100; }
+  function puntaje(cid, nivel) { return nivel ? CRIT[cid].valores[nivel] : 0; }
+  function calcularTotal(ev) {
+    var total = 0, decididos = 0, sub = {};
+    DESCRIPTORES.forEach(function (d) { sub[d.id] = { obtenido: 0, maximo: 0 }; });
+    RUBRICA.forEach(function (c) {
+      sub[c.d].maximo += c.valores.experto;
+      var dec = ev.decisiones && ev.decisiones[c.id];
+      if (dec && dec.nivel) {
+        decididos++;
+        total += c.valores[dec.nivel];
+        sub[c.d].obtenido += c.valores[dec.nivel];
+      }
+    });
+    Object.keys(sub).forEach(function (k) { sub[k].obtenido = redondear2(sub[k].obtenido); sub[k].maximo = redondear2(sub[k].maximo); });
+    return { total: redondear2(total), decididos: decididos, criterios: RUBRICA.length, subtotales: sub };
+  }
+  function fmt2(x) { return (Math.round(x * 100) / 100).toFixed(2).replace('.', ','); }
+
+  // ───────────────────────── Recomendaciones ─────────────────────────
+  // {ejemplos} {n} {dominante} {insumos} {parrafosNo} · [[segmento opcional]]
+  var RECOMENDACIONES = {
+    c1: {
+      avanzado: 'Anuncia tu postura desde el primer párrafo. Hoy aparece más adelante[[ ({ejemplos})]], y el lector avanza sin saber qué defiendes.',
+      intermedio: 'Formula tu postura en una oración explícita, en el párrafo de introducción. Hoy solo se deduce de valoraciones sueltas[[ como {ejemplos}]].',
+      inicial: 'Decide qué defiendes frente a la situación y dilo con claridad en la introducción: a favor, en contra o una alternativa propia.'
+    },
+    c2: {
+      avanzado: 'Tus razones se entienden, pero no muestran de dónde salen. Cita o parafrasea lo que dicen los actores y la información del caso, y di explícitamente por qué eso apoya tu postura.',
+      intermedio: 'Desarrolla cada razón: di qué afirmas, con qué información del caso lo sostienes y cómo eso lleva a tu postura.[[ Revisa en especial {ejemplos}.]]',
+      inicial: 'Tu postura necesita razones. Elige dos o tres ideas de los actores o de la información complementaria, explícalas y muestra cómo conducen a lo que defiendes.'
+    },
+    c3: {
+      avanzado: 'Sostén el rol de principio a fin. Hay momentos en que la voz o el tono cambian[[ ({ejemplos})]].',
+      intermedio: 'Escribe para alguien que debe tomar una decisión: nómbralo, háblale y dile qué esperas que decida.[[ Cuida también el tono en {ejemplos}.]]',
+      inicial: 'Relee la consigna y escribe desde el rol asignado: quién eres, a quién le hablas y qué necesitas que decida.'
+    },
+    c4: {
+      avanzado: 'Al discutir la postura contraria, retoma una de sus razones concretas y respóndela. Hoy argumentas en contra sin mostrar qué dice el otro.',
+      intermedio: 'No basta con mencionar la postura contraria[[ ({ejemplos})]]. Explícala y da al menos un argumento en su contra.',
+      inicial: 'Incluye un párrafo que presente una postura contraria del caso, con una de sus razones, y la refute.'
+    },
+    c5: {
+      avanzado: 'Ajusta la extensión: tu texto tiene {n} palabras y el rango pedido es de 500 a 550.',
+      intermedio: 'Ajusta la extensión: tu texto tiene {n} palabras y el rango pedido es de 500 a 550.',
+      inicial: 'Tu texto tiene {n} palabras, muy lejos del rango pedido de 500 a 550. Planea cuántas palabras le das a cada párrafo antes de escribir.'
+    },
+    c6: {
+      avanzado: 'Revisa la puntuación en los puntos señalados[[, por ejemplo {ejemplos}]]. No impiden entender, pero restan precisión.',
+      intermedio: 'La puntuación obliga a releer algunos pasajes[[ ({ejemplos})]]. Separa con punto las ideas completas y evita la coma entre sujeto y verbo.',
+      inicial: 'Trabaja la puntuación como prioridad: varias partes no se entienden ni releyendo[[, como {ejemplos}]]. Escribe oraciones más cortas y ciérralas con punto.'
+    },
+    c7: {
+      avanzado: 'Varía los marcadores discursivos: repites algunos[[ ({ejemplos})]]. Busca equivalentes según la relación: adición, contraste, causa, consecuencia.',
+      intermedio: 'Revisa qué relación expresa cada marcador[[; en {ejemplos} no corresponde o se repite]]. Usa uno al inicio de cada párrafo para mostrar cómo se conecta con el anterior.',
+      inicial: 'Conecta tus ideas con marcadores discursivos: indica cuándo agregas, contrastas, das una causa o concluyes. Hoy las ideas aparecen una tras otra sin enlace.'
+    },
+    c8: {
+      avanzado: 'Evita repeticiones innecesarias[[ como {ejemplos}]]: usa sinónimos, pronombres o expresiones que retomen lo dicho.',
+      intermedio: 'Las repeticiones y los referentes poco claros[[ ({ejemplos})]] entorpecen la lectura. Asegúrate de que cada pronombre remita a un solo elemento.',
+      inicial: 'Revisa cómo retomas lo ya dicho: hay muchas repeticiones y referencias ambiguas. Alterna sinónimos y pronombres, y comprueba a qué se refiere cada uno.'
+    },
+    c9: {
+      avanzado: 'Cuida que cada parte retome la anterior y aporte algo nuevo[[; hay un desvío en {ejemplos}]].',
+      intermedio: 'Hay saltos o cambios de foco que obligan a releer[[ ({ejemplos})]]. Antes de escribir, ordena tus ideas en una secuencia y verifica que cada párrafo se apoye en el anterior.',
+      inicial: 'El texto salta de un tema a otro y se pierde el hilo. Haz un esquema previo: postura, razones en orden, refutación y cierre.'
+    },
+    c10: {
+      avanzado: 'Revisa la función de cada párrafo[[: el párrafo {parrafosNo} no cumple la suya]]. Cada uno debe abrir, desarrollar o cerrar.',
+      intermedio: 'Dos de tus párrafos no cumplen su función[[ (párrafos {parrafosNo})]]. Define para cada uno si abre, desarrolla o cierra, y escribe solo eso en él.',
+      inicial: 'Organiza el texto en al menos tres párrafos con función clara: apertura, desarrollo y cierre.'
+    },
+    c11: {
+      avanzado: 'Revisa las tildes antes de entregar[[; fíjate en palabras como {ejemplos}]].',
+      intermedio: 'Repasa la regla de tilde que más fallas[[ ({dominante})]].[[ Revisa palabras como {ejemplos}.]]',
+      inicial: 'Las tildes necesitan trabajo sistemático. Repasa las reglas de agudas, llanas, esdrújulas y la tilde diacrítica[[; empieza por {dominante}]].',
+      siempre: true
+    },
+    c12: {
+      avanzado: 'Revisa la ortografía antes de entregar[[; fíjate en palabras como {ejemplos}]].',
+      intermedio: 'Hay un error ortográfico que se repite[[ ({dominante})]].[[ Revisa palabras como {ejemplos}.]]',
+      inicial: 'La ortografía interfiere con la lectura. Relee despacio antes de entregar y repasa las reglas que más fallas[[, empezando por {dominante}]].',
+      siempre: true
+    },
+    c13: {
+      avanzado: 'Relee la construcción de tus oraciones antes de entregar[[; revisa en especial {ejemplos}]].',
+      intermedio: 'Hay un error gramatical que se repite[[ ({dominante})]].[[ Revisa oraciones como {ejemplos}.]]',
+      inicial: 'Varias oraciones están mal construidas. Relee cada una en voz alta y verifica concordancia, tiempos verbales y que esté completa[[; empieza por {dominante}]].',
+      siempre: true
+    }
+  };
+
+  function rellenar(plantilla, datos) {
+    var s = plantilla.replace(/\[\[([\s\S]*?)\]\]/g, function (_, seg) {
+      var vacio = false;
+      seg.replace(/\{(\w+)\}/g, function (__, k) { if (datos[k] == null || datos[k] === '') vacio = true; return ''; });
+      return vacio ? '' : seg;
+    });
+    var faltan = false;
+    s = s.replace(/\{(\w+)\}/g, function (_, k) {
+      if (datos[k] == null || datos[k] === '') { faltan = true; return ''; }
+      return String(datos[k]);
+    });
+    return faltan ? null : s.replace(/\s+([.,;:)])/g, '$1').replace(/\(\s*\)/g, '').replace(/\s{2,}/g, ' ').trim();
+  }
+
+  var ORDEN_EV = {};
+  CATALOGO.forEach(function (e, i) { ORDEN_EV[e.id] = i; });
+
+  function datosRecomendacion(ev, cid) {
+    var errores = marcasDe(ev, cid).filter(function (m) { return EV[m.evidencia].pol === '-' || cid === 'c1'; });
+    if (cid === 'c1') errores = marcasDe(ev, 'c1').filter(function (m) { return m.evidencia !== 'c1.contradictoria'; });
+    errores.sort(function (a, b) {
+      return (ORDEN_EV[a.evidencia] - ORDEN_EV[b.evidencia]) || ((a.inicio != null ? a.inicio : a.punto) - (b.inicio != null ? b.inicio : b.punto));
+    });
+    var vistos = {}, ej = [];
+    errores.forEach(function (m) {
+      if (ej.length >= 3) return;
+      var f = fragmento(ev, m).trim();
+      if (f.length > 60) f = f.slice(0, 57).trim() + '…';
+      if (!f || vistos[f]) return;
+      vistos[f] = 1;
+      ej.push('«' + f + '»');
+    });
+    var porEv = {};
+    errores.forEach(function (m) { porEv[m.evidencia] = (porEv[m.evidencia] || 0) + 1; });
+    var dom = null, max = 0;
+    Object.keys(porEv).sort(function (a, b) { return ORDEN_EV[a] - ORDEN_EV[b]; }).forEach(function (k) { if (porEv[k] > max) { max = porEv[k]; dom = k; } });
+    var dominanteFuerte = dom && max >= 2 && max * 2 >= errores.length;
+    var parrNo = {};
+    (ev.marcas || []).forEach(function (m) { if (m.evidencia === 'c10.nocumple') parrNo[m.parrafo + 1] = 1; });
+    var lista = Object.keys(parrNo).map(Number).sort(function (a, b) { return a - b; });
+    return {
+      ejemplos: ej.length ? unirLista(ej) : '',
+      n: ev.palabras,
+      dominante: dom ? (NOMBRE_DOMINANTE[dom] || EV[dom].nombre.toLowerCase()) : '',
+      dominanteFuerte: dominanteFuerte,
+      insumos: insumosUsados(ev).join(', '),
+      parrafosNo: lista.length ? unirLista(lista.map(String)) : ''
+    };
+  }
+  // Cómo se nombra la evidencia dominante dentro de una frase dirigida al estudiante
+  var NOMBRE_DOMINANTE = {
+    'c11.aguda': 'tilde en palabras agudas', 'c11.llana': 'tilde en palabras llanas', 'c11.esdrujula': 'tilde en palabras esdrújulas',
+    'c11.diacritica': 'tilde diacrítica o interrogativa', 'c11.hiato': 'tilde en hiatos', 'c11.indebida': 'tildes que sobran',
+    'c12.grafia': 'grafía de las palabras', 'c12.mayuscula': 'uso de mayúsculas', 'c12.union': 'unión o separación de palabras', 'c12.malescrita': 'palabras mal escritas',
+    'c13.concordancia': 'concordancia', 'c13.verbal': 'tiempos y modos verbales', 'c13.preposicion': 'uso de preposiciones', 'c13.pronombre': 'uso de pronombres',
+    'c13.orden': 'orden de la oración', 'c13.incompleta': 'oraciones incompletas'
+  };
+  function unirLista(a) {
+    if (a.length <= 1) return a.join('');
+    return a.slice(0, -1).join(', ') + ' y ' + a[a.length - 1];
+  }
+
+  function recomendaciones(ev) {
+    var lista = [];
+    RUBRICA.forEach(function (c) {
+      var dec = ev.decisiones && ev.decisiones[c.id];
+      if (!dec || !dec.nivel || dec.nivel === 'experto') return;
+      var banco = RECOMENDACIONES[c.id];
+      var datos = datosRecomendacion(ev, c.id);
+      if (!(datos.dominanteFuerte || (banco.siempre && dec.nivel === 'intermedio'))) datos.dominante = '';
+      var texto = rellenar(banco[dec.nivel], datos) || '';
+      lista.push({ c: c.id, nivel: dec.nivel, perdidos: redondear2(c.valores.experto - c.valores[dec.nivel]), texto: texto });
+    });
+    lista.sort(function (a, b) { return (b.perdidos - a.perdidos) || (RUBRICA.indexOf(CRIT[a.c]) - RUBRICA.indexOf(CRIT[b.c])); });
+    return lista;
+  }
+
+  // ───────────────────────── Detector de marcadores ─────────────────────────
+  var MARCADORES = [
+    'además', 'asimismo', 'así mismo', 'también', 'incluso', 'de igual modo', 'de igual manera', 'del mismo modo', 'por otra parte', 'por otro lado', 'por una parte', 'por un lado',
+    'sin embargo', 'no obstante', 'en cambio', 'por el contrario', 'aunque', 'a pesar de', 'pese a', 'mientras que', 'si bien', 'con todo', 'aun así',
+    'porque', 'ya que', 'puesto que', 'dado que', 'debido a', 'pues', 'por esta razón', 'por esa razón', 'por eso', 'por ello',
+    'por lo tanto', 'por tanto', 'por consiguiente', 'en consecuencia', 'así que', 'de modo que', 'de manera que', 'de ahí que', 'por ende',
+    'es decir', 'o sea', 'en otras palabras', 'dicho de otro modo', 'por ejemplo', 'en particular', 'en concreto', 'de hecho', 'en efecto', 'sobre todo',
+    'en primer lugar', 'en segundo lugar', 'en tercer lugar', 'en último lugar', 'primero', 'luego', 'después', 'finalmente', 'por último', 'para empezar', 'para terminar',
+    'en conclusión', 'en resumen', 'en síntesis', 'en suma', 'para concluir', 'en definitiva', 'en fin', 'en otro orden'
+  ];
+  function detectarMarcadores(texto) {
+    var res = [];
+    var bajo = texto.toLowerCase();
+    var ordenados = MARCADORES.slice().sort(function (a, b) { return b.length - a.length; });
+    var ocupado = new Array(texto.length).fill(false);
+    ordenados.forEach(function (mk) {
+      var desde = 0, i;
+      while ((i = bajo.indexOf(mk, desde)) !== -1) {
+        var f = i + mk.length;
+        desde = i + 1;
+        if (esLetra(texto[i - 1]) || esLetra(texto[f])) continue;
+        var libre = true;
+        for (var k = i; k < f; k++) if (ocupado[k]) { libre = false; break; }
+        if (!libre) continue;
+        for (k = i; k < f; k++) ocupado[k] = true;
+        res.push({ inicio: i, fin: f });
+      }
+    });
+    return res.sort(function (a, b) { return a.inicio - b.inicio; });
+  }
+
+  // ───────────────────────── Privacidad ─────────────────────────
+  function contieneNombre(ev) {
+    var nombre = sinTildes(ev.estudiante || '').trim();
+    if (!nombre) return [];
+    var partes = nombre.split(/\s+/).filter(function (p) { return p.length >= 3; });
+    var campos = [['texto', ev.texto], ['etiqueta', ev.etiquetaPublica], ['observaciones', ev.observaciones]];
+    (ev.marcas || []).forEach(function (m) { campos.push(['comentario', m.comentario]); });
+    (ev.generales || []).forEach(function (g) { campos.push(['comentario', g.comentario]); });
+    Object.keys(ev.decisiones || {}).forEach(function (k) { campos.push(['motivo de desvío', ev.decisiones[k].motivoDesvio]); });
+    var hall = [];
+    campos.forEach(function (c) {
+      var t = sinTildes(c[1] || '');
+      if (!t) return;
+      var hit = t.indexOf(nombre) !== -1 || partes.some(function (p) {
+        return new RegExp('(^|[^\\p{L}])' + p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^\\p{L}])', 'u').test(t);
+      });
+      if (hit && hall.indexOf(c[0]) === -1) hall.push(c[0]);
+    });
+    return hall;
+  }
+
+  function capaPublica(ev) {
+    var c = JSON.parse(JSON.stringify(ev));
+    delete c.estudiante;
+    c.materialId = null;
+    Object.keys(c.decisiones || {}).forEach(function (k) { c.decisiones[k].motivoDesvio = ''; });
+    return c;
+  }
+
+  // ───────────────────────── Historial ─────────────────────────
+  function fusionar(a, b) {
+    a = a || {}; b = b || {};
+    var borradas = {};
+    (a.borradas || []).concat(b.borradas || []).forEach(function (id) { borradas[id] = 1; });
+    function porId(x, y) {
+      var m = {};
+      (x || []).concat(y || []).forEach(function (e) {
+        if (!e || borradas[e.id]) return;
+        if (!m[e.id] || String(e.modificada || '') > String(m[e.id].modificada || '')) m[e.id] = e;
+      });
+      return Object.keys(m).map(function (k) { return m[k]; }).sort(function (p, q) { return String(q.modificada || '').localeCompare(String(p.modificada || '')); });
+    }
+    return {
+      evaluaciones: porId(a.evaluaciones, b.evaluaciones),
+      materiales: porId(a.materiales, b.materiales),
+      borradas: Object.keys(borradas),
+      umbrales: a.umbrales || b.umbrales || null
+    };
+  }
+
+  // ───────────────────────── Cifrado ─────────────────────────
+  var ITERACIONES = 600000;
+  function subtle() { return (global.crypto && global.crypto.subtle) || null; }
+  function b64(buf) {
+    var bytes = new Uint8Array(buf), s = '';
+    for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return global.btoa ? global.btoa(s) : Buffer.from(s, 'binary').toString('base64');
+  }
+  function deB64(str) {
+    var s = global.atob ? global.atob(str) : Buffer.from(str, 'base64').toString('binary');
+    var out = new Uint8Array(s.length);
+    for (var i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+    return out;
+  }
+  function derivar(clave, sal, iter) {
+    var enc = new TextEncoder();
+    return subtle().importKey('raw', enc.encode(clave), 'PBKDF2', false, ['deriveKey']).then(function (base) {
+      return subtle().deriveKey({ name: 'PBKDF2', salt: sal, iterations: iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    });
+  }
+  function cifrar(objeto, clave, iter) {
+    iter = iter || ITERACIONES;
+    var sal = global.crypto.getRandomValues(new Uint8Array(16));
+    var iv = global.crypto.getRandomValues(new Uint8Array(12));
+    return derivar(clave, sal, iter).then(function (k) {
+      return subtle().encrypt({ name: 'AES-GCM', iv: iv }, k, new TextEncoder().encode(JSON.stringify(objeto)));
+    }).then(function (ct) {
+      return { v: 1, alg: 'AES-GCM', kdf: 'PBKDF2-SHA256', iter: iter, sal: b64(sal), iv: b64(iv), datos: b64(ct) };
+    });
+  }
+  function descifrar(paquete, clave) {
+    return derivar(clave, deB64(paquete.sal), paquete.iter).then(function (k) {
+      return subtle().decrypt({ name: 'AES-GCM', iv: deB64(paquete.iv) }, k, deB64(paquete.datos));
+    }).then(function (pt) { return JSON.parse(new TextDecoder().decode(pt)); });
+  }
+
+  // JSON seguro para incrustar dentro de una etiqueta de script
+  function jsonIncrustable(obj) {
+    return JSON.stringify(obj).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+  }
+
+  function nuevoId(pref) {
+    return pref + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  global.N2 = {
+    COMPETENCIA: COMPETENCIA, DESCRIPTORES: DESCRIPTORES, DESC: DESC, RUBRICA: RUBRICA, CRIT: CRIT, NIVELES: NIVELES, NOMBRE_NIVEL: NOMBRE_NIVEL,
+    CATALOGO: CATALOGO, EV: EV, SECCIONES: SECCIONES, GRAVEDADES: GRAVEDADES, FUNCIONES: FUNCIONES, INSUMOS_DEF: INSUMOS_DEF,
+    UMBRALES_DEF: UMBRALES_DEF, umbralesPorDefecto: umbralesPorDefecto, RECOMENDACIONES: RECOMENDACIONES, MARCADORES: MARCADORES,
+    familiaDe: familiaDe, esLetra: esLetra, contarPalabras: contarPalabras, normalizarTexto: normalizarTexto, calcularParrafos: calcularParrafos,
+    parrafoDe: parrafoDe, ajustarAPalabras: ajustarAPalabras, palabraEn: palabraEn, tipoSeleccion: tipoSeleccion, sinTildes: sinTildes,
+    marcasDe: marcasDe, generalesDe: generalesDe, fragmento: fragmento, sugerir: sugerir, puntaje: puntaje, calcularTotal: calcularTotal,
+    fmt2: fmt2, redondear2: redondear2, rellenar: rellenar, recomendaciones: recomendaciones, datosRecomendacion: datosRecomendacion,
+    detectarMarcadores: detectarMarcadores, contieneNombre: contieneNombre, capaPublica: capaPublica, fusionar: fusionar,
+    cifrar: cifrar, descifrar: descifrar, jsonIncrustable: jsonIncrustable, nuevoId: nuevoId, insumosUsados: insumosUsados, ITERACIONES: ITERACIONES
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function () {
+  'use strict';
+  var N = window.N2;
+  var EV = N.EV, CRIT = N.CRIT, RUBRICA = N.RUBRICA;
+
+  // Copia intacta de la página, tomada antes de tocar el DOM: base de "Guardar historial".
+  var PLANTILLA = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+  var CLAVE_LOCAL = 'calificacion-escritura-n2-manual-v1';
+  var FAMILIA_VAR = { sit: 'var(--sit)', coh: 'var(--coh)', org: 'var(--org)', cor: 'var(--cor)' };
+  var ABREV = { c1: 'Post', c2: 'Just', c3: 'Rol', c4: 'Ref', c5: 'Ext', c6: 'Punt', c7: 'Marc', c8: 'Léx', c9: 'Prog', c10: 'Párr', c11: 'Tild', c12: 'Orto', c13: 'Gram' };
+  var NV_CORTO = { experto: 'Exp', avanzado: 'Ava', intermedio: 'Int', inicial: 'Ini' };
+  var TIPO_NOMBRE = { hueco: 'Hueco', signo: 'Signo', palabra: 'Palabra', frase: 'Frase', parrafo: 'Párrafo' };
+
+  var S = {
+    datos: { evaluaciones: [], materiales: [], borradas: [], umbrales: null },
+    ev: null, sel: null, recientes: [], deshacer: [], abierta: null, detector: false, descartadas: {},
+    ocultarNumeros: false, ocultarMarcas: false, solo: null, filtro: '', expandidos: {}, colapsado: false,
+    menu: false, cifradoEmbebido: null, desbloqueado: false, clave: null, sinAlmacen: false, ptr: null,
+    borrador: { texto: '', estudiante: '', etiqueta: '', materialId: '', visibilidad: 'privada', unidas: 0, guiones: 0 }
+  };
+  window.__N2UI = S; // acceso para pruebas
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function ahora() { return new Date().toISOString(); }
+  function umbrales() { return Object.assign(N.umbralesPorDefecto(), S.datos.umbrales || {}); }
+  function fam(cid) { return N.familiaDe(cid); }
+  function famVar(cid) { return FAMILIA_VAR[fam(cid)]; }
+  function fecha(iso) {
+    try { return new Date(iso).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return iso; }
+  }
+  function esMovil() { return window.matchMedia('(max-width: 860px)').matches; }
+  function copia(o) { return JSON.parse(JSON.stringify(o)); }
+
+  // ───────── Persistencia ─────────
+  function cargar() {
+    try {
+      var t = localStorage.getItem(CLAVE_LOCAL);
+      localStorage.setItem(CLAVE_LOCAL + '-prueba', '1');
+      localStorage.removeItem(CLAVE_LOCAL + '-prueba');
+      if (t) {
+        var d = JSON.parse(t);
+        S.datos = { evaluaciones: d.evaluaciones || [], materiales: d.materiales || [], borradas: d.borradas || [], umbrales: d.umbrales || null };
+      }
+    } catch (e) { S.sinAlmacen = true; }
+    try {
+      var pub = JSON.parse($('n2-publico').textContent || 'null');
+      if (pub && pub.evaluaciones && pub.evaluaciones.length) {
+        pub.evaluaciones.forEach(function (e) { e.publicada = true; });
+        S.datos = N.fusionar(S.datos, { evaluaciones: pub.evaluaciones });
+      }
+    } catch (e) { /* capa pública ilegible: se ignora */ }
+    try {
+      var cif = JSON.parse($('n2-cifrado').textContent || 'null');
+      if (cif && cif.datos) S.cifradoEmbebido = cif;
+    } catch (e) { /* sin capa cifrada */ }
+  }
+  function guardar() {
+    if (S.sinAlmacen) return;
+    try { localStorage.setItem(CLAVE_LOCAL, JSON.stringify(S.datos)); }
+    catch (e) { S.sinAlmacen = true; renderAvisoSup(); }
+  }
+  function tocarEv() {
+    if (!S.ev) return;
+    S.ev.modificada = ahora();
+    var i = S.datos.evaluaciones.findIndex(function (e) { return e.id === S.ev.id; });
+    if (i === -1) S.datos.evaluaciones.unshift(S.ev); else S.datos.evaluaciones[i] = S.ev;
+    guardar();
+  }
+  function material(id) { return S.datos.materiales.find(function (m) { return m.id === id; }) || null; }
+
+  // ───────── Avisos ─────────
+  var tAviso;
+  function aviso(msg) {
+    var el = $('avisoFlotante');
+    if (!el) { el = document.createElement('div'); el.id = 'avisoFlotante'; el.className = 'aviso'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+    el.textContent = msg; el.hidden = false;
+    clearTimeout(tAviso);
+    tAviso = setTimeout(function () { el.hidden = true; }, 3200);
+  }
+  function renderAvisoSup() {
+    var html = '';
+    if (S.sinAlmacen) html = '<div class="aviso-sup">Este navegador no deja guardar datos en esta página. Lo que marques se perderá al cerrarla; usa Guardar historial para conservarlo.</div>';
+    else if (S.cifradoEmbebido && !S.desbloqueado) html = '<div class="aviso-sup"><span style="flex:1">Esta página trae un historial cifrado. Desbloquéalo para ver todas las evaluaciones y poder guardar cambios.</span><button class="btn chico" data-a="desbloquear">Desbloquear historial</button></div>';
+    $('avisoSup').innerHTML = html;
+    document.body.classList.toggle('con-aviso', !!html);
+  }
+
+  // ───────── Cabecera ─────────
+  function renderCabecera() {
+    var ev = S.ev, h = '';
+    h += '<div class="marca"><b>Calificación manual</b><span>Escritura, nivel 2</span></div>';
+    h += '<div class="cab-eval">';
+    if (ev) {
+      var mat = material(ev.materialId);
+      h += '<b>' + esc(ev.etiquetaPublica || ev.estudiante || 'Sin nombre') + '</b>';
+      if (mat) h += '&emsp;' + esc(mat.titulo);
+      h += '&emsp;' + ev.palabras + ' palabras';
+    }
+    h += '</div>';
+    if (ev) {
+      var t = N.calcularTotal(ev);
+      h += '<div class="cab-total" title="Solo suman los criterios decididos"><span class="cifra" id="cifraTotal">' + N.fmt2(t.total) + '</span><span class="cifra-de">/ 5,00</span><span class="decididos">' + t.decididos + ' de ' + t.criterios + ' criterios decididos</span></div>';
+    }
+    h += '<div class="cab-acciones">';
+    if (ev) {
+      h += '<button class="btn solo-escritorio" data-a="inicio">Evaluaciones</button>';
+      h += '<button class="btn solo-escritorio" data-a="imprimir">Imprimir PDF</button>';
+    }
+    h += '<div class="menu"><button class="btn" data-a="menu" aria-haspopup="true" aria-expanded="' + S.menu + '">Más</button>';
+    if (S.menu) {
+      h += '<div class="menu-lista" role="menu">';
+      h += '<button data-a="nueva" role="menuitem">Nueva evaluación</button>';
+      if (ev) {
+        h += '<button data-a="inicio" role="menuitem">Evaluaciones guardadas</button>';
+        h += '<button data-a="imprimir" role="menuitem">Imprimir PDF</button>';
+        if (ev.materialId) h += '<button data-a="verMateriales" role="menuitem">Materiales de la prueba</button>';
+      }
+      h += '<hr><button data-a="pruebas" role="menuitem">Pruebas</button>';
+      h += '<button data-a="umbrales" role="menuitem">Umbrales de sugerencia</button>';
+      h += '<hr><button data-a="guardarHistorial" role="menuitem">Guardar historial</button>';
+      if (S.cifradoEmbebido && !S.desbloqueado) h += '<button data-a="desbloquear" role="menuitem">Desbloquear historial</button>';
+      h += '</div>';
+    }
+    h += '</div></div>';
+    $('cabecera').innerHTML = h;
+    var fab = $('fab');
+    if (ev && esMovil()) {
+      var tt = N.calcularTotal(ev);
+      fab.hidden = false;
+      fab.innerHTML = '<span class="cifra">' + N.fmt2(tt.total) + '</span><small>' + tt.decididos + '/' + tt.criterios + '</small>';
+      fab.setAttribute('aria-label', 'Abrir la rúbrica. Total ' + N.fmt2(tt.total));
+    } else fab.hidden = true;
+  }
+
+  // ───────── Vista de inicio ─────────
+  function irInicio() {
+    S.ev = null; S.sel = null; S.abierta = null; S.deshacer = []; S.solo = null;
+    cerrarEditor();
+    $('vistaMarcado').hidden = true;
+    $('vistaInicio').hidden = false;
+    renderInicio();
+    renderCabecera();
+  }
+
+  function renderContador() {
+    var b = S.borrador;
+    var n = N.contarPalabras(b.texto);
+    var p = N.calcularParrafos(b.texto.replace(/\n{2,}/g, '\n').trim()).length;
+    var h = '<span>' + n + ' palabras</span><span>' + p + ' párrafos</span><span>el rango pedido es de 500 a 550</span>';
+    if (b.unidas || b.guiones) h += '<span class="aviso-norm">Se unieron ' + b.unidas + ' líneas cortadas' + (b.guiones ? ' y ' + b.guiones + ' palabras partidas por guion' : '') + '.</span>';
+    $('contador').innerHTML = h;
+    var btn = $('btnEmpezar');
+    if (btn) btn.disabled = n === 0;
+  }
+
+  function renderInicio() {
+    var b = S.borrador;
+    var mats = S.datos.materiales.slice().sort(function (x, y) { return String(y.modificada).localeCompare(String(x.modificada)); });
+    var h = '<div class="inicio-rejilla"><div>';
+    h += '<h1>Nueva evaluación</h1><p class="sub">Pega el texto del estudiante. Si viene de un PDF con saltos de línea a mitad de frase, se unen solos y verás cuántas líneas se unieron.</p>';
+    h += '<textarea class="area-texto" id="entradaTexto" placeholder="Texto del estudiante" spellcheck="false">' + esc(b.texto) + '</textarea>';
+    h += '<div class="contador" id="contador"></div></div><div>';
+    h += '<label class="campo"><span>Estudiante</span><input class="entrada" id="entEstudiante" value="' + esc(b.estudiante) + '" autocomplete="off"><small>Privado. Nunca se publica.</small></label>';
+    h += '<label class="campo"><span>Etiqueta pública</span><input class="entrada" id="entEtiqueta" value="' + esc(b.etiqueta) + '" autocomplete="off" placeholder="Ejemplo: texto 3, simulacro de marzo"><small>Lo único que se ve si publicas esta evaluación.</small></label>';
+    h += '<div class="campo"><span>Prueba</span><div class="fila"><select class="entrada" id="entMaterial" style="flex:1;min-width:0"><option value="">Sin materiales</option>';
+    mats.forEach(function (m) { h += '<option value="' + m.id + '"' + (b.materialId === m.id ? ' selected' : '') + '>' + esc(m.titulo) + '</option>'; });
+    h += '</select><button class="btn" data-a="nuevaPrueba">Nueva prueba</button></div><small>Situación, actores e información complementaria, para consultarlos mientras marcas.</small></div>';
+    h += '<div class="campo"><span>Visibilidad</span><div class="opciones"><label><input type="radio" name="vis" value="privada"' + (b.visibilidad !== 'publica' ? ' checked' : '') + '> Privada</label><label><input type="radio" name="vis" value="publica"' + (b.visibilidad === 'publica' ? ' checked' : '') + '> Pública, como ejemplo</label></div></div>';
+    h += '<button class="btn primario" id="btnEmpezar" data-a="empezar" style="width:100%;justify-content:center;height:40px">Empezar a marcar</button>';
+    h += '</div></div>';
+    h += '<section class="lista-evals"><h2>Evaluaciones guardadas</h2>' + tablaEvaluaciones() + '</section>';
+    $('vistaInicio').innerHTML = h;
+    renderContador();
+  }
+
+  function tablaEvaluaciones() {
+    var evs = S.datos.evaluaciones;
+    if (!evs.length) return '<p class="vacio">Todavía no hay evaluaciones. La primera aparecerá aquí en cuanto empieces a marcar.</p>';
+    var h = '<div style="overflow-x:auto"><table class="tabla"><thead><tr><th>Evaluación</th><th>Prueba</th><th>Modificada</th><th>Palabras</th><th>Decididos</th><th>Total</th><th></th></tr></thead><tbody>';
+    evs.forEach(function (e) {
+      var t = N.calcularTotal(e), m = material(e.materialId);
+      var nombre = e.estudiante ? esc(e.estudiante) + (e.etiquetaPublica ? ' <span class="etiqueta">' + esc(e.etiquetaPublica) + '</span>' : '') : esc(e.etiquetaPublica || 'Sin nombre');
+      if (e.visibilidad === 'publica') nombre += ' <span class="etiqueta">pública</span>';
+      h += '<tr class="abrible" data-a="abrir" data-id="' + e.id + '"><td>' + nombre + '</td><td>' + (m ? esc(m.titulo) : '<span style="color:var(--tinta-3)">—</span>') + '</td><td>' + fecha(e.modificada) + '</td><td>' + e.palabras + '</td><td>' + t.decididos + ' de ' + t.criterios + '</td><td class="num">' + N.fmt2(t.total) + '</td><td style="text-align:right"><button class="btn chico fantasma peligro" data-a="borrarEval" data-id="' + e.id + '" aria-label="Borrar evaluación">Borrar</button></td></tr>';
+    });
+    return h + '</tbody></table></div>';
+  }
+
+  function empezar() {
+    var b = S.borrador;
+    var norm = N.normalizarTexto(b.texto);
+    if (!N.contarPalabras(norm.texto)) { aviso('Pega primero el texto del estudiante.'); return; }
+    var ev = {
+      id: N.nuevoId('ev'), creada: ahora(), modificada: ahora(),
+      visibilidad: b.visibilidad, estudiante: b.estudiante.trim(), etiquetaPublica: b.etiqueta.trim(),
+      materialId: b.materialId || null, texto: norm.texto, palabras: N.contarPalabras(norm.texto),
+      parrafos: N.calcularParrafos(norm.texto), marcas: [], generales: [], decisiones: {}, recExcluidas: [], observaciones: ''
+    };
+    S.datos.evaluaciones.unshift(ev);
+    guardar();
+    S.borrador = { texto: '', estudiante: '', etiqueta: '', materialId: b.materialId, visibilidad: 'privada', unidas: 0, guiones: 0 };
+    abrirEval(ev.id);
+  }
+
+  function abrirEval(id) {
+    var ev = S.datos.evaluaciones.find(function (e) { return e.id === id; });
+    if (!ev) return;
+    ev.marcas = ev.marcas || []; ev.generales = ev.generales || []; ev.decisiones = ev.decisiones || {}; ev.recExcluidas = ev.recExcluidas || [];
+    S.ev = ev; S.sel = null; S.abierta = null; S.deshacer = []; S.solo = null; S.menu = false;
+    $('vistaInicio').hidden = true;
+    $('vistaMarcado').hidden = false;
+    $('colTexto').scrollTop = 0;
+    renderMarcado();
+  }
+
+  window.__N2 = { S: S, esc: esc, $: $, umbrales: umbrales, fam: fam, famVar: famVar, fecha: fecha, esMovil: esMovil, copia: copia,
+    guardar: guardar, tocarEv: tocarEv, material: material, aviso: aviso, renderAvisoSup: renderAvisoSup, renderCabecera: renderCabecera,
+    irInicio: irInicio, renderInicio: renderInicio, renderContador: renderContador, empezar: empezar, abrirEval: abrirEval,
+    cargar: cargar, PLANTILLA: PLANTILLA, ABREV: ABREV, NV_CORTO: NV_CORTO, TIPO_NOMBRE: TIPO_NOMBRE, FAMILIA_VAR: FAMILIA_VAR, ahora: ahora };
+  function renderMarcado() { window.__N2.renderMarcado(); }
+  function cerrarEditor() { if (window.__N2.cerrarEditor) window.__N2.cerrarEditor(); }
+})();
+
+(function () {
+  'use strict';
+  var N = window.N2, U = window.__N2, S = U.S, $ = U.$, esc = U.esc;
+  var EV = N.EV, CRIT = N.CRIT;
+
+  // ───────── Numeración: sigue la posición donde se pinta el número ─────────
+  function esParrafoEntero(ev, m) {
+    if (m.punto != null) return false;
+    var P = ev.parrafos[m.parrafo];
+    return !!P && m.inicio <= P.inicio && m.fin >= P.fin;
+  }
+  function posNumero(ev, m) {
+    if (m.punto != null) return m.punto;
+    if (esParrafoEntero(ev, m)) return ev.parrafos[m.parrafo].inicio - 0.5;
+    return m.fin;
+  }
+  function numerar(ev) {
+    var orden = ev.marcas.slice().sort(function (a, b) {
+      return (posNumero(ev, a) - posNumero(ev, b)) || String(a.creada).localeCompare(String(b.creada));
+    });
+    var mapa = {};
+    orden.forEach(function (m, i) { mapa[m.id] = i + 1; });
+    return mapa;
+  }
+
+  // ───────── Pintado del texto ─────────
+  function htmlTexto(ev, o) {
+    o = o || {};
+    var nums = numerar(ev);
+    var visibles = ev.marcas.filter(function (m) { return EV[m.evidencia] && (!o.solo || EV[m.evidencia].c === o.solo); });
+    var props = o.propuestas || [];
+    var out = '';
+    ev.parrafos.forEach(function (P, i) {
+      var a = P.inicio, b = P.fin;
+      var barras = [], rangos = [], puntos = [];
+      visibles.forEach(function (m) {
+        if (m.punto != null) { if (m.parrafo === i) puntos.push(m); return; }
+        if (m.fin <= a || m.inicio >= b) return;
+        if (esParrafoEntero(ev, m)) barras.push(m); else rangos.push(m);
+      });
+      var misProps = props.filter(function (p) { return p.inicio >= a && p.fin <= b; });
+      var cortes = {}; cortes[a] = 1; cortes[b] = 1;
+      function cl(x) { return Math.max(a, Math.min(b, x)); }
+      rangos.forEach(function (m) { cortes[cl(m.inicio)] = 1; cortes[cl(m.fin)] = 1; });
+      puntos.forEach(function (m) { cortes[cl(m.punto)] = 1; });
+      misProps.forEach(function (p) { cortes[p.inicio] = 1; cortes[p.fin] = 1; });
+      var sel = o.sel && o.sel.parrafo === i && o.sel.fin > o.sel.inicio ? o.sel : null;
+      if (sel) { cortes[cl(sel.inicio)] = 1; cortes[cl(sel.fin)] = 1; }
+      var c = Object.keys(cortes).map(Number).sort(function (x, y) { return x - y; });
+      function puntosEn(x) {
+        var h = '';
+        puntos.filter(function (m) { return cl(m.punto) === x; }).sort(function (p, q) { return nums[p.id] - nums[q.id]; }).forEach(function (m) {
+          var fv = U.famVar(EV[m.evidencia].c);
+          h += '<span class="punto" data-m="' + m.id + '" data-c="‸" style="--f:' + fv + '" title="' + esc(EV[m.evidencia].nombre) + '"></span>';
+          h += '<span class="num" data-m="' + m.id + '" data-n="' + nums[m.id] + '" style="--f:' + fv + '"></span>';
+        });
+        return h;
+      }
+      function numsFin(y) {
+        var h = '';
+        rangos.filter(function (m) { return cl(m.fin) === y; }).sort(function (p, q) { return nums[p.id] - nums[q.id]; }).forEach(function (m) {
+          h += '<span class="num" data-m="' + m.id + '" data-n="' + nums[m.id] + '" style="--f:' + U.famVar(EV[m.evidencia].c) + '"></span>';
+        });
+        return h;
+      }
+      var cuerpo = '';
+      for (var k = 0; k < c.length - 1; k++) {
+        var x = c[k], y = c[k + 1];
+        cuerpo += puntosEn(x);
+        var cubren = rangos.filter(function (m) { return m.inicio <= x && m.fin >= y; }).sort(function (p, q) { return String(p.creada).localeCompare(String(q.creada)); });
+        var aciertos = cubren.filter(function (m) { return EV[m.evidencia].pol === '+'; });
+        var errores = cubren.filter(function (m) { return EV[m.evidencia].pol === '-'; });
+        var cls = ['s'], st = [];
+        if (aciertos.length) { cls.push('acierto'); st.push('--fa:' + U.famVar(EV[aciertos[0].evidencia].c)); }
+        if (errores.length) {
+          cls.push('error'); st.push('--f:' + U.famVar(EV[errores[0].evidencia].c));
+          if (errores.some(function (m) { return (m.gravedad || 0) >= 1; })) cls.push('grave');
+          if (errores.length > 1) { cls.push('error2'); st.push('--f2:' + U.famVar(EV[errores[1].evidencia].c)); }
+        } else if (aciertos.length) st.push('--f:' + U.famVar(EV[aciertos[0].evidencia].c));
+        if (sel && x >= sel.inicio && y <= sel.fin) cls.push('seleccion');
+        var pr = misProps.find(function (p) { return x >= p.inicio && y <= p.fin; });
+        var attrs = '';
+        if (pr && !cubren.length) { cls.push('prop'); attrs += ' data-prop="' + pr.inicio + '-' + pr.fin + '" title="Clic: confirmar marcador · clic derecho: descartar"'; }
+        if (cubren.length) attrs += ' data-m="' + cubren.map(function (m) { return m.id; }).join(' ') + '"';
+        cuerpo += '<span class="' + cls.join(' ') + '" data-o="' + x + '"' + attrs + (st.length ? ' style="' + st.join(';') + '"' : '') + '>' + esc(ev.texto.slice(x, y)) + '</span>';
+        cuerpo += numsFin(y);
+      }
+      cuerpo += puntosEn(b);
+      var margen = '';
+      barras.sort(function (p, q) { return nums[p.id] - nums[q.id]; }).forEach(function (m) {
+        var e = EV[m.evidencia];
+        margen += '<button class="barra-m ' + (e.pol === '+' ? 'acierto' : 'error') + '" data-m="' + m.id + '" style="--f:' + U.famVar(e.c) + '" title="' + esc(e.nombre) + '" aria-label="Marca ' + nums[m.id] + ': ' + esc(e.nombre) + '"><span class="num" data-n="' + nums[m.id] + '" style="--f:' + U.famVar(e.c) + '"></span></button>';
+      });
+      if (!o.imprimir) margen += '<button class="asa" data-a="parrafo" data-p="' + i + '" title="Tomar el párrafo ' + (i + 1) + ' entero" aria-label="Seleccionar el párrafo ' + (i + 1) + '">¶</button>';
+      out += '<div class="parr" data-p="' + i + '"><div class="margen">' + margen + '</div><p class="ptexto" data-p="' + i + '">' + cuerpo + '</p></div>';
+    });
+    return out;
+  }
+
+  function propuestasActivas() {
+    if (!S.detector || !S.ev) return [];
+    var desc = S.descartadas[S.ev.id] || {};
+    var marc = S.ev.marcas.filter(function (m) { return m.punto == null && EV[m.evidencia].c === 'c7'; });
+    return N.detectarMarcadores(S.ev.texto).filter(function (p) {
+      if (desc[p.inicio + '-' + p.fin]) return false;
+      return !marc.some(function (m) { return m.inicio < p.fin && m.fin > p.inicio; });
+    });
+  }
+
+  function renderTexto() {
+    var t = $('texto');
+    t.className = (S.ocultarNumeros ? 'sin-numeros ' : '') + (S.ocultarMarcas ? 'sin-marcas' : '');
+    t.innerHTML = htmlTexto(S.ev, { sel: S.sel, solo: S.solo, propuestas: propuestasActivas() });
+  }
+
+  function renderHerramientas() {
+    var h = '<label title="Propone los marcadores discursivos del texto. Solo cuentan los que confirmes."><input type="checkbox" data-campo="detector"' + (S.detector ? ' checked' : '') + '> Sugerir marcadores</label>';
+    h += '<label><input type="checkbox" data-campo="ocultarNumeros"' + (S.ocultarNumeros ? ' checked' : '') + '> Ocultar números</label>';
+    h += '<label><input type="checkbox" data-campo="ocultarMarcas"' + (S.ocultarMarcas ? ' checked' : '') + '> Ocultar marcas</label>';
+    if (S.solo) h += '<span class="etiqueta">Solo ' + esc(CRIT[S.solo].corto.toLowerCase()) + ' <button class="btn chico fantasma" data-a="soloFuera" style="height:18px;padding:0 4px">✕</button></span>';
+    h += '<span class="sep"></span>';
+    if (S.ev.materialId) h += '<button class="btn chico" data-a="verMateriales">Materiales de la prueba</button>';
+    h += '<button class="btn chico" data-a="deshacer"' + (S.deshacer.length ? '' : ' disabled') + ' title="Ctrl+Z">Deshacer</button>';
+    $('herramientas').innerHTML = h;
+  }
+
+  function renderLeyenda() {
+    var h = '<div class="leyenda">';
+    N.DESCRIPTORES.forEach(function (d) { h += '<span class="f-' + d.familia + '"><i></i>' + esc(d.corto) + '</span>'; });
+    h += '<span>Fondo de color, acierto. Subrayado ondulado, error. ‸, falta un signo.</span></div>';
+    $('leyenda').innerHTML = h;
+  }
+
+  // ───────── Paleta ─────────
+  function chip(e, extra) {
+    var c = CRIT[e.c];
+    return '<button class="chip f-' + U.fam(e.c) + (e.doc ? ' doc' : '') + '" data-a="marcar" data-ev="' + e.id + '" title="' + esc(c.corto + (e.doc ? ' · documental: no mueve la sugerencia' : '')) + '"><span class="punto-f"></span><span class="pol ' + (e.pol === '+' ? 'mas">✓' : 'menos">✕') + '</span>' + esc(e.nombre) + (extra ? ' <kbd>' + extra + '</kbd>' : (e.tecla ? ' <kbd>' + e.tecla + '</kbd>' : '')) + '</button>';
+  }
+  function sugeridas(tipo) {
+    var orden = [];
+    N.SECCIONES.forEach(function (sec) { sec.criterios.forEach(function (cid) { N.CATALOGO.forEach(function (e) { if (e.c === cid && !e.general && e.tam && e.tam.indexOf(tipo) !== -1) orden.push(e); }); }); });
+    // Primero las que ya usaste en esta sesión; luego el orden de lectura. Ocho bastan: el catálogo completo está debajo.
+    var rec = orden.filter(function (e) { return S.recientes.indexOf(e.id) !== -1; });
+    var resto = orden.filter(function (e) { return S.recientes.indexOf(e.id) === -1; });
+    return rec.concat(resto).slice(0, 8);
+  }
+  function renderPaleta() {
+    var p = $('paleta');
+    p.classList.toggle('con-seleccion', !!S.sel);
+    if (!S.sel) {
+      p.innerHTML = U.esMovil() ? '<div class="paleta-vacia">Toca una palabra o un espacio para marcar; ¶ toma el párrafo.</div>' : '<div class="paleta-vacia">Selecciona una palabra o una frase, haz clic en un espacio para marcar un hueco, o usa ¶ para tomar un párrafo entero.</div>';
+      return;
+    }
+    var ev = S.ev, sel = S.sel;
+    var frag = sel.tipo === 'hueco' ? ev.texto.slice(Math.max(0, sel.inicio - 18), sel.inicio) + '‸' + ev.texto.slice(sel.inicio, sel.inicio + 18) : ev.texto.slice(sel.inicio, sel.fin);
+    var h = '<div class="paleta-abierta"><div class="pal-cab"><span class="pal-tipo">' + U.TIPO_NOMBRE[sel.tipo] + ', párrafo ' + (sel.parrafo + 1) + '</span><span class="pal-frag cita">«' + esc(frag) + '»</span><button class="btn chico fantasma" data-a="cancelarSel">Cancelar <span class="kbd">Esc</span></button></div>';
+    h += '<div class="pal-fila"><span class="pal-rot">Sugeridas</span>' + sugeridas(sel.tipo).map(function (e) { return chip(e); }).join('') + '</div>';
+    if (S.recientes.length) h += '<div class="pal-fila"><span class="pal-rot">Recientes</span>' + S.recientes.map(function (id, i) { return chip(EV[id], String(i + 1)); }).join('') + '</div>';
+    h += '<div class="pal-fila"><span class="pal-rot">Catálogo</span><input class="entrada pal-filtro" id="palFiltro" placeholder="Filtrar evidencias" value="' + esc(S.filtro) + '" autocomplete="off"></div>';
+    h += '<div class="pal-secciones" id="palSecciones">' + htmlSecciones() + '</div>';
+    h += '<div class="pal-ayuda">Mayúscula + clic o Mayúscula + tecla crea la marca con la gravedad siguiente. Ctrl+Z deshace.</div></div>';
+    p.innerHTML = h;
+  }
+  function htmlSecciones() {
+    var f = N.sinTildes(S.filtro.trim());
+    var h = '';
+    N.SECCIONES.forEach(function (sec) {
+      var bloque = '';
+      sec.criterios.forEach(function (cid) {
+        var evs = N.CATALOGO.filter(function (e) { return e.c === cid && !e.general && (!f || N.sinTildes(e.nombre + ' ' + CRIT[cid].corto).indexOf(f) !== -1); });
+        if (!evs.length) return;
+        bloque += '<div class="pal-crit"><div>' + esc(CRIT[cid].corto) + '</div><div class="chips">' + evs.map(function (e) { return chip(e); }).join('') + '</div></div>';
+      });
+      if (bloque) h += '<div class="pal-sec"><h4>' + sec.nombre + '</h4>' + bloque + '</div>';
+    });
+    return h || '<p class="vacio">Ninguna evidencia coincide con el filtro.</p>';
+  }
+  function asegurarVisible() {
+    var s = document.querySelector('#texto .s.seleccion') || document.querySelector('#texto .parr[data-p="' + (S.sel ? S.sel.parrafo : 0) + '"]');
+    if (!s || !S.sel) return;
+    var col = $('colTexto'), pal = $('paleta');
+    var r = s.getBoundingClientRect(), rp = pal.getBoundingClientRect();
+    if (U.esMovil()) {
+      if (r.bottom > rp.top - 8) col.scrollTop += r.bottom - rp.top + 24;
+    } else if (r.top < rp.bottom + 8) col.scrollTop -= rp.bottom + 24 - r.top;
+  }
+
+  // ───────── Selección ─────────
+  function offsetDe(node, off) {
+    var el = node.nodeType === 3 ? node.parentElement : node;
+    var pt = el && el.closest ? el.closest('.ptexto') : null;
+    if (!pt || !$('texto').contains(pt)) return null;
+    var p = +pt.getAttribute('data-p');
+    var r = document.createRange();
+    r.setStart(pt, 0);
+    try { r.setEnd(node, off); } catch (e) { return null; }
+    return { p: p, pos: S.ev.parrafos[p].inicio + r.toString().length };
+  }
+  function caretEn(x, y) {
+    if (document.caretPositionFromPoint) { var c = document.caretPositionFromPoint(x, y); return c ? { node: c.offsetNode, off: c.offset } : null; }
+    if (document.caretRangeFromPoint) { var r = document.caretRangeFromPoint(x, y); return r ? { node: r.startContainer, off: r.startOffset } : null; }
+    return null;
+  }
+  function fijarSeleccion(inicio, fin, parrafo) {
+    var ev = S.ev, P = ev.parrafos[parrafo];
+    inicio = Math.max(P.inicio, inicio); fin = Math.min(P.fin, fin);
+    var aj = inicio === fin ? { inicio: inicio, fin: fin } : N.ajustarAPalabras(ev.texto, inicio, fin);
+    aj.inicio = Math.max(P.inicio, aj.inicio); aj.fin = Math.min(P.fin, aj.fin);
+    S.sel = { inicio: aj.inicio, fin: aj.fin, parrafo: parrafo, tipo: N.tipoSeleccion(ev.texto, ev.parrafos, aj.inicio, aj.fin) };
+    if (aj.inicio === aj.fin) S.sel.tipo = 'hueco';
+    cerrarEditor();
+    renderTexto(); renderPaleta(); asegurarVisible();
+  }
+  function limpiarSeleccion() {
+    if (!S.sel) return;
+    S.sel = null; S.filtro = '';
+    renderTexto(); renderPaleta();
+  }
+
+  function alSoltar(e) {
+    var ptr = S.ptr || {};
+    var movio = ptr.x != null && (Math.abs(e.clientX - ptr.x) > 5 || Math.abs(e.clientY - ptr.y) > 5);
+    var sel = window.getSelection();
+    if (sel && sel.rangeCount && !sel.isCollapsed) {
+      var r = sel.getRangeAt(0);
+      var a = offsetDe(r.startContainer, r.startOffset);
+      if (a) {
+        var b = offsetDe(r.endContainer, r.endOffset);
+        var fin = b && b.p === a.p ? b.pos : S.ev.parrafos[a.p].fin;
+        sel.removeAllRanges();
+        if (fin > a.pos) { fijarSeleccion(a.pos, fin, a.p); return; }
+      }
+    }
+    if (movio) return;
+    clicEnTexto(e, ptr.tipo || 'mouse');
+  }
+
+  function clicEnTexto(e, tipo) {
+    var t = e.target;
+    var marcaEl = t.closest && t.closest('.num, .punto, .barra-m');
+    if (marcaEl) { abrirMarca(marcaEl.getAttribute('data-m')); return; }
+    var prop = t.closest && t.closest('.s.prop');
+    if (prop && e.button !== 2) { confirmarPropuesta(prop.getAttribute('data-prop')); return; }
+    if (t.closest && t.closest('.asa, .margen')) return;
+    var c = caretEn(e.clientX, e.clientY);
+    var o = c && offsetDe(c.node, c.off);
+    if (!o) { limpiarSeleccion(); cerrarEditor(); return; }
+    var seg = t.closest && t.closest('.s[data-m]');
+    if (seg) {
+      var ids = seg.getAttribute('data-m').split(' ');
+      var cortas = ids.map(function (id) { return S.ev.marcas.find(function (m) { return m.id === id; }); }).filter(function (m) { return m && m.fin - m.inicio <= 40; });
+      cortas.sort(function (p, q) { return (p.fin - p.inicio) - (q.fin - q.inicio); });
+      if (cortas.length) { abrirMarca(cortas[0].id); return; }
+    }
+    var tx = S.ev.texto, pos = o.pos;
+    var antes = tx[pos - 1], despues = tx[pos];
+    var dentro = N.esLetra(antes) && N.esLetra(despues);
+    if (!dentro && (/\s/.test(despues || '') || /\s/.test(antes || ''))) {
+      var hueco = /\s/.test(despues || '') ? pos : pos - 1;
+      if (N.esLetra(tx[hueco - 1]) || /[\p{P}]/u.test(tx[hueco - 1] || '')) { fijarSeleccion(hueco, hueco, o.p); return; }
+    }
+    if (tipo !== 'mouse') {
+      var w = N.palabraEn(tx, pos);
+      if (w) { fijarSeleccion(w.inicio, w.fin, o.p); return; }
+    }
+    limpiarSeleccion(); cerrarEditor();
+  }
+
+  function seleccionarParrafo(i) {
+    var P = S.ev.parrafos[i];
+    fijarSeleccion(P.inicio, P.fin, i);
+  }
+
+  // ───────── Marcas ─────────
+  function instantanea() { return { marcas: U.copia(S.ev.marcas), generales: U.copia(S.ev.generales) }; }
+  function apilar() {
+    S.deshacer.push(instantanea());
+    if (S.deshacer.length > 200) S.deshacer.shift();
+  }
+  function deshacer() {
+    if (!S.ev || !S.deshacer.length) return;
+    var previo = S.deshacer.pop();
+    // Los comentarios escritos después no se pierden.
+    var com = {};
+    S.ev.marcas.concat(S.ev.generales).forEach(function (m) { if (m.comentario) com[m.id] = m.comentario; });
+    previo.marcas.concat(previo.generales).forEach(function (m) { if (com[m.id]) m.comentario = com[m.id]; });
+    S.ev.marcas = previo.marcas; S.ev.generales = previo.generales;
+    if (S.abierta && !S.ev.marcas.some(function (m) { return m.id === S.abierta; })) cerrarEditor();
+    U.tocarEv(); U.renderMarcado({ editor: true });
+    U.aviso('Deshecho.');
+  }
+  function funcionProbable(p) {
+    var n = S.ev.parrafos.length;
+    return p === 0 ? 'apertura' : (p === n - 1 ? 'cierre' : 'desarrollo');
+  }
+  function crearMarca(evId, gravMas) {
+    var e = EV[evId], sel = S.sel, ev = S.ev;
+    if (!e || !sel || e.general) return;
+    var P = ev.parrafos[sel.parrafo];
+    var m = { id: N.nuevoId('m'), evidencia: evId, inicio: null, fin: null, punto: null, parrafo: sel.parrafo,
+      insumo: null, gravedad: e.grav ? (gravMas ? 1 : 0) : null, funcion: e.extra === 'funcion' ? funcionProbable(sel.parrafo) : null,
+      comentario: '', creada: U.ahora() };
+    if (e.ancla === 'parrafo') { m.inicio = P.inicio; m.fin = P.fin; }
+    else if (e.ancla === 'inicio') { m.punto = P.inicio; }
+    else if (e.ancla === 'punto') { m.punto = sel.fin; }
+    else if (sel.inicio === sel.fin) { m.punto = sel.inicio; }
+    else { m.inicio = sel.inicio; m.fin = sel.fin; }
+    apilar();
+    ev.marcas.push(m);
+    S.recientes = [evId].concat(S.recientes.filter(function (x) { return x !== evId; })).slice(0, 5);
+    S.sel = null; S.filtro = '';
+    U.tocarEv();
+    U.renderMarcado();
+    if (e.extra === 'insumo') abrirMarca(m.id);
+    else U.aviso(e.nombre + (m.gravedad ? ', ' + N.GRAVEDADES[e.grav][m.gravedad].toLowerCase() : '') + '.');
+  }
+  function confirmarPropuesta(clave) {
+    var p = clave.split('-').map(Number);
+    S.sel = { inicio: p[0], fin: p[1], parrafo: N.parrafoDe(S.ev.parrafos, p[0]), tipo: 'palabra' };
+    crearMarca('c7.pertinente');
+  }
+  function descartarPropuesta(clave) {
+    S.descartadas[S.ev.id] = S.descartadas[S.ev.id] || {};
+    S.descartadas[S.ev.id][clave] = 1;
+    renderTexto();
+  }
+  function borrarMarca(id) {
+    var i = S.ev.marcas.findIndex(function (m) { return m.id === id; });
+    if (i === -1) return;
+    apilar();
+    S.ev.marcas.splice(i, 1);
+    cerrarEditor();
+    U.tocarEv(); U.renderMarcado();
+    U.aviso('Marca borrada. Ctrl+Z la recupera.');
+  }
+
+  // ───────── Editor de marca ─────────
+  function cerrarEditor() {
+    S.abierta = null;
+    var ed = $('editorMarca');
+    if (ed) ed.remove();
+  }
+  function tipoAncla(e) { return e.ancla === 'punto' || e.ancla === 'inicio' ? 'punto' : 'rango'; }
+  function insumosDisponibles() {
+    var mat = U.material(S.ev.materialId);
+    var docs = mat ? mat.docs.map(function (d) { return d.nombre; }).filter(function (n) { return !/^situaci/i.test(n); }) : [];
+    return docs.length ? docs : N.INSUMOS_DEF;
+  }
+  function abrirMarca(id) {
+    var m = S.ev.marcas.find(function (x) { return x.id === id; });
+    if (!m) return;
+    S.sel = null; renderPaleta();
+    S.abierta = id;
+    var ed = $('editorMarca');
+    if (!ed) { ed = document.createElement('div'); ed.id = 'editorMarca'; ed.className = 'editor-marca'; ed.setAttribute('role', 'dialog'); document.body.appendChild(ed); }
+    var e = EV[m.evidencia], nums = numerar(S.ev);
+    ed.style.setProperty('--f', U.famVar(e.c));
+    var h = '<span class="cita">' + nums[m.id] + '. «' + esc(N.fragmento(S.ev, m)) + '»</span>';
+    h += '<label class="campo"><span>Evidencia</span><select class="entrada" data-campo="m.evidencia">';
+    N.RUBRICA.forEach(function (c) {
+      var ops = N.CATALOGO.filter(function (x) { return x.c === c.id && !x.general && tipoAncla(x) === tipoAncla(e); });
+      if (!ops.length) return;
+      h += '<optgroup label="' + esc(c.corto) + '">' + ops.map(function (x) { return '<option value="' + x.id + '"' + (x.id === m.evidencia ? ' selected' : '') + '>' + (x.pol === '+' ? '✓ ' : '✕ ') + esc(x.nombre) + '</option>'; }).join('') + '</optgroup>';
+    });
+    h += '</select><small>' + esc(CRIT[e.c].nombre) + '</small></label>';
+    if (e.grav) {
+      h += '<div class="campo"><span>Gravedad</span><div class="grav">';
+      N.GRAVEDADES[e.grav].forEach(function (g, i) { h += '<label><input type="radio" name="grav" data-campo="m.gravedad" value="' + i + '"' + ((m.gravedad || 0) === i ? ' checked' : '') + '> ' + esc(g) + '</label>'; });
+      h += '</div></div>';
+    }
+    if (e.extra === 'insumo') {
+      h += '<label class="campo"><span>¿De qué insumo sale la evidencia?</span><select class="entrada" data-campo="m.insumo"><option value="">Elige un insumo</option>';
+      insumosDisponibles().forEach(function (n) { h += '<option' + (m.insumo === n ? ' selected' : '') + '>' + esc(n) + '</option>'; });
+      h += '</select></label>';
+    }
+    if (e.extra === 'funcion') {
+      h += '<label class="campo"><span>Función esperada del párrafo</span><select class="entrada" data-campo="m.funcion">';
+      N.FUNCIONES.forEach(function (f) { h += '<option' + (m.funcion === f ? ' selected' : '') + '>' + f + '</option>'; });
+      h += '</select></label>';
+    }
+    h += '<label class="campo"><span>Comentario para el estudiante</span><textarea class="entrada" rows="2" data-campo="m.comentario">' + esc(m.comentario) + '</textarea></label>';
+    h += '<div class="fila" style="justify-content:space-between"><button class="btn chico peligro" data-a="borrarMarca" data-id="' + m.id + '">Borrar <span class="kbd">Supr</span></button><button class="btn chico" data-a="cerrarEditor">Listo</button></div>';
+    ed.innerHTML = h;
+    ubicarEditor(ed, m.id);
+    renderTexto();
+  }
+  function ubicarEditor(ed, id) {
+    if (U.esMovil()) return;
+    var anc = document.querySelector('#texto .num[data-m="' + id + '"]') || document.querySelector('#texto [data-m~="' + id + '"]');
+    var r = anc ? anc.getBoundingClientRect() : { left: 80, bottom: 120, top: 100 };
+    var w = 340, hgt = ed.offsetHeight || 300;
+    var left = Math.min(Math.max(8, r.left - 20), window.innerWidth - w - 8);
+    var top = r.bottom + 8;
+    if (top + hgt > window.innerHeight - 8) top = Math.max(8, r.top - hgt - 8);
+    ed.style.left = left + 'px'; ed.style.top = top + 'px';
+  }
+  function cambiarCampoMarca(campo, valor) {
+    var m = S.ev.marcas.find(function (x) { return x.id === S.abierta; });
+    if (!m) return;
+    if (campo === 'comentario') { m.comentario = valor; U.tocarEv(); U.renderPanel(); return; }
+    apilar();
+    if (campo === 'evidencia') {
+      var e = EV[valor];
+      m.evidencia = valor;
+      if (e.ancla === 'parrafo') { var P = S.ev.parrafos[m.parrafo]; m.inicio = P.inicio; m.fin = P.fin; }
+      m.gravedad = e.grav ? (m.gravedad || 0) : null;
+      if (e.grav && m.gravedad >= N.GRAVEDADES[e.grav].length) m.gravedad = N.GRAVEDADES[e.grav].length - 1;
+      if (e.extra !== 'insumo') m.insumo = null;
+      m.funcion = e.extra === 'funcion' ? (m.funcion || funcionProbable(m.parrafo)) : null;
+    } else if (campo === 'gravedad') m.gravedad = +valor;
+    else if (campo === 'insumo') m.insumo = valor || null;
+    else if (campo === 'funcion') m.funcion = valor;
+    U.tocarEv();
+    U.renderMarcado({ editor: true });
+  }
+
+  // ───────── Vista de marcado ─────────
+  function renderMarcado(o) {
+    if (!S.ev) return;
+    $('vistaMarcado').classList.toggle('panel-colapsado', S.colapsado);
+    U.renderCabecera(); renderHerramientas(); renderLeyenda(); renderTexto(); renderPaleta(); U.renderPanel();
+    if (o && o.editor && S.abierta) abrirMarca(S.abierta);
+  }
+
+  function irAMarca(id) {
+    var el = document.querySelector('#texto .num[data-m="' + id + '"]') || document.querySelector('#texto [data-m~="' + id + '"]');
+    if (!el) { if (S.solo) { S.solo = null; renderMarcado(); el = document.querySelector('#texto [data-m~="' + id + '"]'); } }
+    if (!el) return;
+    if (U.esMovil()) $('panel').classList.remove('abierto-movil');
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    document.querySelectorAll('#texto [data-m~="' + id + '"].s').forEach(function (s) { s.classList.remove('destello'); void s.offsetWidth; s.classList.add('destello'); });
+    setTimeout(function () { abrirMarca(id); }, 250);
+  }
+
+  Object.assign(U, {
+    numerar: numerar, htmlTexto: htmlTexto, esParrafoEntero: esParrafoEntero, renderTexto: renderTexto, renderPaleta: renderPaleta,
+    htmlSecciones: htmlSecciones, fijarSeleccion: fijarSeleccion, limpiarSeleccion: limpiarSeleccion, alSoltar: alSoltar,
+    seleccionarParrafo: seleccionarParrafo, crearMarca: crearMarca, borrarMarca: borrarMarca, abrirMarca: abrirMarca,
+    cerrarEditor: cerrarEditor, cambiarCampoMarca: cambiarCampoMarca, deshacer: deshacer, apilar: apilar,
+    confirmarPropuesta: confirmarPropuesta, descartarPropuesta: descartarPropuesta, renderMarcado: renderMarcado,
+    renderHerramientas: renderHerramientas, irAMarca: irAMarca, offsetDe: offsetDe
+  });
+})();
+
+(function () {
+  'use strict';
+  var N = window.N2, U = window.__N2, S = U.S, $ = U.$, esc = U.esc;
+  var EV = N.EV, CRIT = N.CRIT;
+
+  function conteos(ev, cid) {
+    var ms = N.marcasDe(ev, cid), gs = N.generalesDe(ev, cid);
+    return { mas: ms.filter(function (m) { return EV[m.evidencia].pol === '+'; }).length, menos: ms.filter(function (m) { return EV[m.evidencia].pol === '-'; }).length + gs.length };
+  }
+
+  function tarjeta(ev, c, u, nums) {
+    var sug = N.sugerir(ev, c.id, u);
+    var dec = ev.decisiones[c.id];
+    var nivel = dec && dec.nivel;
+    var k = conteos(ev, c.id);
+    var h = '<div class="tarjeta f-' + U.fam(c.id) + (S.enfoque === c.id ? ' enfocada' : '') + '" id="tar-' + c.id + '" data-c="' + c.id + '">';
+    h += '<div class="t-cab"><span class="t-nombre">' + esc(c.nombre) + '</span>';
+    if (!c.automatico) h += '<span class="t-conteo"><span class="mas">✓' + k.mas + '</span><span class="menos">✕' + k.menos + '</span></span>';
+    h += '</div>';
+    if (sug.nivel) h += '<div class="t-sug">Sugerido: <b>' + N.NOMBRE_NIVEL[sug.nivel] + '</b>. ' + esc(sug.razon) + '</div>';
+    else h += '<div class="t-sug falta">' + esc(sug.razon) + '</div>';
+    h += '<div class="t-niveles" role="group" aria-label="Nivel de ' + esc(c.corto) + '">';
+    N.NIVELES.forEach(function (n) {
+      var cls = 'nv' + (nivel === n ? ' elegido' : '') + (sug.nivel === n ? ' sugerido' : '');
+      h += '<button class="' + cls + '" data-a="nivel" data-c="' + c.id + '" data-n="' + n + '" aria-pressed="' + (nivel === n) + '">' + N.NOMBRE_NIVEL[n] + '<span class="p">' + N.fmt2(c.valores[n]) + '</span></button>';
+    });
+    h += '</div>';
+    if (nivel) {
+      h += '<div class="t-decision"><b>' + N.NOMBRE_NIVEL[nivel] + '</b>&ensp;<span class="pt">' + N.fmt2(c.valores[nivel]) + ' / ' + N.fmt2(c.valores.experto) + '</span>';
+      h += '<p>' + esc(c.niveles[nivel]) + (c.incompletos && c.incompletos.indexOf(nivel) !== -1 ? '<span class="incompleto" title="El texto de este nivel llegó cortado en la rúbrica fuente. Se muestra tal cual.">texto incompleto en la fuente</span>' : '') + '</p></div>';
+      if (sug.nivel && sug.nivel !== nivel) {
+        h += '<label class="campo desvio"><small>Te apartas de la sugerencia. ¿Por qué? (opcional; no sale en el PDF)</small><input class="entrada" data-campo="desvio" data-c="' + c.id + '" value="' + esc(dec.motivoDesvio || '') + '"></label>';
+      }
+    }
+    if (!c.automatico) {
+      var ms = N.marcasDe(ev, c.id).slice().sort(function (a, b) { return nums[a.id] - nums[b.id]; });
+      var gen = N.CATALOGO.filter(function (e) { return e.c === c.id && e.general; });
+      h += '<details class="t-mas" data-c="' + c.id + '"' + (S.expandidos[c.id] ? ' open' : '') + '><summary>Evidencias (' + (ms.length + N.generalesDe(ev, c.id).length) + ')</summary>';
+      if (ms.length) {
+        h += '<ul class="ev-lista">';
+        ms.forEach(function (m) {
+          var e = EV[m.evidencia];
+          var extra = [];
+          if (e.grav && m.gravedad) extra.push(N.GRAVEDADES[e.grav][m.gravedad].toLowerCase());
+          if (m.insumo) extra.push(m.insumo);
+          if (m.funcion) extra.push(m.funcion);
+          h += '<li data-a="irMarca" data-id="' + m.id + '"><span class="n">' + nums[m.id] + '</span><span class="fr"><span style="color:' + (e.pol === '+' ? 'var(--ok)' : 'var(--err)') + '">' + (e.pol === '+' ? '✓' : '✕') + '</span> ' + esc(e.nombre) + (extra.length ? ' (' + esc(extra.join(', ')) + ')' : '') + ' <span class="cita">«' + esc(N.fragmento(ev, m)) + '»</span></span>' + (m.comentario ? '<span class="co">' + esc(m.comentario) + '</span>' : '') + '</li>';
+        });
+        h += '</ul>';
+      } else h += '<p class="vacio" style="padding:6px 0">Sin marcas en el texto.</p>';
+      if (gen.length) {
+        h += '<div class="generales">';
+        gen.forEach(function (g) {
+          var reg = ev.generales.find(function (x) { return x.evidencia === g.id; });
+          if (reg) h += '<div class="general"><div class="fila"><b>✕ ' + esc(g.nombre) + '</b><button class="btn chico fantasma" data-a="quitarGeneral" data-id="' + reg.id + '">Quitar</button></div><input class="entrada" data-campo="gcom" data-id="' + reg.id + '" placeholder="Comentario para el estudiante" value="' + esc(reg.comentario || '') + '"></div>';
+          else h += '<button class="btn chico" data-a="general" data-ev="' + g.id + '">Registrar: ' + esc(g.nombre.charAt(0).toLowerCase() + g.nombre.slice(1)) + '</button>';
+        });
+        h += '</div>';
+      }
+      h += '<label class="solo-toggle"><input type="checkbox" data-campo="solo" data-c="' + c.id + '"' + (S.solo === c.id ? ' checked' : '') + '> Ver solo estas en el texto</label>';
+      h += '</details>';
+    }
+    return h + '</div>';
+  }
+
+  function htmlRecs(ev) {
+    var recs = N.recomendaciones(ev);
+    var h = '<section class="recs"><h3>Recomendaciones para el estudiante</h3>';
+    if (!recs.length) h += '<p class="vacio">Aparecen al decidir un criterio por debajo de Experto, ordenadas por lo que más subiría el puntaje.</p>';
+    function fila(r) {
+      var ex = ev.recExcluidas.indexOf(r.c) !== -1;
+      return '<label class="rec' + (ex ? ' excluida' : '') + '"><input type="checkbox" data-campo="rec" data-c="' + r.c + '"' + (ex ? '' : ' checked') + ' aria-label="Incluir en el PDF"><span>' + esc(r.texto) + '<small>' + esc(CRIT[r.c].corto) + ', ' + N.NOMBRE_NIVEL[r.nivel].toLowerCase() + '; ' + N.fmt2(r.perdidos) + ' puntos por ganar</small></span></label>';
+    }
+    if (recs.length) {
+      h += '<h4>Lo que más subiría tu puntaje</h4>' + recs.slice(0, 3).map(fila).join('');
+      if (recs.length > 3) h += '<h4>Otros aspectos para revisar</h4>' + recs.slice(3).map(fila).join('');
+    }
+    h += '<h3 style="margin-top:20px">Observaciones del evaluador</h3><textarea class="entrada" data-campo="obs" placeholder="Salen al final del PDF.">' + esc(ev.observaciones || '') + '</textarea>';
+    return h + '</section>';
+  }
+
+  function renderPanel() {
+    var ev = S.ev;
+    if (!ev) return;
+    var p = $('panel');
+    var scroll = p.scrollTop;
+    var u = U.umbrales();
+    var nums = U.numerar(ev);
+    var t = N.calcularTotal(ev);
+    if (S.colapsado && !U.esMovil()) {
+      var h = '<div class="tira"><button data-a="colapsar" title="Abrir la rúbrica" style="border-left-color:var(--tinta-3)"><span class="nv-i">Abrir</span></button>';
+      N.RUBRICA.forEach(function (c) {
+        var d = ev.decisiones[c.id], k = conteos(ev, c.id);
+        h += '<button class="f-' + U.fam(c.id) + '" style="border-left-color:var(--f)" data-a="irCrit" data-c="' + c.id + '" title="' + esc(c.corto) + '"><span>' + U.ABREV[c.id] + '</span><span class="nv-i' + (d && d.nivel ? '' : ' no') + '">' + (d && d.nivel ? U.NV_CORTO[d.nivel] : '—') + '</span><span class="cn">' + (c.automatico ? '' : '✕' + k.menos) + '</span></button>';
+      });
+      p.innerHTML = h + '</div>';
+      return;
+    }
+    var h2 = '<div class="panel-cab"><b>Rúbrica</b><span class="fila"><span style="font-size:12px;color:var(--tinta-3)">' + t.decididos + ' de ' + t.criterios + ' decididos</span><button class="btn chico fantasma solo-escritorio" data-a="colapsar" title="Contraer el panel">Contraer</button><button class="btn chico solo-movil" data-a="cerrarPanel">Cerrar</button></span></div>';
+    N.DESCRIPTORES.forEach(function (d) {
+      var st = t.subtotales[d.id];
+      h2 += '<section class="desc f-' + d.familia + '"><div class="desc-cab"><span class="n">' + esc(d.corto) + '<small>' + esc(d.nombre) + '</small></span><span class="st">' + N.fmt2(st.obtenido) + ' / ' + N.fmt2(st.maximo) + '</span></div>';
+      N.RUBRICA.filter(function (c) { return c.d === d.id; }).forEach(function (c) { h2 += tarjeta(ev, c, u, nums); });
+      h2 += '</section>';
+    });
+    h2 += htmlRecs(ev);
+    p.innerHTML = h2;
+    p.scrollTop = scroll;
+  }
+
+  function decidir(cid, nivel) {
+    var ev = S.ev, d = ev.decisiones[cid];
+    // Quitar la decisión conserva el motivo de desvío por si se vuelve a elegir.
+    ev.decisiones[cid] = { nivel: d && d.nivel === nivel ? null : nivel, motivoDesvio: d ? d.motivoDesvio || '' : '' };
+    U.tocarEv();
+    renderPanel(); U.renderCabecera();
+  }
+  function registrarGeneral(evId) {
+    U.apilar();
+    S.ev.generales.push({ id: N.nuevoId('g'), evidencia: evId, comentario: '' });
+    U.tocarEv(); U.renderMarcado();
+  }
+  function quitarGeneral(id) {
+    U.apilar();
+    S.ev.generales = S.ev.generales.filter(function (g) { return g.id !== id; });
+    U.tocarEv(); U.renderMarcado();
+  }
+  function irCrit(cid) {
+    S.colapsado = false; S.expandidos[cid] = true; S.enfoque = cid;
+    U.renderMarcado();
+    var el = $('tar-' + cid);
+    if (el) el.scrollIntoView({ block: 'start' });
+  }
+
+  Object.assign(U, { renderPanel: renderPanel, decidir: decidir, registrarGeneral: registrarGeneral, quitarGeneral: quitarGeneral, irCrit: irCrit });
+})();
+
+(function () {
+  'use strict';
+  var N = window.N2, U = window.__N2, S = U.S, $ = U.$, esc = U.esc;
+  var EV = N.EV, CRIT = N.CRIT;
+
+  // ───────── Ventana genérica ─────────
+  function ventana(titulo, cuerpo, pie, ancho) {
+    cerrarVentana();
+    var v = document.createElement('div');
+    v.className = 'velo'; v.id = 'velo';
+    v.innerHTML = '<div class="modal' + (ancho ? ' ancho' : '') + '" role="dialog" aria-modal="true" aria-label="' + esc(titulo) + '"><div class="modal-cab"><h2>' + esc(titulo) + '</h2><button class="btn chico fantasma" data-a="cerrarVentana" aria-label="Cerrar">✕</button></div><div class="modal-cuerpo" id="ventanaCuerpo">' + cuerpo + '</div>' + (pie ? '<div class="modal-pie" id="ventanaPie">' + pie + '</div>' : '') + '</div>';
+    $('emergentes').appendChild(v);
+    var f = v.querySelector('input, textarea, select');
+    if (f) setTimeout(function () { f.focus(); }, 20);
+    return v;
+  }
+  function cerrarVentana() { var v = $('velo'); if (v) v.remove(); }
+  function confirmar(titulo, texto, boton, alAceptar, peligro) {
+    ventana(titulo, '<p>' + texto + '</p>', '<button class="btn" data-a="cerrarVentana">Cancelar</button><button class="btn ' + (peligro ? 'peligro' : 'primario') + '" id="btnConfirmar">' + esc(boton) + '</button>');
+    $('btnConfirmar').onclick = function () { cerrarVentana(); alAceptar(); };
+  }
+
+  // ───────── Pruebas (materiales) ─────────
+  var DOCS_BASE = ['Situación', 'Actor 1', 'Actor 2', 'Actor 3', 'Información complementaria'];
+  function usos(id) { return S.datos.evaluaciones.filter(function (e) { return e.materialId === id; }).length; }
+  function verPruebas() {
+    var mats = S.datos.materiales;
+    var h = '<p class="nota">Una prueba reúne los materiales de un simulacro. Se guarda una vez y se reutiliza con muchos estudiantes. Si editas una prueba ya usada, se crea una versión nueva y las evaluaciones anteriores conservan la original.</p>';
+    if (!mats.length) h += '<p class="vacio">No hay pruebas guardadas.</p>';
+    else {
+      h += '<table class="tabla"><thead><tr><th>Prueba</th><th>Documentos</th><th>Usada en</th><th></th></tr></thead><tbody>';
+      mats.forEach(function (m) {
+        h += '<tr><td>' + esc(m.titulo) + '</td><td>' + m.docs.length + '</td><td>' + usos(m.id) + ' evaluaciones</td><td style="text-align:right"><button class="btn chico" data-a="editarPrueba" data-id="' + m.id + '">Editar</button></td></tr>';
+      });
+      h += '</tbody></table>';
+    }
+    ventana('Pruebas', h, '<button class="btn primario" data-a="nuevaPrueba">Nueva prueba</button>', true);
+  }
+  function editorPrueba(id) {
+    var m = id ? S.datos.materiales.find(function (x) { return x.id === id; }) : null;
+    var docs = m ? U.copia(m.docs) : DOCS_BASE.map(function (n) { return { nombre: n, texto: '' }; });
+    var h = '';
+    if (m && usos(m.id)) h += '<p class="nota">Esta prueba ya se usó en ' + usos(m.id) + ' evaluaciones. Al guardar se creará una prueba nueva; esas evaluaciones conservan la versión actual.</p>';
+    h += '<label class="campo"><span>Título</span><input class="entrada" id="prTitulo" value="' + esc(m ? m.titulo : '') + '" placeholder="Ejemplo: simulacro de marzo, residuos en el campus"></label>';
+    h += '<div id="prDocs">' + docs.map(docEd).join('') + '</div>';
+    h += '<button class="btn chico" data-a="agregarDoc">Agregar documento</button>';
+    ventana(m ? 'Editar prueba' : 'Nueva prueba', h, '<button class="btn" data-a="cerrarVentana">Cancelar</button><button class="btn primario" data-a="guardarPrueba" data-id="' + (m ? m.id : '') + '">Guardar prueba</button>', true);
+  }
+  function docEd(d) {
+    return '<div class="doc-ed"><div class="fila" style="margin-bottom:6px"><input class="entrada pr-nombre" value="' + esc(d.nombre) + '" style="flex:1" aria-label="Nombre del documento"><button class="btn chico fantasma" data-a="quitarDoc">Quitar</button></div><textarea class="entrada pr-texto" aria-label="Texto del documento">' + esc(d.texto) + '</textarea></div>';
+  }
+  function guardarPrueba(id) {
+    var titulo = $('prTitulo').value.trim();
+    if (!titulo) { U.aviso('Ponle un título a la prueba.'); $('prTitulo').focus(); return; }
+    var docs = [];
+    document.querySelectorAll('#prDocs .doc-ed').forEach(function (el) {
+      var n = el.querySelector('.pr-nombre').value.trim(), t = el.querySelector('.pr-texto').value.trim();
+      if (n || t) docs.push({ nombre: n || 'Documento', texto: t });
+    });
+    var previo = id ? S.datos.materiales.find(function (x) { return x.id === id; }) : null;
+    var nuevo;
+    if (previo && !usos(previo.id)) {
+      previo.titulo = titulo; previo.docs = docs; previo.modificada = U.ahora(); nuevo = previo;
+    } else {
+      nuevo = { id: N.nuevoId('mat'), titulo: titulo, docs: docs, creada: U.ahora(), modificada: U.ahora() };
+      if (previo && titulo === previo.titulo) nuevo.titulo = titulo + ' (versión nueva)';
+      S.datos.materiales.unshift(nuevo);
+    }
+    U.guardar();
+    S.borrador.materialId = nuevo.id;
+    cerrarVentana();
+    U.aviso('Prueba guardada.');
+    if (!S.ev) U.renderInicio();
+  }
+  function verMateriales(i) {
+    var m = U.material(S.ev && S.ev.materialId);
+    if (!m) return;
+    i = i || 0;
+    var h = '<div class="pestanas">' + m.docs.map(function (d, k) { return '<button class="' + (k === i ? 'activa' : '') + '" data-a="pestana" data-i="' + k + '">' + esc(d.nombre) + '</button>'; }).join('') + '</div>';
+    h += m.docs[i] ? '<div class="doc-texto">' + esc(m.docs[i].texto || 'Sin texto.') + '</div>' : '<p class="vacio">Esta prueba no tiene documentos.</p>';
+    ventana(m.titulo, h, '', true);
+  }
+
+  // ───────── Umbrales ─────────
+  function verUmbrales() {
+    var u = U.umbrales(), grupos = {};
+    N.UMBRALES_DEF.forEach(function (d) { (grupos[d.g] = grupos[d.g] || []).push(d); });
+    var h = '<p class="nota">La rúbrica no dice cuántos errores son "puntuales" ni cuántos son "recurrentes". Estas cifras deciden solo la sugerencia; el nivel siempre lo eliges tú. Cambiarlas no toca ningún nivel ya decidido.</p>';
+    Object.keys(grupos).forEach(function (g) {
+      h += '<div class="umb-grupo"><h3>' + esc(g) + '</h3>';
+      grupos[g].forEach(function (d) { h += '<label class="umb"><span>' + esc(d.t) + (u[d.k] !== d.v ? ' <span class="etiqueta">cambiado</span>' : '') + '</span><input class="entrada" type="number" min="' + (d.k === 'base' ? 1 : 0) + '" step="1" data-umbral="' + d.k + '" value="' + u[d.k] + '"></label>'; });
+      h += '</div>';
+    });
+    ventana('Umbrales de sugerencia', h, '<button class="btn" data-a="restablecerUmbrales">Restablecer</button><span style="flex:1"></span><button class="btn" data-a="cerrarVentana">Cancelar</button><button class="btn primario" data-a="guardarUmbrales">Guardar</button>');
+  }
+  function guardarUmbrales() {
+    var u = {};
+    document.querySelectorAll('[data-umbral]').forEach(function (i) {
+      var v = Number(i.value);
+      if (isFinite(v) && v >= 0) u[i.getAttribute('data-umbral')] = i.getAttribute('data-umbral') === 'base' ? Math.max(1, v) : v;
+    });
+    S.datos.umbrales = u;
+    U.guardar(); cerrarVentana();
+    if (S.ev) U.renderPanel();
+    U.aviso('Umbrales guardados.');
+  }
+
+  // ───────── Historial: guardar y desbloquear ─────────
+  function nombreArchivo() {
+    var d = new Date();
+    var p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return 'calificacion-n2-historial-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '.html';
+  }
+  function guardarHistorial() {
+    if (S.cifradoEmbebido && !S.desbloqueado) {
+      ventana('Primero desbloquea el historial', '<p>Esta página ya trae un historial cifrado. Si guardas sin desbloquearlo, la copia nueva lo reemplazaría y perderías lo publicado.</p><p class="nota alerta">Si olvidaste la contraseña, puedes empezar un historial nuevo. Las evaluaciones del historial cifrado actual no pasarán a la copia nueva.</p>',
+        '<button class="btn peligro" data-a="empezarDeCero">Empezar un historial nuevo</button><span style="flex:1"></span><button class="btn primario" data-a="desbloquear">Desbloquear</button>');
+      return;
+    }
+    var bloqueadas = [];
+    S.datos.evaluaciones.filter(function (e) { return e.visibilidad === 'publica'; }).forEach(function (e) {
+      var h = N.contieneNombre(e);
+      if (h.length) bloqueadas.push({ e: e, donde: h });
+    });
+    if (bloqueadas.length) {
+      ventana('El nombre de un estudiante aparece en una evaluación pública', '<p>No se puede publicar mientras el nombre aparezca en lo que ve cualquiera:</p><ul>' + bloqueadas.map(function (b) { return '<li><b>' + esc(b.e.etiquetaPublica || 'Sin etiqueta') + '</b>: en ' + esc(b.donde.join(', ')) + '</li>'; }).join('') + '</ul><p>Quita el nombre o cambia esas evaluaciones a privadas.</p>', '<button class="btn primario" data-a="cerrarVentana">Entendido</button>');
+      return;
+    }
+    if (!S.clave) { pedirClaveNueva(); return; }
+    descargarHistorial();
+  }
+  function pedirClaveNueva() {
+    var h = '<p>Todo el historial se cifra con esta contraseña antes de salir de tu navegador. La capa pública (solo las evaluaciones marcadas como públicas, sin nombres ni materiales) queda legible para cualquiera.</p>';
+    h += '<label class="campo"><span>Contraseña</span><input class="entrada" type="password" id="clave1" autocomplete="new-password"><small>Una frase de cuatro o más palabras. Protege un archivo que será público.</small></label>';
+    h += '<label class="campo"><span>Repítela</span><input class="entrada" type="password" id="clave2" autocomplete="new-password"></label>';
+    h += '<p class="nota">No hay forma de recuperarla. Guárdala en un gestor de contraseñas.</p>';
+    ventana('Contraseña del historial', h, '<button class="btn" data-a="cerrarVentana">Cancelar</button><button class="btn primario" data-a="fijarClave">Cifrar y descargar</button>');
+  }
+  function fijarClave() {
+    var a = $('clave1').value, b = $('clave2').value;
+    if (a.length < 12 || a.trim().split(/\s+/).length < 2) { U.aviso('Usa una frase de al menos 12 caracteres y varias palabras.'); return; }
+    if (a !== b) { U.aviso('Las dos contraseñas no coinciden.'); return; }
+    S.clave = a; S.desbloqueado = true;
+    descargarHistorial();
+  }
+  function construirHistorial(datos, clave) {
+    var publico = { evaluaciones: datos.evaluaciones.filter(function (e) { return e.visibilidad === 'publica'; }).map(N.capaPublica) };
+    return N.cifrar({ evaluaciones: datos.evaluaciones, materiales: datos.materiales, borradas: datos.borradas, umbrales: datos.umbrales }, clave).then(function (pkg) {
+      // Las etiquetas se arman por partes para que su texto literal solo exista una vez en la página.
+      function bloque(html, nombre, valor) {
+        var abre = '<' + 'script type="application/json" id="n2-' + nombre + '">', cierra = '<' + '/script>';
+        var i = html.indexOf(abre), j = html.indexOf(cierra, i);
+        if (i === -1 || j === -1) throw new Error('Plantilla sin bloque ' + nombre);
+        return html.slice(0, i + abre.length) + N.jsonIncrustable(valor) + html.slice(j);
+      }
+      return bloque(bloque(U.PLANTILLA, 'publico', publico), 'cifrado', pkg);
+    });
+  }
+  function descargarHistorial() {
+    cerrarVentana();
+    U.aviso('Cifrando el historial…');
+    construirHistorial(S.datos, S.clave).then(function (html) {
+      var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = nombreArchivo();
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+      var pub = S.datos.evaluaciones.filter(function (e) { return e.visibilidad === 'publica'; }).length;
+      ventana('Historial descargado', '<p>El archivo trae ' + S.datos.evaluaciones.length + ' evaluaciones cifradas y ' + pub + ' públicas.</p><p>Para publicarlo, renómbralo a <b>index.html</b> y súbelo a tu repositorio en lugar del anterior.</p><div class="nota"><p style="margin:0 0 6px">Antes de publicar, ten en cuenta:</p><ul style="margin:0;padding-left:18px"><li>Un repositorio guarda la historia de cada archivo. Lo que publiques quedará ahí aunque después lo borres.</li><li>La contraseña protege un archivo público: cualquiera puede descargarlo e intentar abrirlo.</li><li>Pide autorización a los estudiantes cuyos textos publiques como ejemplo.</li></ul></div>', '<button class="btn primario" data-a="cerrarVentana">Entendido</button>');
+    }).catch(function () { U.aviso('No se pudo cifrar el historial en este navegador.'); });
+  }
+  function desbloquear() {
+    if (!S.cifradoEmbebido) { U.aviso('Esta página no trae un historial cifrado.'); return; }
+    ventana('Desbloquear historial', '<label class="campo"><span>Contraseña del historial</span><input class="entrada" type="password" id="claveAbrir" autocomplete="current-password"></label><p class="nota">Las evaluaciones cifradas se fusionan con las de este navegador; de cada una queda la versión más reciente.</p>', '<button class="btn" data-a="cerrarVentana">Cancelar</button><button class="btn primario" data-a="abrirCifrado">Desbloquear</button>');
+  }
+  function abrirCifrado() {
+    var clave = $('claveAbrir').value;
+    var btn = document.querySelector('[data-a="abrirCifrado"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Abriendo…'; }
+    N.descifrar(S.cifradoEmbebido, clave).then(function (d) {
+      S.datos = N.fusionar(d, S.datos);
+      S.clave = clave; S.desbloqueado = true;
+      U.guardar(); cerrarVentana(); U.renderAvisoSup(); U.renderCabecera();
+      if (!S.ev) U.renderInicio();
+      U.aviso('Historial desbloqueado: ' + S.datos.evaluaciones.length + ' evaluaciones.');
+    }).catch(function () {
+      if (btn) { btn.disabled = false; btn.textContent = 'Desbloquear'; }
+      U.aviso('Esa contraseña no abre este historial.');
+    });
+  }
+  function empezarDeCero() {
+    confirmar('Empezar un historial nuevo', 'La copia que descargues no incluirá las evaluaciones del historial cifrado que trae esta página. Las de este navegador sí se conservan.', 'Empezar de nuevo', function () {
+      S.cifradoEmbebido = null; S.desbloqueado = true; S.clave = null;
+      U.renderAvisoSup(); U.renderCabecera();
+      pedirClaveNueva();
+    }, true);
+  }
+
+  // ───────── Impresión ─────────
+  function corto(t) { t = t.trim(); return t.length > 140 ? t.slice(0, 70).trim() + ' … ' + t.slice(-50).trim() : t; }
+  function imprimir() {
+    var ev = S.ev;
+    if (!ev) return;
+    var t = N.calcularTotal(ev), nums = U.numerar(ev), mat = U.material(ev.materialId);
+    var h = '<div class="imp"><h1>Retroalimentación de escritura, nivel 2</h1>';
+    h += '<div class="meta">' + esc(ev.estudiante || ev.etiquetaPublica || '') + (mat ? '&emsp;' + esc(mat.titulo) : '') + '&emsp;' + U.fecha(ev.modificada) + '&emsp;' + ev.palabras + ' palabras</div>';
+    h += '<div><span class="tot">' + N.fmt2(t.total) + '</span> <span style="color:#666">de 5,00</span>' + (t.decididos < t.criterios ? '&emsp;<span class="nota-imp">' + t.decididos + ' de ' + t.criterios + ' criterios decididos</span>' : '') + '</div>';
+    h += '<h2>Resultado por criterio</h2><table class="tabla-res"><thead><tr><th>Criterio</th><th>Nivel</th><th>Puntaje</th><th>Descripción del nivel</th></tr></thead><tbody>';
+    N.DESCRIPTORES.forEach(function (d) {
+      var st = t.subtotales[d.id];
+      h += '<tr class="grupo f-' + d.familia + '"><td colspan="2">' + esc(d.nombre) + '</td><td class="pts">' + N.fmt2(st.obtenido) + ' / ' + N.fmt2(st.maximo) + '</td><td></td></tr>';
+      N.RUBRICA.filter(function (c) { return c.d === d.id; }).forEach(function (c) {
+        var dec = ev.decisiones[c.id], n = dec && dec.nivel;
+        h += '<tr><td>' + esc(c.nombre) + '</td><td>' + (n ? N.NOMBRE_NIVEL[n] : 'Sin decidir') + '</td><td class="pts">' + (n ? N.fmt2(c.valores[n]) : '—') + ' / ' + N.fmt2(c.valores.experto) + '</td><td>' + (n ? esc(c.niveles[n]) : '') + '</td></tr>';
+      });
+    });
+    h += '</tbody></table>';
+    h += '<h2>Tu texto, con las observaciones numeradas</h2><div class="texto-imp">' + U.htmlTexto(ev, { imprimir: true }) + '</div>';
+    var hayEv = false, bloque = '';
+    N.RUBRICA.forEach(function (c) {
+      var ms = N.marcasDe(ev, c.id).slice().sort(function (a, b) { return nums[a.id] - nums[b.id]; });
+      var gs = N.generalesDe(ev, c.id);
+      if (!ms.length && !gs.length) return;
+      hayEv = true;
+      bloque += '<h3 style="font-size:10.5pt;margin:10pt 0 3pt">' + esc(c.corto) + '</h3><ul class="ev-imp f-' + U.fam(c.id) + '">';
+      ms.forEach(function (m) {
+        var e = EV[m.evidencia], ex = [];
+        if (e.grav && m.gravedad) ex.push(N.GRAVEDADES[e.grav][m.gravedad].toLowerCase());
+        if (m.insumo) ex.push(m.insumo);
+        if (m.funcion) ex.push('función: ' + m.funcion);
+        bloque += '<li><span class="n">' + nums[m.id] + '</span>' + (e.pol === '+' ? '✓ ' : '✕ ') + esc(e.nombre) + (ex.length ? ' (' + esc(ex.join(', ')) + ')' : '') + ': <i class="cita">«' + esc(corto(N.fragmento(ev, m))) + '»</i>' + (m.comentario ? '. ' + esc(m.comentario) : '') + '</li>';
+      });
+      gs.forEach(function (g) { bloque += '<li><span class="n">—</span>✕ ' + esc(EV[g.evidencia].nombre) + (g.comentario ? '. ' + esc(g.comentario) : '') + '</li>'; });
+      bloque += '</ul>';
+    });
+    if (hayEv) h += '<h2>Evidencias por criterio</h2>' + bloque;
+    var recs = N.recomendaciones(ev).filter(function (r) { return ev.recExcluidas.indexOf(r.c) === -1; });
+    if (recs.length) {
+      h += '<h2>Lo que más subiría tu puntaje</h2><ul class="rec-imp">' + recs.slice(0, 3).map(function (r) { return '<li>' + esc(r.texto) + '</li>'; }).join('') + '</ul>';
+      if (recs.length > 3) h += '<h2>Otros aspectos para revisar</h2><ul class="rec-imp">' + recs.slice(3).map(function (r) { return '<li>' + esc(r.texto) + '</li>'; }).join('') + '</ul>';
+    }
+    if (ev.observaciones && ev.observaciones.trim()) h += '<h2>Observaciones del evaluador</h2><p style="white-space:pre-wrap">' + esc(ev.observaciones) + '</p>';
+    h += '</div>';
+    $('impresion').innerHTML = h;
+    var titulo = document.title;
+    document.title = 'Retroalimentación ' + (ev.estudiante || ev.etiquetaPublica || 'escritura n2');
+    setTimeout(function () { window.print(); document.title = titulo; }, 60);
+  }
+
+  // ───────── Eventos ─────────
+  function accion(a, el, e) {
+    var id = el.getAttribute('data-id');
+    switch (a) {
+      case 'menu': S.menu = !S.menu; U.renderCabecera(); return;
+      case 'nueva': S.menu = false; U.irInicio(); setTimeout(function () { var t = $('entradaTexto'); if (t) t.focus(); }, 30); return;
+      case 'inicio': S.menu = false; U.irInicio(); return;
+      case 'imprimir': S.menu = false; U.renderCabecera(); imprimir(); return;
+      case 'pruebas': S.menu = false; U.renderCabecera(); verPruebas(); return;
+      case 'nuevaPrueba': editorPrueba(null); return;
+      case 'editarPrueba': editorPrueba(id); return;
+      case 'guardarPrueba': guardarPrueba(id); return;
+      case 'agregarDoc': $('prDocs').insertAdjacentHTML('beforeend', docEd({ nombre: '', texto: '' })); return;
+      case 'quitarDoc': el.closest('.doc-ed').remove(); return;
+      case 'verMateriales': S.menu = false; U.renderCabecera(); verMateriales(0); return;
+      case 'pestana': verMateriales(+el.getAttribute('data-i')); return;
+      case 'umbrales': S.menu = false; U.renderCabecera(); verUmbrales(); return;
+      case 'restablecerUmbrales': document.querySelectorAll('[data-umbral]').forEach(function (i) { i.value = N.umbralesPorDefecto()[i.getAttribute('data-umbral')]; }); return;
+      case 'guardarUmbrales': guardarUmbrales(); return;
+      case 'guardarHistorial': S.menu = false; U.renderCabecera(); guardarHistorial(); return;
+      case 'fijarClave': fijarClave(); return;
+      case 'desbloquear': S.menu = false; U.renderCabecera(); desbloquear(); return;
+      case 'abrirCifrado': abrirCifrado(); return;
+      case 'empezarDeCero': empezarDeCero(); return;
+      case 'cerrarVentana': cerrarVentana(); return;
+      case 'empezar': U.empezar(); return;
+      case 'abrir': if (e.target.closest('[data-a="borrarEval"]')) return; U.abrirEval(id); return;
+      case 'borrarEval':
+        confirmar('Borrar evaluación', 'La evaluación desaparece de este navegador y no volverá a aparecer al fusionar historiales.', 'Borrar', function () {
+          S.datos.evaluaciones = S.datos.evaluaciones.filter(function (x) { return x.id !== id; });
+          if (S.datos.borradas.indexOf(id) === -1) S.datos.borradas.push(id);
+          U.guardar(); U.renderInicio();
+        }, true);
+        return;
+      case 'parrafo': U.seleccionarParrafo(+el.getAttribute('data-p')); return;
+      case 'cancelarSel': U.limpiarSeleccion(); return;
+      case 'marcar': U.crearMarca(el.getAttribute('data-ev'), e.shiftKey); return;
+      case 'borrarMarca': U.borrarMarca(id); return;
+      case 'cerrarEditor': U.cerrarEditor(); U.renderTexto(); return;
+      case 'deshacer': U.deshacer(); return;
+      case 'soloFuera': S.solo = null; U.renderMarcado(); return;
+      case 'nivel': U.decidir(el.getAttribute('data-c'), el.getAttribute('data-n')); return;
+      case 'general': U.registrarGeneral(el.getAttribute('data-ev')); return;
+      case 'quitarGeneral': U.quitarGeneral(id); return;
+      case 'irMarca': U.irAMarca(id); return;
+      case 'irCrit': U.irCrit(el.getAttribute('data-c')); return;
+      case 'colapsar': S.colapsado = !S.colapsado; U.renderMarcado(); return;
+      case 'cerrarPanel': $('panel').classList.remove('abierto-movil'); return;
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    // Un toque que abre la paleta genera después un clic en el mismo punto; si cae sobre la paleta recién abierta, se ignora.
+    if (S.tragarClic && Date.now() < S.tragarClic && e.target.closest('#paleta, #editorMarca')) { e.preventDefault(); e.stopPropagation(); S.tragarClic = 0; return; }
+    var el = e.target.closest('[data-a]');
+    if (S.menu && !e.target.closest('.menu')) { S.menu = false; U.renderCabecera(); }
+    if (el && !el.closest('#texto')) { accion(el.getAttribute('data-a'), el, e); return; }
+    if (S.abierta && !e.target.closest('#editorMarca, #texto')) { U.cerrarEditor(); U.renderTexto(); }
+  });
+  $('fab').addEventListener('click', function () { $('panel').classList.add('abierto-movil'); U.renderPanel(); });
+
+  var texto = $('texto');
+  texto.addEventListener('pointerdown', function (e) { S.ptr = { tipo: e.pointerType, x: e.clientX, y: e.clientY }; });
+  texto.addEventListener('pointerup', function (e) {
+    if (e.button === 2) return;
+    var asa = e.target.closest('.asa');
+    if (e.pointerType !== 'mouse') S.tragarClic = Date.now() + 600;
+    if (asa) { e.preventDefault(); U.seleccionarParrafo(+asa.getAttribute('data-p')); return; }
+    setTimeout(function () { U.alSoltar(e); }, 0);
+  });
+  texto.addEventListener('contextmenu', function (e) {
+    var p = e.target.closest('.s.prop');
+    if (p) { e.preventDefault(); U.descartarPropuesta(p.getAttribute('data-prop')); }
+  });
+
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.id === 'entradaTexto') { S.borrador.texto = t.value; U.renderContador(); return; }
+    if (t.id === 'entEstudiante') { S.borrador.estudiante = t.value; return; }
+    if (t.id === 'entEtiqueta') { S.borrador.etiqueta = t.value; return; }
+    if (t.id === 'palFiltro') { S.filtro = t.value; $('palSecciones').innerHTML = U.htmlSecciones(); return; }
+    var campo = t.getAttribute('data-campo');
+    if (!campo || !S.ev) return;
+    if (campo === 'm.comentario') { U.cambiarCampoMarca('comentario', t.value); return; }
+    if (campo === 'desvio') { S.ev.decisiones[t.getAttribute('data-c')].motivoDesvio = t.value; U.tocarEv(); return; }
+    if (campo === 'gcom') { var g = S.ev.generales.find(function (x) { return x.id === t.getAttribute('data-id'); }); if (g) { g.comentario = t.value; U.tocarEv(); } return; }
+    if (campo === 'obs') { S.ev.observaciones = t.value; U.tocarEv(); return; }
+  });
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.id === 'entMaterial') { S.borrador.materialId = t.value; return; }
+    if (t.name === 'vis') { S.borrador.visibilidad = t.value; return; }
+    var campo = t.getAttribute('data-campo');
+    if (!campo) return;
+    if (campo.indexOf('m.') === 0 && campo !== 'm.comentario') { U.cambiarCampoMarca(campo.slice(2), t.value); return; }
+    if (campo === 'detector' || campo === 'ocultarNumeros' || campo === 'ocultarMarcas') { S[campo] = t.checked; U.renderTexto(); return; }
+    if (campo === 'solo') { S.solo = t.checked ? t.getAttribute('data-c') : null; U.renderMarcado(); return; }
+    if (campo === 'rec') {
+      var c = t.getAttribute('data-c');
+      S.ev.recExcluidas = S.ev.recExcluidas.filter(function (x) { return x !== c; });
+      if (!t.checked) S.ev.recExcluidas.push(c);
+      U.tocarEv(); U.renderPanel(); return;
+    }
+  });
+  document.addEventListener('toggle', function (e) {
+    var d = e.target;
+    if (d.classList && d.classList.contains('t-mas')) S.expandidos[d.getAttribute('data-c')] = d.open;
+  }, true);
+  document.addEventListener('paste', function (e) {
+    if (e.target.id !== 'entradaTexto') return;
+    e.preventDefault();
+    var bruto = (e.clipboardData || window.clipboardData).getData('text');
+    var ta = e.target;
+    var nuevo = ta.value.slice(0, ta.selectionStart) + bruto + ta.value.slice(ta.selectionEnd);
+    var n = N.normalizarTexto(nuevo);
+    ta.value = n.texto;
+    S.borrador.texto = n.texto; S.borrador.unidas = n.unidas; S.borrador.guiones = n.guiones;
+    U.renderContador();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var t = e.target, enCampo = /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);
+    if (e.key === 'Escape') {
+      if ($('velo')) { cerrarVentana(); return; }
+      if (S.abierta) { U.cerrarEditor(); U.renderTexto(); return; }
+      if (S.menu) { S.menu = false; U.renderCabecera(); return; }
+      if (S.sel) { U.limpiarSeleccion(); return; }
+      return;
+    }
+    if (!S.ev || $('velo')) return;
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z' && !enCampo) { e.preventDefault(); U.deshacer(); return; }
+    if (enCampo || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (S.abierta && (e.key === 'Delete' || e.key === 'Supr' || e.key === 'Backspace')) { e.preventDefault(); U.borrarMarca(S.abierta); return; }
+    if (!S.sel) return;
+    if (/^[1-5]$/.test(e.key)) {
+      var r = S.recientes[+e.key - 1];
+      if (r) { e.preventDefault(); U.crearMarca(r, false); }
+      return;
+    }
+    var letra = e.key.length === 1 ? e.key.toUpperCase() : '';
+    var ev = letra && N.CATALOGO.find(function (x) { return x.tecla === letra; });
+    if (ev) { e.preventDefault(); U.crearMarca(ev.id, e.shiftKey); }
+  });
+  window.addEventListener('resize', function () { if (S.ev) { U.renderCabecera(); U.renderPanel(); } });
+
+  // ───────── Arranque ─────────
+  U.cargar();
+  U.renderAvisoSup();
+  U.irInicio();
+  Object.assign(U, { imprimir: imprimir, construirHistorial: construirHistorial, verPruebas: verPruebas, verUmbrales: verUmbrales, cerrarVentana: cerrarVentana });
+})();
+
+</script>
+</body>
+</html>
